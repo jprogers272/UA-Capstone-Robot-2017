@@ -1,0 +1,17 @@
+#!/bin/bash
+
+config-pin P8.34 pwm
+config-pin P8.36 pwm
+config-pin P8.45 pwm
+config-pin P8.46 pwm
+
+
+#PWM1A - P8.36
+echo 0 > /sys/devices/platform/ocp/48302000.epwmss/48302200.pwm/pwm/pwmchip*/export
+#PWM1B - P8.34
+echo 1 > /sys/devices/platform/ocp/48302000.epwmss/48302200.pwm/pwm/pwmchip*/export
+
+#PWM2A - P8.45
+echo 0 > /sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip*/export
+#PWM2B - P8.46
+echo 1 > /sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip*/export

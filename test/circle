@@ -1,0 +1,17 @@
+./motor_test 1 1 1 1
+sleep 1.5
+./motor_test 1 -1 1 -1
+sleep 0.7
+./motor_test 1 1 1 1
+sleep 1.5
+./motor_test 1 -1 1 -1
+sleep 0.7
+./motor_test 1 1 1 1
+sleep 1.5
+./motor_test 1 -1 1 -1
+sleep 0.7
+./motor_test 1 1 1 1
+sleep 1.5
+./motor_test 1 -1 1 -1
+sleep 0.7
+./motor_test 0 0 0 0

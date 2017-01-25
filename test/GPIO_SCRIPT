@@ -1,0 +1,26 @@
+#!/bin/bash
+
+echo 2 > /sys/class/gpio/export
+echo 3 > /sys/class/gpio/export
+echo 7 > /sys/class/gpio/export
+echo 11 > /sys/class/gpio/export
+echo 14 > /sys/class/gpio/export
+echo 15 > /sys/class/gpio/export
+echo 27 > /sys/class/gpio/export
+echo 47 > /sys/class/gpio/export
+echo 48 > /sys/class/gpio/export
+echo 49 > /sys/class/gpio/export
+echo 51 > /sys/class/gpio/export
+echo 60 > /sys/class/gpio/export
+echo 73 > /sys/class/gpio/export
+echo 75 > /sys/class/gpio/export
+echo 89 > /sys/class/gpio/export
+echo 112 > /sys/class/gpio/export
+echo 113 > /sys/class/gpio/export
+echo 115 > /sys/class/gpio/export
+echo BB-ADC > /sys/devices/platform/bone_capemgr/slots
+
+config-pin P8_30 gpio
+config-pin P8_32 gpio
+config-pin P8_42 gpio
+config-pin P8_44 gpio
