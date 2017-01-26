@@ -32,8 +32,8 @@ char PWM2A_file[100];
 char PWM2B_file[100];
 
 void identifyFiles(void);
-float processMecanum(float,float,float,float);
-void writeMotor(float,int);
+float *processMecanum(float,float,float,float);
+void writeMotor(float,int,float);
 void setDutyCyclePWM(int,int);
 void setPeriodPWM(int,int);
 void setStatePWM(int,int);
@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
 	setDirectionGPIO(DIR1A, 0);	
 	setDirectionGPIO(DIR2B, 0);
 		
-	float motor_voltages[4];
+	float *motor_voltages;
 	motor_voltages = processMecanum(voltage_max,velocity_translation,angle_translation,velocity_rotation);
 	
 	float vbat = 11 * readADC(2);
@@ -146,7 +146,7 @@ void identifyFiles(void) {
 	//printf("%s\n%s\n",PWM2A_file, PWM2B_file);
 }
 
-float * processMecanum(float maximum_voltage, float vel_trans, float angle_trans, float vel_rot) {
+float *processMecanum(float maximum_voltage, float vel_trans, float angle_trans, float vel_rot) {
 	float voltages[4];
 	voltages[0] = maximum_voltage * (vel_trans * sin(angle_trans + PI/4.0) + vel_rot);
 	voltages[1] = maximum_voltage * (vel_trans * cos(angle_trans + PI/4.0) - vel_rot);
