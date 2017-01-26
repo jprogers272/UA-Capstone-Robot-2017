@@ -1,4 +1,4 @@
-//This code is specific to kernel version 4.4.9-ti-r25
+//This code is specific to kernel version 4.4.x
 
 #include <stdio.h>
 #include <string.h>
