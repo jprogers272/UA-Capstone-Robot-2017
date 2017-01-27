@@ -8,7 +8,7 @@
 
 #define PI 3.141592
 
-#define VBAT_MULTIPLIER 11
+#define VBAT_MULTIPLIER 11.2
 
 #define PWM_PERIOD 50000
 #define MAX_DUTY_CYCLE 50000
@@ -86,10 +86,10 @@ int main(int argc, char **argv) {
 
 //	printf("mecanum wheel voltages calculated\n");
 	
-	float vbat = 11 * readADC(2) / 1000;
+	float vbat = VBAT_MULTIPLIER * readADC(2) / 1000.0;
 
 
-//	printf("read battery voltage. %f volts\n",vbat);
+	printf("read battery voltage. %f volts\n",vbat);
 	//printf("Setting pwm periods to 50,000 ns.\n");
 	
 	setPeriodPWM(PWM_PERIOD,PWM1A);
