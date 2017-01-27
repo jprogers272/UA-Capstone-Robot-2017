@@ -1,6 +1,7 @@
 //This code is specific to kernel version 4.4.x
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
 #include <math.h>
@@ -32,7 +33,7 @@ char PWM2A_file[100];
 char PWM2B_file[100];
 
 void identifyFiles(void);
-float *processMecanum(float,float,float,float);
+void processMecanum(float,float,float,float,float*);
 void writeMotor(float,int,float);
 void setDutyCyclePWM(int,int);
 void setPeriodPWM(int,int);
@@ -74,14 +75,21 @@ int main(int argc, char **argv) {
 	
 	setDirectionGPIO(DIR1A, 0);
 	setDirectionGPIO(DIR1B, 0);
-	setDirectionGPIO(DIR1A, 0);	
+	setDirectionGPIO(DIR2A, 0);	
 	setDirectionGPIO(DIR2B, 0);
 		
-	float *motor_voltages;
-	motor_voltages = processMecanum(voltage_max,velocity_translation,angle_translation,velocity_rotation);
-	
-	float vbat = 11 * readADC(2);
+//	printf("set directions\n");
 
+	float *motor_voltages;
+	motor_voltages = malloc(4*sizeof(float));
+	processMecanum(voltage_max,velocity_translation,angle_translation,velocity_rotation,motor_voltages);
+
+//	printf("mecanum wheel voltages calculated\n");
+	
+	float vbat = 11 * readADC(2) / 1000;
+
+
+//	printf("read battery voltage. %f volts\n",vbat);
 	//printf("Setting pwm periods to 50,000 ns.\n");
 	
 	setPeriodPWM(PWM_PERIOD,PWM1A);
@@ -89,6 +97,7 @@ int main(int argc, char **argv) {
 	setPeriodPWM(PWM_PERIOD,PWM2A);
 	setPeriodPWM(PWM_PERIOD,PWM2B);
 
+//	printf("periods set\n");
 	//printf("writing pwms and direction pins\n");
 	
 	writeMotor(motor_voltages[0],PWM1A,vbat);
@@ -100,6 +109,8 @@ int main(int argc, char **argv) {
 	setStatePWM(1,PWM1B);
 	setStatePWM(1,PWM2A);
 	setStatePWM(1,PWM2B);
+
+//	printf("PWMs enabled\n");
 
 	return 0;
 }
@@ -146,28 +157,28 @@ void identifyFiles(void) {
 	//printf("%s\n%s\n",PWM2A_file, PWM2B_file);
 }
 
-float *processMecanum(float maximum_voltage, float vel_trans, float angle_trans, float vel_rot) {
-	float voltages[4];
-	voltages[0] = maximum_voltage * (vel_trans * sin(angle_trans + PI/4.0) + vel_rot);
-	voltages[1] = maximum_voltage * (vel_trans * cos(angle_trans + PI/4.0) - vel_rot);
-	voltages[2] = maximum_voltage * (vel_trans * cos(angle_trans + PI/4.0) + vel_rot);
-	voltages[3] = maximum_voltage * (vel_trans * sin(angle_trans + PI/4.0) - vel_rot);
+void processMecanum(float maximum_voltage, float vel_trans, float angle_trans, float vel_rot, float *voltages_return) {
+	voltages_return[0] = maximum_voltage * (vel_trans * sin(angle_trans + PI/4.0) + vel_rot);
+	voltages_return[1] = maximum_voltage * (vel_trans * cos(angle_trans + PI/4.0) - vel_rot);
+	voltages_return[2] = maximum_voltage * (vel_trans * cos(angle_trans + PI/4.0) + vel_rot);
+	voltages_return[3] = maximum_voltage * (vel_trans * sin(angle_trans + PI/4.0) - vel_rot);
 	
 	//check if any voltage magnitudes are greater than the provided maximum, and scale accordingly
 	int i;
-	float calculated_max = fabs(voltages[0]);
+	float calculated_max = fabs(voltages_return[0]);
 	for (i=1; i<4; i++) {
-		if (fabs(voltages[i]) > calculated_max)
-			calculated_max = fabs(voltages[i]);
+		if (fabs(voltages_return[i]) > calculated_max)
+			calculated_max = fabs(voltages_return[i]);
 	}
 	if (calculated_max > maximum_voltage) {
 		for (i=0; i<4; i++) {
-			voltages[i] = voltages[i] * maximum_voltage / calculated_max;
+			voltages_return[i] = voltages_return[i] * maximum_voltage / calculated_max;
 		}
 	}
 }
 
 void writeMotor(float voltage, int channel, float vbat) {
+//	printf("begin writeMotor function\n");
 	int pwm_channel = 0;
 	int motor_direction = 0;
 	int direction_pin = 0;

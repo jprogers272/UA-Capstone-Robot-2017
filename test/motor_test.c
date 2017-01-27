@@ -5,7 +5,7 @@
 #include <dirent.h>
 
 #define MAX_DUTY_CYCLE 50000
-#define MAX_MAGNITUDE 0.5
+#define MAX_MAGNITUDE 0.25
 //#define PWM1A_file "/sys/devices/platform/ocp/48302000.epwmss/48302200.pwm/pwm/pwmchip*/pwm0/"
 //#define PWM1B_file "/sys/devices/platform/ocp/48302000.epwmss/48302200.pwm/pwm/pwmchip*/pwm1/"
 //#define PWM2A_file "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip*/pwm0/"
@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 	
 	setDirectionGPIO(DIR1A, 0);
 	setDirectionGPIO(DIR1B, 0);
-	setDirectionGPIO(DIR1A, 0);	
+	setDirectionGPIO(DIR2A, 0);	
 	setDirectionGPIO(DIR2B, 0);
 	
 	int i;
