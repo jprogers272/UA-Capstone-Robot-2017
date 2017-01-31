@@ -394,10 +394,10 @@ void driveme(char dir){
 	//if dir == w
 	//drive forward
 	if(dir == 'w'){
-		float voltage_max = 3.0
-		float velocity_translation = 1.0
-		float angle_translation = 0.0
-		float velocity_rotation = 0.0
+		float voltage_max = 3.0;
+		float velocity_translation = 1.0;
+		float angle_translation = 0.0;
+		float velocity_rotation = 0.0;
 
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 	}
@@ -405,10 +405,10 @@ void driveme(char dir){
 	//if dir == s
 	//drive reverse
 	if(dir == 's'){
-		float voltage_max = 3.0
-		float velocity_translation = -1.0
-		float angle_translation = 0.0
-		float velocity_rotation = 0.0
+		float voltage_max = 3.0;
+		float velocity_translation = -1.0;
+		float angle_translation = 0.0;
+		float velocity_rotation = 0.0;
 
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
@@ -417,10 +417,10 @@ void driveme(char dir){
 	//if dir == a
 	//drive left
 	if(dir == 'a'){
-		float voltage_max = 3.0
-		float velocity_translation = 3010.0
-		float angle_translation = -90.0
-		float velocity_rotation = 0.0
+		float voltage_max = 3.0;
+		float velocity_translation = 3010.0;
+		float angle_translation = -90.0;
+		float velocity_rotation = 0.0;
 
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
@@ -429,10 +429,10 @@ void driveme(char dir){
 	//if dir == d
 	//drive right
 	if(dir == 'd'){
-		float voltage_max = 3.0
-		float velocity_translation = 3010.0
-		float angle_translation = 90.0
-		float velocity_rotation = 0.0
+		float voltage_max = 3.0;
+		float velocity_translation = 3010.0;
+		float angle_translation = 90.0;
+		float velocity_rotation = 0.0;
 
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
@@ -441,10 +441,10 @@ void driveme(char dir){
 	//if dir = y
 	//drive NW
 	if(dir == 'y'){
-		float voltage_max = 3.0
-		float velocity_translation = 3010.0
-		float angle_translation = -45.0
-		float velocity_rotation = 0.0
+		float voltage_max = 3.0;
+		float velocity_translation = 3010.0;
+		float angle_translation = -45.0;
+		float velocity_rotation = 0.0;
 
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
@@ -452,11 +452,11 @@ void driveme(char dir){
 
 	//if dir = u
 	//drive NE
-	if(dir == u){
-		float voltage_max = 3.0
-		float velocity_translation = 3010.0
-		float angle_translation = 45.0
-		float velocity_rotation = 0.0
+	if(dir == 'u'){
+		float voltage_max = 3.0;
+		float velocity_translation = 3010.0;
+		float angle_translation = 45.0;
+		float velocity_rotation = 0.0;
 
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
@@ -464,11 +464,11 @@ void driveme(char dir){
 
 	//if dir == h
 	//drive SW
-	if(dir == h){
-		float voltage_max = 3.0
-		float velocity_translation = 3010.0
-		float angle_translation = -135.0
-		float velocity_rotation = 0.0
+	if(dir == 'h'){
+		float voltage_max = 3.0;
+		float velocity_translation = 3010.0;
+		float angle_translation = -135.0;
+		float velocity_rotation = 0.0;
 
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
@@ -476,11 +476,11 @@ void driveme(char dir){
 
 	//if dir == j
 	//drive SE
-	if(dir == j){
-		float voltage_max = 3.0
-		float velocity_translation = 3010.0
-		float angle_translation = 135.0
-		float velocity_rotation =
+	if(dir == 'j'){
+		float voltage_max = 3.0;
+		float velocity_translation = 3010.0;
+		float angle_translation = 135.0;
+		float velocity_rotation = 0.0;
 
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
