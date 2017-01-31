@@ -347,8 +347,8 @@ void directionverify(){ //used at the end of the program when prompting user for
 	int check = 0;
 	printf("Drive Direction? (w = forward, s = reverse, a = left, d = right)\n ");
 	printf("y = NW, u = NE, h = SW, j = SE: ");
-	//scanf("\n%c", &direction);
-	fgets(direction, 1, stdin);
+	scanf("\n%c", &direction);
+	//fgets(direction, 1, stdin);
 	//fprintf(stdin, "%c", '\n');
 	//fflush(stdin);
 	if (direction != 'w'){ //foward
