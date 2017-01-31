@@ -112,7 +112,7 @@ int motorDrive(float voltage_max, float velocity_translation, float angle_transl
 
 //	printf("PWMs enabled\n");
 
-	directionverify();
+	directionverify(int argc, const char **argv);
 }
 
 void identifyFiles(void) {
