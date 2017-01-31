@@ -349,6 +349,11 @@ void directionverify(){
 	printf("y = NW, u = NE, h = SW, j = SE, x = kill power: ");
 	//scanf("\n%c", &direction);
 	fgets(direction, 1, stdin);
+	struct timespec time_des;
+	time_des.tv_sec = 0;
+	time_des.tv_nsec = 10000000;
+	nanosleep(time_des, NULL);
+	printf("%c", *direction);
 	//fprintf(stdin, "%c", '\n');
 	//fflush(stdin);
 	if (*direction != 'w'){ //foward
