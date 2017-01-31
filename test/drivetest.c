@@ -377,6 +377,7 @@ int readADC(int channel) {
 
 void directionverify(){ 
 	char direction = getch();
+	int check = 0;
 	
 	//direction = getch();   //pull user input from commandline
 	if (direction != 'w'){ //forward
@@ -461,7 +462,7 @@ void driveme(char dir){
 		float velocity_translation = 3010.0;
 		float angle_translation = -90.0;
 		float velocity_rotation = 0.0;
-		printf("\nDrive Robot Left")
+		printf("\nDrive Robot Left");
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
 	}
@@ -528,7 +529,7 @@ void driveme(char dir){
 
 	if(dir == 'r'){
 		float voltage_max = 3.0;
-		float velocity_translation = 3010.0;
+		float velocity_translation = 0.0;
 		float angle_translation = 135.0;
 		float velocity_rotation = 3.0;
 		printf("\nDrive Robot SE");
@@ -536,7 +537,7 @@ void driveme(char dir){
 	}
 	if(dir == 'f'){
 		float voltage_max = 3.0;
-		float velocity_translation = 3010.0;
+		float velocity_translation = 0.0;
 		float angle_translation = 135.0;
 		float velocity_rotation = -3.0;
 		printf("\nDrive Robot SE");
