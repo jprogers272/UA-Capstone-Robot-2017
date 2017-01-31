@@ -40,7 +40,7 @@ void writeGPIO(int,int);
 int readGPIO(int);
 void setDirectionGPIO(int,int);
 int readADC(int);
-void directionverify();
+void directionverify(int argc, const char **argv);
 void driveme(char);
 
 int motorDrive(float voltage_max, float velocity_translation, float angle_translation, float velocity_rotation) {
@@ -351,32 +351,32 @@ void directionverify(int argc, const char **argv){
 	fgets(direction, 1, stdin);
 	//fprintf(stdin, "%c", '\n');
 	//fflush(stdin);
-	if (direction != 'w'){ //foward
+	if (*direction != 'w'){ //foward
 		check++;
 	}
-	if (direction != 's'){ //reverse
+	if (*direction != 's'){ //reverse
 		check++;
 	}
-	if (direction != 'a'){ //left
+	if (*direction != 'a'){ //left
 		check++;
 	}
-	if (direction != 'd'){ //right
+	if (*direction != 'd'){ //right
 		check++;
 	}
-	if (direction != 'y'){ //NW
+	if (*direction != 'y'){ //NW
 		check++;
 	}
-	if (direction != 'u'){ //NE
+	if (*direction != 'u'){ //NE
 		check++;
 	}
-	if (direction != 'h'){ //SW
+	if (*direction != 'h'){ //SW
 		check++;
 	}
-	if (direction != 'j'){ //SE
+	if (*direction != 'j'){ //SE
 		check++;
 	}
 
-	if (direction != 'x'){ //exit case
+	if (*direction != 'x'){ //exit case
 		check++;
 	}
 
@@ -393,7 +393,7 @@ void directionverify(int argc, const char **argv){
 		                 //recursive call and the safety it brings.
 	}
 	
-	driveme(direction);
+	driveme(*direction);
 }
 
 void driveme(char dir){
