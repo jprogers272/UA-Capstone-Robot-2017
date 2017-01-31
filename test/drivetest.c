@@ -40,6 +40,8 @@ void writeGPIO(int,int);
 int readGPIO(int);
 void setDirectionGPIO(int,int);
 int readADC(int);
+void directionverify();
+void driveme(char);
 
 int motorDrive(float voltage_max, float velocity_translation, float angle_translation, float velocity_rotation) {
 	// if (argc != 5) {
@@ -340,12 +342,13 @@ int readADC(int channel) {
 	return adc_value;
 }
 
-char directionverify(){ //used at the end of the program when prompting user for input
+void directionverify(){ //used at the end of the program when prompting user for input
 	char direction;
 	int check = 0;
 	printf("Drive Direction? (w = forward, s = reverse, a = left, d = right)\n ");
 	printf("y = NW, u = NE, h = SW, j = SE: ");
 	scanf("\n%c", &direction);
+	fprintf(stdin, "%c", '\n');
 	if (direction != 'w'){ //foward
 		check++;
 	}
@@ -387,7 +390,8 @@ char directionverify(){ //used at the end of the program when prompting user for
 		directionverify(); //the entire reason for this function's existence is for this
 		                 //recursive call and the safety it brings.
 	}
-	return cont;
+	
+	driveme(direction);
 }
 
 void driveme(char dir){
