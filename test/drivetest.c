@@ -375,7 +375,7 @@ void directionverify(){ //used at the end of the program when prompting user for
 	}
 
 	if (direction == 'x'){ //exit case
-		return 0;
+		return;
 	}
 
 	if (check < 8){
@@ -490,6 +490,10 @@ void driveme(char dir){
 
 	}
 
+	directionverify();
+}
+
+int main(void){
 	directionverify();
 }
 
