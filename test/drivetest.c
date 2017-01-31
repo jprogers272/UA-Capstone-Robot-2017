@@ -356,7 +356,7 @@ void directionverify(){
 	printf("%c", *direction);
 	//fprintf(stdin, "%c", '\n');
 	//fflush(stdin);
-	if (*direction != 'w'){ //foward
+	if (*direction != '\nw'){ //foward
 		check++;
 	}
 	if (*direction != 's'){ //reverse
