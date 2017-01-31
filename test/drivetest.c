@@ -342,13 +342,13 @@ int readADC(int channel) {
 	return adc_value;
 }
 
-void directionverify(){ //used at the end of the program when prompting user for input
-	char direction;
+void directionverify(int argc, const char **argv){ 
+	char direction[1];
 	int check = 0;
 	printf("Drive Direction? (w = forward, s = reverse, a = left, d = right)\n ");
-	printf("y = NW, u = NE, h = SW, j = SE: ");
-	scanf("\n%c", &direction);
-	//fgets(direction, 1, stdin);
+	printf("y = NW, u = NE, h = SW, j = SE, x = kill power: ");
+	//scanf("\n%c", &direction);
+	fgets(direction, 1, stdin);
 	//fprintf(stdin, "%c", '\n');
 	//fflush(stdin);
 	if (direction != 'w'){ //foward
@@ -376,7 +376,7 @@ void directionverify(){ //used at the end of the program when prompting user for
 		check++;
 	}
 
-	if (direction != 'c'){ //exit case
+	if (direction != 'x'){ //exit case
 		check++;
 	}
 
@@ -495,7 +495,7 @@ void driveme(char dir){
 	}
 
 	//kill powah
-	if(dir == 'c'){
+	if(dir == 'x'){
 		float voltage_max = 3.0;
 		float velocity_translation = 0.0;
 		float angle_translation = 0.0;
