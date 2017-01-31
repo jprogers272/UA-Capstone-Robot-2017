@@ -347,7 +347,8 @@ void directionverify(){ //used at the end of the program when prompting user for
 	int check = 0;
 	printf("Drive Direction? (w = forward, s = reverse, a = left, d = right)\n ");
 	printf("y = NW, u = NE, h = SW, j = SE: ");
-	scanf("\n%c", &direction);
+	//scanf("\n%c", &direction);
+	fgets(direction, 1, stdin);
 	//fprintf(stdin, "%c", '\n');
 	//fflush(stdin);
 	if (direction != 'w'){ //foward
@@ -375,7 +376,7 @@ void directionverify(){ //used at the end of the program when prompting user for
 		check++;
 	}
 
-	if (direction == 'c'){ //exit case
+	if (direction != 'c'){ //exit case
 		check++;
 	}
 
@@ -398,6 +399,8 @@ void directionverify(){ //used at the end of the program when prompting user for
 void driveme(char dir){
 	//if dir == w
 	//drive forward
+
+
 	if(dir == 'w'){
 		float voltage_max = 3.0;
 		float velocity_translation = 1.0;
