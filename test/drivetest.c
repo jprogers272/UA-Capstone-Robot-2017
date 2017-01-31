@@ -376,10 +376,9 @@ int readADC(int channel) {
 }
 
 void directionverify(){ 
-	char direction;
-	int check = 0;
+	char direction = getch();
 	
-	direction = getch();   //pull user input from commandline
+	//direction = getch();   //pull user input from commandline
 	if (direction != 'w'){ //forward
 		check++;
 	}
@@ -404,12 +403,18 @@ void directionverify(){
 	if (direction != 'j'){ //SE
 		check++;
 	}
+	if (direction != 'r'){ //rotate right
+		check++;
+	}
+	if (direction != 'f'){ //rotate left
+		check++;
+	}
 	else{
 		check++;
 	}
 
 	//checking and time delay
-	if (check < 9){
+	if (check < 11){
 		struct timespec time_des;
 		time_des.tv_sec = 0;
 		time_des.tv_nsec = 10000000;
@@ -519,6 +524,23 @@ void driveme(char dir){
 		printf("\nDrive Robot SE");
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
+	}
+
+	if(dir == 'r'){
+		float voltage_max = 3.0;
+		float velocity_translation = 3010.0;
+		float angle_translation = 135.0;
+		float velocity_rotation = 3.0;
+		printf("\nDrive Robot SE");
+		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
+	}
+	if(dir == 'f'){
+		float voltage_max = 3.0;
+		float velocity_translation = 3010.0;
+		float angle_translation = 135.0;
+		float velocity_rotation = -3.0;
+		printf("\nDrive Robot SE");
+		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 	}
 
 	//kill powah
