@@ -376,10 +376,10 @@ void directionverify(){ //used at the end of the program when prompting user for
 	}
 
 	if (direction == 'x'){ //exit case
-		return;
+		check++;
 	}
 
-	if (check < 8){
+	if (check < 9){
 		struct timespec time_des;
 		time_des.tv_sec = 0;
 		time_des.tv_nsec = 10000000;
