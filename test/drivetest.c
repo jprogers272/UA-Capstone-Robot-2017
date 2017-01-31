@@ -40,7 +40,7 @@ void writeGPIO(int,int);
 int readGPIO(int);
 void setDirectionGPIO(int,int);
 int readADC(int);
-void directionverify(int argc, const char **argv);
+void directionverify();
 void driveme(char);
 
 int motorDrive(float voltage_max, float velocity_translation, float angle_translation, float velocity_rotation) {
@@ -112,7 +112,7 @@ int motorDrive(float voltage_max, float velocity_translation, float angle_transl
 
 //	printf("PWMs enabled\n");
 
-	directionverify(int argc, const char **argv);
+	directionverify();
 }
 
 void identifyFiles(void) {
@@ -342,7 +342,7 @@ int readADC(int channel) {
 	return adc_value;
 }
 
-void directionverify(int argc, const char **argv){ 
+void directionverify(){ 
 	char direction[1];
 	int check = 0;
 	printf("Drive Direction? (w = forward, s = reverse, a = left, d = right)\n ");
@@ -389,7 +389,7 @@ void directionverify(int argc, const char **argv){
 	}
 
 	else{
-		directionverify(int argc, const char **argv);
+		directionverify();
 	}
 	
 	driveme(*direction);
@@ -504,10 +504,10 @@ void driveme(char dir){
 
 	}
 
-	directionverify(int argc, const char **argv);
+	directionverify();
 }
 
-int main(int argc, const char **argv){
-	directionverify(int argc, const char **argv);
+int main(){
+	directionverify();
 }
 
