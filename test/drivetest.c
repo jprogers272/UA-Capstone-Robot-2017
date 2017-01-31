@@ -385,7 +385,7 @@ void directionverify(){
 		time_des.tv_sec = 0;
 		time_des.tv_nsec = 10000000;
 		nanosleep(time_des, NULL);
-		driveme(direction);
+		driveme(*direction);
 	}
 
 	else{
