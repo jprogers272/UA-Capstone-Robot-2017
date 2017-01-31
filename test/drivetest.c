@@ -349,7 +349,7 @@ void directionverify(){ //used at the end of the program when prompting user for
 	printf("y = NW, u = NE, h = SW, j = SE: ");
 	scanf("\n%c", &direction);
 	//fprintf(stdin, "%c", '\n');
-	fflush(stdin);
+	//fflush(stdin);
 	if (direction != 'w'){ //foward
 		check++;
 	}
