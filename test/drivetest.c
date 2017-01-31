@@ -389,8 +389,7 @@ void directionverify(int argc, const char **argv){
 	}
 
 	else{
-		directionverify(); //the entire reason for this function's existence is for this
-		                 //recursive call and the safety it brings.
+		directionverify(int argc, const char **argv);
 	}
 	
 	driveme(*direction);
@@ -505,10 +504,10 @@ void driveme(char dir){
 
 	}
 
-	directionverify();
+	directionverify(int argc, const char **argv);
 }
 
-int main(void){
-	directionverify();
+int main(int argc, const char **argv){
+	directionverify(int argc, const char **argv);
 }
 
