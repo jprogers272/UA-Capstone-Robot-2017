@@ -3,6 +3,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <math.h>
+#include <termios.h> //necessary for manual control
 
 #define PI 3.141592
 
@@ -30,6 +31,49 @@ char PWM1B_file[100];
 char PWM2A_file[100];
 char PWM2B_file[100];
 
+//HUGE ASS BLOCK OF DEFINITIONS FOR CORRECT CONTROL FUNCTIONALITY
+static struct termios old, new;
+
+/* Initialize new terminal i/o settings */
+void initTermios(int echo) 
+{
+  tcgetattr(0, &old); /* grab old terminal i/o settings */
+  new = old; /* make new settings same as old settings */
+  new.c_lflag &= ~ICANON; /* disable buffered i/o */
+  new.c_lflag &= echo ? ECHO : ~ECHO; /* set echo mode */
+  tcsetattr(0, TCSANOW, &new); /* use these new terminal i/o settings now */
+}
+
+/* Restore old terminal i/o settings */
+void resetTermios(void) 
+{
+  tcsetattr(0, TCSANOW, &old);
+}
+
+/* Read 1 character - echo defines echo mode */
+char getch_(int echo) 
+{
+  char ch;
+  initTermios(echo);
+  ch = getchar();
+  resetTermios();
+  return ch;
+}
+
+/* Read 1 character without echo */
+char getch(void) 
+{
+  return getch_(0);
+}
+
+/* Read 1 character with echo */
+char getche(void) 
+{
+  return getch_(1);
+}
+
+//END HUGE ASS BLOCK OF DEFINITIONS FOR CORRECT CONTROL FUNCTIONALITY
+
 void identifyFiles(void);
 void processMecanum(float,float,float,float,float*);
 void writeMotor(float,int,float);
@@ -44,28 +88,17 @@ void directionverify();
 void driveme(char);
 
 int motorDrive(float voltage_max, float velocity_translation, float angle_translation, float velocity_rotation) {
-	// if (argc != 5) {
-	// 	printf("Improper usage - run with four floats, max voltage, translation velocity, translation angle, and rotation velocity.\n");
-	// 	printf("Max voltage - a float between 0.0 and 6.0.\n");
-	// 	printf("Translation velocity - a float between -1.0 and 1.0.\n");
-	// 	printf("Translation angle - a float between 0.0 and 360.0 (degrees).\n");
-	// 	printf("Rotation velocity - a float between -1.0 and 1.0.\n");
-	// 	return 1;
-	// }
 	
-	
+	//parsing user input
 	if (voltage_max > 6.0) 
 		voltage_max = 6.0;
 	else if (voltage_max < 0.0) 
 		voltage_max = 0.0;
-	// float velocity_translation = atof(argv[2]);
 	if (velocity_translation > 1.0) 
 		velocity_translation = 1.0;
 	else if (velocity_translation < -1.0) 
 		velocity_translation = -1.0;
-	// float angle_translation = atof(argv[3]);
 	angle_translation *= PI/180.0;
-	// float velocity_rotation = atof(argv[4]);
 	if (velocity_rotation > 1.0) 
 		velocity_rotation = 1.0;
 	else if (velocity_rotation < -1.0) 
@@ -345,18 +378,9 @@ int readADC(int channel) {
 void directionverify(){ 
 	char direction;
 	int check = 0;
-	printf("Drive Direction? (w = forward, s = reverse, a = left, d = right)\n ");
-	printf("y = NW, u = NE, h = SW, j = SE, x = kill power: ");
-	scanf("\n%c", &direction);
-	// fgets(direction, 1, stdin);
-	// struct timespec time_des;
-	// time_des.tv_sec = 0;
-	// time_des.tv_nsec = 10000000;
-	// nanosleep(time_des, NULL);
-	// printf("%c", *direction);
-	//fprintf(stdin, "%c", '\n');
-	//fflush(stdin);
-	if (direction != 'w'){ //foward
+	
+	direction = getch();   //pull user input from commandline
+	if (direction != 'w'){ //forward
 		check++;
 	}
 	if (direction != 's'){ //reverse
@@ -380,11 +404,11 @@ void directionverify(){
 	if (direction != 'j'){ //SE
 		check++;
 	}
-
-	if (direction != 'x'){ //exit case
+	else{
 		check++;
 	}
 
+	//checking and time delay
 	if (check < 9){
 		struct timespec time_des;
 		time_des.tv_sec = 0;
@@ -401,16 +425,15 @@ void directionverify(){
 }
 
 void driveme(char dir){
+
 	//if dir == w
 	//drive forward
-
-
 	if(dir == 'w'){
 		float voltage_max = 3.0;
 		float velocity_translation = 1.0;
 		float angle_translation = 0.0;
 		float velocity_rotation = 0.0;
-
+		printf("\nDrive Robot Forward");
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 	}
 
@@ -421,7 +444,7 @@ void driveme(char dir){
 		float velocity_translation = -1.0;
 		float angle_translation = 0.0;
 		float velocity_rotation = 0.0;
-
+		printf("\nDrive Robot Backward");
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
 	}
@@ -433,7 +456,7 @@ void driveme(char dir){
 		float velocity_translation = 3010.0;
 		float angle_translation = -90.0;
 		float velocity_rotation = 0.0;
-
+		printf("\nDrive Robot Left")
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
 	}
@@ -445,7 +468,7 @@ void driveme(char dir){
 		float velocity_translation = 3010.0;
 		float angle_translation = 90.0;
 		float velocity_rotation = 0.0;
-
+		printf("\nDrive Robot Right");
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
 	}
@@ -457,7 +480,7 @@ void driveme(char dir){
 		float velocity_translation = 3010.0;
 		float angle_translation = -45.0;
 		float velocity_rotation = 0.0;
-
+		printf("\nDrive Robot NW");
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
 	}
@@ -469,7 +492,7 @@ void driveme(char dir){
 		float velocity_translation = 3010.0;
 		float angle_translation = 45.0;
 		float velocity_rotation = 0.0;
-
+		printf("\nDrive Robot NE");
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
 	}
@@ -481,7 +504,7 @@ void driveme(char dir){
 		float velocity_translation = 3010.0;
 		float angle_translation = -135.0;
 		float velocity_rotation = 0.0;
-
+		printf("\nDrive Robot SW");
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
 	}
@@ -493,18 +516,18 @@ void driveme(char dir){
 		float velocity_translation = 3010.0;
 		float angle_translation = 135.0;
 		float velocity_rotation = 0.0;
-
+		printf("\nDrive Robot SE");
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
 	}
 
 	//kill powah
-	if(dir == 'x'){
+	else{
 		float voltage_max = 3.0;
 		float velocity_translation = 0.0;
 		float angle_translation = 0.0;
 		float velocity_rotation = 0.0;
-
+		printf("\nCease all motor functions");
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
 
 	}
@@ -513,6 +536,23 @@ void driveme(char dir){
 }
 
 int main(){
+	printf("\n   Hello! Welcome to the manual controller");
+	printf("\n    for the IEEE SECon 2017 Robot, RT-R2.");
+	printf("  Here is a quick guide to controlling the robot\n");
+	printf("\n**********************************************");
+	printf("\n*              Controls List                 *");
+	printf("\n**********************************************");
+	printf("\n*            w = robot forward               *");
+	printf("\n*            s = robot reverse               *");
+	printf("\n*            a = robot left                  *");
+	printf("\n*            d = robot right                 *");
+	printf("\n*            y = robot NW                    *");
+	printf("\n*            u = robot NE                    *");
+	printf("\n*            h = robot SW                    *");
+	printf("\n*            j = robot SE                    *");
+	printf("\n*      all other std keys = robot brake      *");
+	printf("\n*            More coming soon!               *");
+	printf("\n**********************************************");
 	directionverify();
 }
 
