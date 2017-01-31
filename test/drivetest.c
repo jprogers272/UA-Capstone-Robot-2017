@@ -348,7 +348,8 @@ void directionverify(){ //used at the end of the program when prompting user for
 	printf("Drive Direction? (w = forward, s = reverse, a = left, d = right)\n ");
 	printf("y = NW, u = NE, h = SW, j = SE: ");
 	scanf("\n%c", &direction);
-	fprintf(stdin, "%c", '\n');
+	//fprintf(stdin, "%c", '\n');
+	fflush(stdin);
 	if (direction != 'w'){ //foward
 		check++;
 	}
@@ -484,6 +485,17 @@ void driveme(char dir){
 		float voltage_max = 3.0;
 		float velocity_translation = 3010.0;
 		float angle_translation = 135.0;
+		float velocity_rotation = 0.0;
+
+		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
+
+	}
+
+	//kill powah
+	if(dir == 'x'){
+		float voltage_max = 0.0;
+		float velocity_translation = 0.0;
+		float angle_translation = 0.0;
 		float velocity_rotation = 0.0;
 
 		motorDrive(voltage_max, velocity_translation, angle_translation, velocity_rotation);
