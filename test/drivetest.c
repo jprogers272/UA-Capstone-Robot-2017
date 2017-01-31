@@ -375,7 +375,7 @@ void directionverify(){ //used at the end of the program when prompting user for
 		check++;
 	}
 
-	if (direction == 'x'){ //exit case
+	if (direction == 'c'){ //exit case
 		check++;
 	}
 
@@ -492,8 +492,8 @@ void driveme(char dir){
 	}
 
 	//kill powah
-	if(dir == 'x'){
-		float voltage_max = 0.0;
+	if(dir == 'c'){
+		float voltage_max = 3.0;
 		float velocity_translation = 0.0;
 		float angle_translation = 0.0;
 		float velocity_rotation = 0.0;
