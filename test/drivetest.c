@@ -41,7 +41,7 @@ int readGPIO(int);
 void setDirectionGPIO(int,int);
 int readADC(int);
 
-int motorDrive(float voltage_max, float velocity_translation, angle_translation, velocity_rotation) {
+int motorDrive(float voltage_max, float velocity_translation, float angle_translation, float velocity_rotation) {
 	// if (argc != 5) {
 	// 	printf("Improper usage - run with four floats, max voltage, translation velocity, translation angle, and rotation velocity.\n");
 	// 	printf("Max voltage - a float between 0.0 and 6.0.\n");
@@ -345,7 +345,7 @@ char directionverify(){ //used at the end of the program when prompting user for
 	int check = 0;
 	printf("Drive Direction? (w = forward, s = reverse, a = left, d = right)\n ");
 	printf("y = NW, u = NE, h = SW, j = SE: ");
-	scanf("\n%c", &cont);
+	scanf("\n%c", &direction);
 	if (direction != 'w'){ //foward
 		check++;
 	}
