@@ -343,45 +343,45 @@ int readADC(int channel) {
 }
 
 void directionverify(){ 
-	char direction[1];
+	char direction;
 	int check = 0;
 	printf("Drive Direction? (w = forward, s = reverse, a = left, d = right)\n ");
 	printf("y = NW, u = NE, h = SW, j = SE, x = kill power: ");
-	//scanf("\n%c", &direction);
-	fgets(direction, 1, stdin);
-	struct timespec time_des;
-	time_des.tv_sec = 0;
-	time_des.tv_nsec = 10000000;
-	nanosleep(time_des, NULL);
-	printf("%c", *direction);
+	scanf("\n%c", &direction);
+	// fgets(direction, 1, stdin);
+	// struct timespec time_des;
+	// time_des.tv_sec = 0;
+	// time_des.tv_nsec = 10000000;
+	// nanosleep(time_des, NULL);
+	// printf("%c", *direction);
 	//fprintf(stdin, "%c", '\n');
 	//fflush(stdin);
-	if (*direction != '\nw'){ //foward
+	if (direction != 'w'){ //foward
 		check++;
 	}
-	if (*direction != 's'){ //reverse
+	if (direction != 's'){ //reverse
 		check++;
 	}
-	if (*direction != 'a'){ //left
+	if (direction != 'a'){ //left
 		check++;
 	}
-	if (*direction != 'd'){ //right
+	if (direction != 'd'){ //right
 		check++;
 	}
-	if (*direction != 'y'){ //NW
+	if (direction != 'y'){ //NW
 		check++;
 	}
-	if (*direction != 'u'){ //NE
+	if (direction != 'u'){ //NE
 		check++;
 	}
-	if (*direction != 'h'){ //SW
+	if (direction != 'h'){ //SW
 		check++;
 	}
-	if (*direction != 'j'){ //SE
+	if (direction != 'j'){ //SE
 		check++;
 	}
 
-	if (*direction != 'x'){ //exit case
+	if (direction != 'x'){ //exit case
 		check++;
 	}
 
@@ -390,14 +390,14 @@ void directionverify(){
 		time_des.tv_sec = 0;
 		time_des.tv_nsec = 10000000;
 		nanosleep(time_des, NULL);
-		driveme(*direction);
+		driveme(direction);
 	}
 
 	else{
 		directionverify();
 	}
 	
-	driveme(*direction);
+	driveme(direction);
 }
 
 void driveme(char dir){
