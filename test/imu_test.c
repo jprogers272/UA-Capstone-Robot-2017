@@ -5,6 +5,7 @@
 #include <linux/i2c.h>
 #include <linux/i2c-dev.h>
 #include <math.h>
+#include <time.h>
 
 #define ADDR 0x6a
 #define BUFFER_SIZE 40
@@ -46,26 +47,33 @@ int main (void) {
 	float accel[4];
 	float gyro[3];
 	float temperature;
+
+	int i;
+	FILE *gyro_data = fopen("/home/gyro.csv","w");
+	fprintf(gyro_data,"z axis dps\n");
+	fclose(gyro_data);
 	
 	free(readBuffer);
 	while(1) {
+		gyro_data = fopen("/home/gyro.csv","a");
 		readBuffer = readRegisters(0x20,0x2D,file_i2c);
 		
 		temperature = 25.0 + combineRegisters(readBuffer[1],readBuffer[0]) / 16.0; //in degrees C
 		
 		for(i=0; i<6; i+=2) {
-			printf("i=%d\n",i);
-			gyro[i] = 4.375/1000.0*combineRegisters(readBuffer[3+i],readBuffer[2+i]);  //in degrees per second
-			accel[i] = 0.061/1000.0*combineRegisters(readBuffer[9+i],readBuffer[8+i]); //in multiples of g
+			gyro[i/2] = 4.375/1000.0*combineRegisters(readBuffer[3+i],readBuffer[2+i]);  //in degrees per second
+			accel[i/2] = 0.061/1000.0*combineRegisters(readBuffer[9+i],readBuffer[8+i]); //in multiples of g
 		}
 		accel[3] = sqrt(accel[0]*accel[0] + accel[1]*accel[1] + accel[2]*accel[2]); //magnitude of accelerometer
 		
-		printf("Temp=%fC",temperature);
-		printf("gyro(dps): x=%0.3f y=0.3f z=0.3f\n",gyro[0],gyro[1],gyro[2]);
-		printf("accel(g) : x=%0.3f y=0.3f z=0.3f mag=%0.3f\n",accel[0],accel[1],accel[2]);
+		printf("Temp: %fC\n",temperature);
+		printf("gyro(dps): x=%0.3f y=%0.3f z=%0.3f\n",gyro[0],gyro[1],gyro[2]);
+		printf("accel(g) : x=%0.3f y=%0.3f z=%0.3f mag=%0.3f\n",accel[0],accel[1],accel[2],accel[3]);
 		
+		fprintf(gyro_data,"%f\n",gyro[2]);
 		free(readBuffer);
-		nanosleep(time_des);
+		fclose(gyro_data);
+		nanosleep(&time_des,NULL);
 		
 		/*
 		printf("Temp: %02x%02x\n"

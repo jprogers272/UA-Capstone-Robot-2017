@@ -5,6 +5,7 @@
 #include <linux/i2c.h>
 #include <linux/i2c-dev.h>
 #include <math.h>
+#include <time.h>
 
 #define ADDR 0x60
 #define BUFFER_SIZE 40
@@ -30,7 +31,7 @@ int main (void) {
 	}
 	char* readBuffer;
 	struct timespec time_des;
-	time_des.tv_nsec = 10000000; //10 ms
+	time_des.tv_nsec = 50000000; //50 ms 
 	time_des.tv_sec = 0;
 	
 	//compass returns data as both single byte 0-255 data, and one word 0-3559 data
@@ -46,12 +47,13 @@ int main (void) {
 		bearing_fbyte = bearing_byte * 360.0/255.0;
 		bearing_word = combineRegisters(readBuffer[1],readBuffer[2]) / 10.0;
 		
-		printf("byte: %d\n",bearing_byte);
-		printf("byte: %f degrees\n",bearing_fbyte);
-		printf("word: %f degrees\n",bearing_word);
-		
+		//printf("byte: %d\n",bearing_byte);
+		//printf("byte: %0.1f degrees\n",bearing_fbyte);
+		//printf("word: %0.1f degrees\n",bearing_word);
+		printf("%3.0f degrees\n",bearing_word);
+
 		free(readBuffer);
-		nanosleep(time_des);
+		nanosleep(&time_des,NULL);
 		
 		/*
 		printf("Temp: %02x%02x\n"
