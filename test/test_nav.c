@@ -31,12 +31,15 @@
 #define IR1_2 76
 #define IR2_1 8
 #define IR2_2 86
+#define IR3_1 87
+#define IR3_2 10
 
 char PWM1A_file[100];
 char PWM1B_file[100];
 char PWM2A_file[100];
 char PWM2B_file[100];
 
+void motorDrive(float,float,float,float);
 void identifyFiles(void);
 void processMecanum(float,float,float,float,float*);
 void writeMotor(float,int,float);
@@ -60,12 +63,20 @@ int main(int argc, char **argv) {
 	while(readGPIO(IR1_1) || readGPIO(IR1_2)) {
 		
 	}
-	motorDrive(0.0,0.0,0.0,0.0); //turn motors off when the wall is seen
+	motorDrive(3.0,1.0,0.0,0.0); //turn motors off when the wall is seen
+	while(readGPIO(IR2_1) || readGPIO(IR2_2)) {
+	}
+
+	motorDrive(4.0,1.0,90.0,0.0);
+	while(readGPIO(IR3_1) || readGPIO(IR3_2)) {
+
+	}
+	motorDrive(0.0,0.0,0.0,0.0);
 	
 	return 0;
 }
 
-int motorDrive(float voltage_max, float velocity_translation, float angle_translation, float velocity_rotation) {
+void motorDrive(float voltage_max, float velocity_translation, float angle_translation, float velocity_rotation) {
 	
 	//parsing user input
 	if (voltage_max > 6.0) 
@@ -115,8 +126,6 @@ int motorDrive(float voltage_max, float velocity_translation, float angle_transl
 	setStatePWM(1,PWM2B);
 
 //	printf("PWMs enabled\n");
-
-	directionverify();
 }
 
 void identifyFiles(void) {
