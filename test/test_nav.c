@@ -5,6 +5,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <math.h>
+#include <time.h>
 
 #define PI 3.141592
 
@@ -59,7 +60,11 @@ int main(int argc, char **argv) {
 	setDirectionGPIO(DIR2A, 0);	
 	setDirectionGPIO(DIR2B, 0);
 
-	motorDrive(3.0,1.0,-90.0,0.0); //strafe toward stage 1
+	struct timespec time_des;
+	time_des.tv_sec = 5;
+	time_des.tv_nsec = 750000000;
+	
+	motorDrive(4.0,1.0,-90.0,0.0); //strafe toward stage 1
 	while(readGPIO(IR1_1) || readGPIO(IR1_2)) {
 		
 	}
@@ -72,7 +77,42 @@ int main(int argc, char **argv) {
 
 	}
 	motorDrive(0.0,0.0,0.0,0.0);
+
+	motorDrive(3.5,-1.0,0.0,0.0);	
+	nanosleep(&time_des,NULL);
+	motorDrive(6.0,-1.0,0.0,0.0);
+	time_des.tv_sec = 0;
+	time_des.tv_nsec = 900000000;
+	nanosleep(&time_des,NULL);
+	motorDrive(0.0,0.0,0.0,0.0);
+	time_des.tv_sec = 1;
+	time_des.tv_nsec = 100000000;
+	motorDrive(3.0,0.0,0.0,-1.0);
+	nanosleep(&time_des,NULL);
+	motorDrive(0.0,0.0,0.0,0.0);
+
+	time_des.tv_sec = 0;
+	time_des.tv_nsec = 750000000;
+	motorDrive(5.0,1.0,90.0,0.0);
+	nanosleep(&time_des,NULL);
+	motorDrive(0.0,0.0,0.0,0.0);
 	
+	motorDrive(2.0,-1.0,0.0,0.0);
+	while(readGPIO(IR3_1) || readGPIO(IR3_2)) {
+
+	}
+	motorDrive(0.0,0.0,0.0,0.0);
+
+	time_des.tv_sec = 0;
+	time_des.tv_nsec = 750000000;
+	nanosleep(&time_des,NULL);
+
+	motorDrive(3.5,1.0,90.0,0.0);
+	time_des.tv_sec = 0;
+	time_des.tv_nsec = 750000000;
+	nanosleep(&time_des,NULL);
+	motorDrive(0.0,0.0,0.0,0.0);
+
 	return 0;
 }
 
