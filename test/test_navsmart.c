@@ -64,12 +64,58 @@ int main(int argc, char **argv) {
 	time_des.tv_sec = 5;
 	time_des.tv_nsec = 750000000;
 
-	motorDrive(4.0,1.0,-90.0,0.0); //strafe toward stage 1
-    while(1) {
-        if(!readGPIO(IR1_1) && readGPIO(IR1_2)) motorDrive(3.0,-0.4, 45, -0.4);
-        else if(readGPIO(IR1_2) && !readGPIO(IR1_1)) motorDrive(3.0,-0.4, 135, 0.4);
-        else if (!readGPIO(IR1_1) && !readGPIO(IR1_2)) break;
-    }	motorDrive(3.0,1.0,0.0,0.0); //turn motors off when the wall is seen
+	time_des.tv_sec = 0;
+	time_des.tv_nsec = 100000000;
+
+	motorDrive(3.0,1.0,90.0,0.0); //strafe toward stage 1
+	int a,b, i = 1;
+    	while(i < 5) {
+		a = !readGPIO(IR3_1);
+		b = !readGPIO(IR3_2);
+
+		motorDrive(4.0/(1+i/4),1.0,90.0,0.0); //strafe toward stage 1
+        	if(!a && b) {
+			//printf("I see IR1_2\n");
+			//motorDrive(0.0,0.0,0.0,0.0);
+		//nanosleep(&time_des,NULL);
+			while(!a) {
+				a = !readGPIO(IR3_1);	
+			}
+			while(b) {
+				motorDrive(3,0.4, -45, -0.4);
+				b = !readGPIO(IR3_2);
+			}
+			i++;	
+		}
+        	else if(a && !b) {
+			//printf("I see IR1_1\n");
+			//motorDrive(0.0,0.0,0.0,0.0);
+			//nanosleep(&time_des,NULL);
+			while(!b) {
+				b = !readGPIO(IR3_2);	
+			}
+			while(a) {
+				motorDrive(3,-0.4, 45, 0.4);
+				a = !readGPIO(IR3_1);
+			}
+			i++;
+        	}
+    	}
+	if(!b) {
+	while(!b){ 
+		motorDrive(3, 0.4, 45, 0.4);
+		b = !readGPIO(IR3_1);
+	}
+}
+	else if(!a) {
+		while(!a) {
+			motorDrive(3, -0.4, 45, -0.4);
+			a = !readGPIO(IR3_2);
+		}
+	}
+	motorDrive(0.0,0.0,0.0,0.0);	
+	/*
+	motorDrive(3.0,1.0,0.0,0.0); //turn motors off when the wall is seen
 	while(readGPIO(IR2_1) || readGPIO(IR2_2)) {
 	}
 
@@ -113,7 +159,7 @@ int main(int argc, char **argv) {
 	time_des.tv_nsec = 750000000;
 	nanosleep(&time_des,NULL);
 	motorDrive(0.0,0.0,0.0,0.0);
-
+	*/
 	return 0;
 }
 
