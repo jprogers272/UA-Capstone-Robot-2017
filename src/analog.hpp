@@ -5,6 +5,6 @@
 
 int readADC_mv(int);
 int readADC_raw(int);
-int convertADC_raw(int);
+int convertAnalog_raw(int);
 
 #endif

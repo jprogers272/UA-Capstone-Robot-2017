@@ -16,7 +16,7 @@ int readADC_mv(int channel) {
 int readADC_raw(int channel) {
 	ifstream file_analog;
 	ostringstream file_path;
-	file_path < ADC_FILE_PREFIX << channel << "_raw";
+	file_path << ADC_FILE_PREFIX << channel << "_raw";
 	file_analog.open(file_path.str());
 	int adc_value;
 	file_analog >> adc_value;
@@ -24,5 +24,5 @@ int readADC_raw(int channel) {
 }
 
 int convertAnalog_raw(int raw_value) {
-	return (int) (((float)adc_value / 4095.0) * 1800);
+	return (int) (((float)raw_value / 4095.0) * 1800);
 }

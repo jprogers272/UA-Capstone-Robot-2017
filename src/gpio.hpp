@@ -5,6 +5,6 @@
 
 void writeGPIO(int,int);
 int readGPIO(int,int);
-int setDirectionGPIO(int,int);
+void setDirectionGPIO(int,int);
 
 #endif
