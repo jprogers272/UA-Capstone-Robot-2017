@@ -2,8 +2,6 @@
 #include "gpio.hpp"
 #include "pwm.hpp"
 
-using namespace std;
-
 DCmotor::DCmotor(PWM *motorPWM, int directionGPIO) : motorPWM(motorPWM), directionGPIO(directionGPIO) {
 }
 
