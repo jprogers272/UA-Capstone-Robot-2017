@@ -9,9 +9,9 @@ using namespace std;
 
 //cant use constructor initialization because the set functions will then think the values are already set correctly
 PWM::PWM(PWMchannel channel, int duty_cycle, int period, int state) {
-	this->duty_cycle = 0;
-	this->period = 0;
-	this->state = 0;
+	this->duty_cycle = -1;
+	this->period = -1;
+	this->state = -1;
 	PWM::pwm_file_path = identifyFile(string(PWM0_FILE_PREFIX),channel);
 	PWM::setDutyCycle(duty_cycle);
 	PWM::setPeriod(period);

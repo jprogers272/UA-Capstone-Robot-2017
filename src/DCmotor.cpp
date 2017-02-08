@@ -3,6 +3,7 @@
 #include "pwm.hpp"
 
 DCmotor::DCmotor(PWM *motorPWM, int directionGPIO) : motorPWM(motorPWM), directionGPIO(directionGPIO) {
+	//only need to initialize variables in initializer list
 }
 
 void DCmotor::setVoltage(float voltage, float vbat) {
