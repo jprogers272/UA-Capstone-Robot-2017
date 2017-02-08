@@ -179,7 +179,7 @@ void processMecanum(float maximum_voltage, float vel_trans, float angle_trans, f
 
 void writeMotor(float voltage, int channel, float vbat) {
 //	printf("begin writeMotor function\n");
-	int pwm_channel = 0;
+	//int pwm_channel = 0;
 	int motor_direction = 0;
 	int direction_pin = 0;
 	int duty = 0;
@@ -228,7 +228,7 @@ void setDutyCyclePWM(int duty_cycle, int channel) {
 
 	//printf("set file path prefix correctly (I hope)\n");
 	
-	sprintf(file_end,"duty_cycle",channel);
+	sprintf(file_end,"duty_cycle");
 	strcat(file_path,file_end);
 	f_pwm = fopen(file_path,"w");
 	fprintf(f_pwm,"%d",duty_cycle);
@@ -250,7 +250,7 @@ void setPeriodPWM(int period, int channel) {
 	else {return;}
 	
 	//printf("set proper file path prefix\n");
-	sprintf(file_end,"period",channel);
+	sprintf(file_end,"period");
 	strcat(file_path,file_end);
 	
 	//printf("opening period file\n");
@@ -271,7 +271,7 @@ void setStatePWM(int state, int channel) {
 	FILE *f_pwm;
 	char file_path[100];
 	char file_end[15];
-	int prevState;
+	//int prevState;
 	
 	if (channel == PWM1A) {sprintf(file_path,"%s",PWM1A_file);}
 	else if (channel == PWM1B) {sprintf(file_path,"%s",PWM1B_file);}
@@ -279,7 +279,7 @@ void setStatePWM(int state, int channel) {
 	else if (channel == PWM2B) {sprintf(file_path,"%s",PWM2B_file);}
 	else {return;}
 	
-	sprintf(file_end,"enable",channel);
+	sprintf(file_end,"enable");
 	strcat(file_path,file_end);
 	
 	f_pwm = fopen(file_path,"w");
