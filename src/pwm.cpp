@@ -7,37 +7,55 @@
 
 using namespace std;
 
-PWM::PWM() {
-	pwm_file_paths[0] = identifyFile(string(PWM0_FILE_PREFIX),PWM0A);
-	pwm_file_paths[1] = identifyFile(string(PWM0_FILE_PREFIX),PWM0B);
-	pwm_file_paths[2] = identifyFile(string(PWM1_FILE_PREFIX),PWM1A);
-	pwm_file_paths[3] = identifyFile(string(PWM1_FILE_PREFIX),PWM1B);
-	pwm_file_paths[4] = identifyFile(string(PWM2_FILE_PREFIX),PWM2A);
-	pwm_file_paths[5] = identifyFile(string(PWM2_FILE_PREFIX),PWM2B);
+//cant use constructor initialization because the set functions will then think the values are already set correctly
+PWM::PWM(PWMchannel channel, int duty_cycle, int period, int state) {
+	this->duty_cycle = 0;
+	this->period = 0;
+	this->state = 0;
+	PWM::pwm_file_path = identifyFile(string(PWM0_FILE_PREFIX),channel);
+	PWM::setDutyCycle(duty_cycle);
+	PWM::setPeriod(period);
+	PWM::setState(state);
+	this->duty_cycle = duty_cycle;
+	this->period = period;
+	this->state = state;
+	
 }
 
-void PWM::setDutyCycle(int duty_cycle, PWMchannel channel) {
+void PWM::setDutyCycle(int duty_cycle) {
+	if (duty_cycle == this->duty_cycle) {
+		return;
+	}
+	this->duty_cycle = duty_cycle;
 	ofstream file_pwm;
 	ostringstream file_path;
-    file_path << pwm_file_paths[2*channel.device + channel.part] << "duty_cycle";
+    file_path << pwm_file_path << "duty_cycle";
 	file_pwm.open(file_path.str());
 	file_pwm << duty_cycle;
 	file_pwm.close();
 }
 
-void PWM::setPeriod(int period, PWMchannel channel) {
+void PWM::setPeriod(int period) {
+	if (period == this->period) {
+		return;
+	}
+	this->period = period;
 	ofstream file_pwm;
 	ostringstream file_path;
-    file_path << pwm_file_paths[2*channel.device + channel.part] << "period";
+    file_path << pwm_file_path << "period";
 	file_pwm.open(file_path.str());
 	file_pwm << period;
 	file_pwm.close();
 }
 
-void PWM::setState(int state, PWMchannel channel) {
+void PWM::setState(int state) {
+	if (state == this->state) {
+		return;
+	}
+	this->state = state;
 	ofstream file_pwm;
 	ostringstream file_path;
-    file_path << pwm_file_paths[2*channel.device + channel.part] << "state";
+    file_path << pwm_file_path << "state";
 	file_pwm.open(file_path.str());
 	file_pwm << state;
 	file_pwm.close();

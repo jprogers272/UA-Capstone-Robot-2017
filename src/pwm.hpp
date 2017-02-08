@@ -3,6 +3,8 @@
 
 #include <string> //for identifyFile function prototype
 
+#define PWM_PERIOD 50000
+
 #define PWM0_FILE_PREFIX "/sys/devices/platform/ocp/48300000.epwmss/48302200.pwm/pwm/"
 #define PWM1_FILE_PREFIX "/sys/devices/platform/ocp/48302000.epwmss/48302200.pwm/pwm/"
 #define PWM2_FILE_PREFIX "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/"
@@ -17,18 +19,20 @@ PWMchannel const PWM2A = {2,0};
 PWMchannel const PWM2B = {2,1};
 
 class PWM {
+	//members
 	private:
-		//file path for each individual pwm channel
-		std::string pwm_file_paths[6];
+		std::string pwm_file_path;
+		int duty_cycle, period, state;
 		
+	//member functions
 	public:
-		PWM();
-		void setDutyCycle(int,PWMchannel);
-		void setPeriod(int,PWMchannel);
-		void setState(int,PWMchannel);
+		PWM(PWMchannel,int,int,int);
+		void setDutyCycle(int);
+		void setPeriod(int);
+		void setState(int);	
 		
 	private:
-		static std::string identifyFile(std::string,PWMchannel);
+		std::string identifyFile(std::string,PWMchannel);
 };
 
 #endif
