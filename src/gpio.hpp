@@ -1,4 +1,4 @@
-#ifndef GPIO_HPPP
+#ifndef GPIO_HPP
 #define GPIO_HPP
 
 #define GPIO_FILE_PREFIX "/sys/class/gpio/gpio"
