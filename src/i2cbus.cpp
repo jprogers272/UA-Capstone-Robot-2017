@@ -82,9 +82,3 @@ int I2Cbus::writeRegister(unsigned int registerAddress, unsigned char value) {
 	}
 	return 0;
 }
-
-/*
-short combineRegisters(unsigned char msB, unsigned char lsB) {
-	return ((short)msB<<8) | lsB;
-}
-*/
