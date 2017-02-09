@@ -1,14 +1,15 @@
 FLAGS = -Wall -c
 ODIR = obj
 SDIR = src
-OBJ = analog.o DCmotor.o gpio.o i2cbus.o imu.o ir.o pwm.o
+OBJ = $(ODIR)/analog.o $(ODIR)/DCmotor.o $(ODIR)/gpio.o $(ODIR)/i2cbus.o $(ODIR)/imu.o $(ODIR)/ir.o $(ODIR)/pwm.o
+OBJ_DEP = analog.o DCmotor.o gpio.o i2cbus.o imu.o ir.o pwm.o
 HEADERS = $(SDIR)/analog.hpp $(SDIR)/DCmotor.hpp $(SDIR)/gpio.hpp $(SDIR)/i2cbus.hpp $(SDIR)/imu.hpp $(SDIR)/ir.hpp $(SDIR)/pwm.hpp
 
-example: $(ODIR)/example.o $(OBJ)
-	g++ -o /bin/example $(ODIR)/example.o $(OBJ)
+example: example.o $(OBJ_DEP)
+	g++ -Wall -g $(ODIR)/example.o $(OBJ) -o bin/example 
 
 example.o: $(SRC_ALL)
-	g++ $(SDIR)/example.cpp -o $(ODIR/example.o) $(FLAGS)
+	g++ $(SDIR)/example.cpp -o $(ODIR)/example.o $(FLAGS)
 
 analog.o:	$(SDIR)/analog.cpp $(HEADERS)
 	g++ $(SDIR)/analog.cpp -o $(ODIR)/analog.o $(FLAGS)
@@ -25,7 +26,7 @@ i2cbus.o:	$(SDIR)/i2cbus.cpp $(HEADERS)
 imu.o:		$(SDIR)/imu.cpp $(HEADERS)
 	g++ $(SDIR)/imu.cpp -o $(ODIR)/imu.o $(FLAGS)
 	
-ir.o:		$(SDIR)/ir.cpp $$(HEADERS)
+ir.o:		$(SDIR)/ir.cpp $(HEADERS)
 	g++ $(SDIR)/ir.cpp -o $(ODIR)/ir.o $(FLAGS)
 	
 pwm.o:		$(SDIR)/pwm.cpp $(HEADERS)

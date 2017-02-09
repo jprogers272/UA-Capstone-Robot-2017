@@ -3,7 +3,8 @@
 #include "pwm.hpp"
 
 DCmotor::DCmotor(PWM *motorPWM, int directionGPIO) : motorPWM(motorPWM), directionGPIO(directionGPIO) {
-	//only need to initialize variables in initializer list
+	//set direction pin to output - fix confusing name?
+	setDirectionGPIO(directionGPIO,0);
 }
 
 void DCmotor::setVoltage(float voltage, float vbat) {

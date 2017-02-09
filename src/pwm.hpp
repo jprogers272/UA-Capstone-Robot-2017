@@ -21,7 +21,7 @@ PWMchannel const PWM2B = {2,1};
 class PWM {
 	//members
 	private:
-		std::string pwm_file_path;
+		std::string pwm_file_path, file_prefix;
 		int duty_cycle, period, state;
 		
 	//member functions

@@ -6,7 +6,7 @@
 class IMU {
 	//members
 	private:
-		const int imu_address = 0x6a;
+		static const int imu_address = 0x6a;
 		I2Cbus *sensor_bus;
 	
 	//member functions

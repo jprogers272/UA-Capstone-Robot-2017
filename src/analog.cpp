@@ -17,7 +17,7 @@ int readADC_raw(int channel) {
 	ifstream file_analog;
 	ostringstream file_path;
 	file_path << ADC_FILE_PREFIX << channel << "_raw";
-	file_analog.open(file_path.str());
+	file_analog.open(file_path.str().c_str());
 	int adc_value;
 	file_analog >> adc_value;
 	return adc_value;
