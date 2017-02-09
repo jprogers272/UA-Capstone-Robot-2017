@@ -4,7 +4,8 @@ SDIR = src
 OBJ = analog.o DCmotor.o gpio.o i2cbus.o imu.o ir.o pwm.o
 HEADERS = $(SDIR)/analog.hpp $(SDIR)/DCmotor.hpp $(SDIR)/gpio.hpp $(SDIR)/i2cbus.hpp $(SDIR)/imu.hpp $(SDIR)/ir.hpp $(SDIR)/pwm.hpp
 
-example: example.o $(OBJ)
+example: $(ODIR)/example.o $(OBJ)
+	g++ -o /bin/example $(ODIR)/example.o $(OBJ)
 
 example.o: $(SRC_ALL)
 	g++ $(SDIR)/example.cpp -o $(ODIR/example.o) $(FLAGS)
