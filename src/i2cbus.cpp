@@ -12,9 +12,7 @@ using namespace std;
 
 I2Cbus::I2Cbus(int bus) : bus(bus) {
 	device_address = -1;
-	if (openFile()) {
-		cout << "failed to open i2c bus file" << endl;
-	}
+	openFile();
 }
 
 I2Cbus::~I2Cbus(void) {
@@ -65,7 +63,7 @@ unsigned char* I2Cbus::readRegisters(unsigned int fromAddr, unsigned int toAddr)
 }
 
 int I2Cbus::setRegisterAddress(unsigned int registerAddress) {
-	char writeBuffer[1];
+	unsigned char writeBuffer[1];
 	writeBuffer[0] = registerAddress;
 	if (write(file_i2c, writeBuffer, 1) != 1) {
 		perror("Failed to set register address\n");
@@ -75,10 +73,10 @@ int I2Cbus::setRegisterAddress(unsigned int registerAddress) {
 }
 
 int I2Cbus::writeRegister(unsigned int registerAddress, unsigned char value) {
-	unsigned int writeBuffer[2];
+	unsigned char writeBuffer[1];
 	writeBuffer[0] = registerAddress;
 	writeBuffer[1] = value;
-	if (write(file_i2c, writeBuffer, 1) != 1) {
+	if (write(file_i2c, writeBuffer, 2) != 2) {
 		perror("Failed to write to device");
 		return 1;
 	}

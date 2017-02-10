@@ -3,11 +3,13 @@
 #include <iostream>
 #include <cmath>
 
+using namespace std;
+
 IMU::IMU(I2Cbus *sensor_bus) : sensor_bus(sensor_bus) {
 	sensor_bus->setDevice(imu_address);
 	//set accelerometer and gyro to on
-	sensor_bus->writeRegister(0x10,0x11);
-	sensor_bus->writeRegister(0x11,0x11);
+	sensor_bus->writeRegister(0x10,0x10);
+	sensor_bus->writeRegister(0x11,0x10);
 }
 
 float IMU::getTemp(void) {
@@ -15,9 +17,9 @@ float IMU::getTemp(void) {
 	
 	unsigned char *readBuffer;
 	readBuffer = sensor_bus->readRegisters(0x20,0x21);
-	delete(readBuffer);
 	
-	return 25.0 + combineRegisters(readBuffer[1],readBuffer[0]) / 16.0;
+	return 25.0 + (float)combineRegisters(readBuffer[1],readBuffer[0]) / 16.0;
+	delete(readBuffer);
 }
 
 float IMU::getGyroX(void) {
@@ -25,9 +27,9 @@ float IMU::getGyroX(void) {
 	
 	unsigned char *readBuffer;
 	readBuffer = sensor_bus->readRegisters(0x22,0x23);
-	delete(readBuffer);
 	
 	return 4.375/1000.0*combineRegisters(readBuffer[1],readBuffer[0]);
+	delete(readBuffer);
 }
 
 float IMU::getGyroY(void) {
@@ -35,9 +37,9 @@ float IMU::getGyroY(void) {
 	
 	unsigned char *readBuffer;
 	readBuffer = sensor_bus->readRegisters(0x24,0x25);
-	delete(readBuffer);
 	
 	return 4.375/1000.0*combineRegisters(readBuffer[1],readBuffer[0]);
+	delete(readBuffer);
 }
 
 float IMU::getGyroZ(void) {
@@ -45,9 +47,9 @@ float IMU::getGyroZ(void) {
 	
 	unsigned char *readBuffer;
 	readBuffer = sensor_bus->readRegisters(0x26,0x27);
-	delete(readBuffer);
 	
 	return 4.375/1000.0*combineRegisters(readBuffer[1],readBuffer[0]);
+	delete(readBuffer);
 }
 
 float IMU::getAcclX(void) {
@@ -55,9 +57,9 @@ float IMU::getAcclX(void) {
 	
 	unsigned char *readBuffer;
 	readBuffer = sensor_bus->readRegisters(0x28,0x29);
-	delete(readBuffer);
 	
 	return 0.061/1000.0*combineRegisters(readBuffer[1],readBuffer[0]);
+	delete(readBuffer);
 }
 
 float IMU::getAcclY(void) {
@@ -65,9 +67,9 @@ float IMU::getAcclY(void) {
 	
 	unsigned char *readBuffer;
 	readBuffer = sensor_bus->readRegisters(0x2a,0x2b);
-	delete(readBuffer);
 	
 	return 0.061/1000.0*combineRegisters(readBuffer[1],readBuffer[0]);
+	delete(readBuffer);
 }
 
 float IMU::getAcclZ(void) {
@@ -75,9 +77,9 @@ float IMU::getAcclZ(void) {
 	
 	unsigned char *readBuffer;
 	readBuffer = sensor_bus->readRegisters(0x2c,0x2d);
-	delete(readBuffer);
 	
 	return 0.061/1000.0*combineRegisters(readBuffer[1],readBuffer[0]);
+	delete(readBuffer);
 }
 
 //returns magnitude of acceleration vector
@@ -96,7 +98,6 @@ float *IMU::getDataAll(void) {
 	
 	unsigned char *readBuffer;
 	readBuffer = sensor_bus->readRegisters(0x20,0x2d);
-	delete(readBuffer);
 	
 	float temperature;
 	float gyro[3];
@@ -111,6 +112,8 @@ float *IMU::getDataAll(void) {
 	}
 	accel[3] = sqrt(accel[0]*accel[0] + accel[1]*accel[1] + accel[2]*accel[2]); //magnitude of accelerometer
 	
+	delete(readBuffer);
+
 	float *return_values = new float[8];
 	return_values[0] = temperature;
 	return_values[1] = gyro[0];
