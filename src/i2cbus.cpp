@@ -10,10 +10,11 @@
 
 using namespace std;
 
-I2Cbus::I2Cbus(int bus) {
-	this->bus = bus;
+I2Cbus::I2Cbus(int bus) : bus(bus) {
 	device_address = -1;
-	openFile();
+	if (openFile()) {
+		cout << "failed to open i2c bus file" << endl;
+	}
 }
 
 I2Cbus::~I2Cbus(void) {

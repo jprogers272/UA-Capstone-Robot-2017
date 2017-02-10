@@ -57,10 +57,10 @@ void PWM::setState(int state) {
 		return;
 	}
 	this->state = state;
-	cout << "writing " << this->state << " to enable file" << endl;
 	ofstream file_pwm;
 	ostringstream file_path;
-	file_path << pwm_file_path << "enable";
+	file_path << pwm_file_path << "enable";	
+	cout << "writing " << this->state << " to " << file_path.str() << endl;
 	file_pwm.open(file_path.str().c_str());
 	file_pwm << this->state;
 	file_pwm.flush();
