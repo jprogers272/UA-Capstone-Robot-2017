@@ -29,6 +29,6 @@ void DCmotor::setVoltage(float voltage, float vbat) {
 }
 
 void DCmotor::off(void) {
-	motorPWM->setState(0);
+	motorPWM->setDutyCycle(0);
 	writeGPIO(directionGPIO,0);
 }

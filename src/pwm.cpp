@@ -32,7 +32,7 @@ void PWM::setDutyCycle(int duty_cycle) {
 	ofstream file_pwm;
 	ostringstream file_path;
 	file_path << pwm_file_path << "duty_cycle";
-	cout << "writing duty cycle to " << file_path.str() << endl;
+//	cout << "writing " << duty_cycle << " to " << file_path.str() << endl;
 	file_pwm.open(file_path.str().c_str());
 	file_pwm << duty_cycle;
 	file_pwm.close();
@@ -53,14 +53,14 @@ void PWM::setPeriod(int period) {
 
 void PWM::setState(int state) {
 	if (state == this->state) {
-		cout << "state unchanging" << endl;
+//		cout << "state unchanging" << endl;
 		return;
 	}
 	this->state = state;
 	ofstream file_pwm;
 	ostringstream file_path;
 	file_path << pwm_file_path << "enable";	
-	cout << "writing " << this->state << " to " << file_path.str() << endl;
+//	cout << "writing " << this->state << " to " << file_path.str() << endl;
 	file_pwm.open(file_path.str().c_str());
 	file_pwm << this->state;
 	file_pwm.flush();
@@ -68,7 +68,7 @@ void PWM::setState(int state) {
 }
 
 string PWM::identifyFile(string prefix, PWMchannel channel) {
-	cout << "Identifying files" << endl;
+//	cout << "Identifying files" << endl;
 	DIR *dir;
 	struct dirent *dp;
 	ostringstream return_path;

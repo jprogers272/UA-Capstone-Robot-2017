@@ -11,10 +11,10 @@ DEP = $(wildcard $(SRC_DIR)/*.hpp)
 $(OBJ_DIR)/%.o:	$(SRC_DIR)/%.cpp $(DEP)
 	$(CC) $(FLAGS) -o $@ -c $<
 
-example:		example.o $(OBJ_RULES)
-	g++ -Wall -g $(OBJ_DIR)/example.o $(OBJ) -o $(BIN_DIR)/example 
+example:	$(OBJ)
+	g++ -Wall -g $(OBJ) -o $(BIN_DIR)/example 
 
-all_obj:		$(SRC) $(DEP)
+all_obj:	$(SRC) $(DEP)
 	make $(OBJ_DIR)/*.o
 
 .PHONY: clean

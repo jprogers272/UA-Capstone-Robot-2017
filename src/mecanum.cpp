@@ -42,10 +42,10 @@ void processMecanum(float *voltages, float maximum_voltage, float translation_ve
 }
 
 void addRotation(float *voltages, float rotation_velocity, float maximum_voltage) {
-	voltages[0] += rotation_velocity;
-	voltages[1] -= rotation_velocity;
-	voltages[2] += rotation_velocity;
-	voltages[3] -= rotation_velocity;
+	voltages[0] += maximum_voltage * rotation_velocity;
+	voltages[1] -= maximum_voltage * rotation_velocity;
+	voltages[2] += maximum_voltage * rotation_velocity;
+	voltages[3] -= maximum_voltage * rotation_velocity;
 	scaleVoltages(voltages,maximum_voltage);
 }
 
