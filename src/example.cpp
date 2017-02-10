@@ -22,6 +22,6 @@ int main(void) {
 
 	while (1) {
 		imu.printData();
-		std::cout << "Compass: " << compass.getAngleRaw << '\n';
+		std::cout << "Compass: " << compass.getAngleRaw() << '\n';
 	}
 }
