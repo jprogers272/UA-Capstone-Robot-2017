@@ -1,5 +1,9 @@
 #include "mecanum.hpp"
 
+#include <cmath>
+
+#define PI 3.14159
+
 /*calculates voltages required for each mecanum wheel given 4 parameters, plus a pointer where the voltages will be stored
  * parameters:
  * voltages: the array in which the calculated voltages are stored
@@ -47,7 +51,7 @@ void addRotation(float *voltages, float rotation_velocity, float maximum_voltage
 
 void scaleVoltages(float *voltages, float maximum_voltage) {
 	int i;
-	float calculated_max = fabs(voltages_return[0]);
+	float calculated_max = fabs(voltages[0]);
 	for (i=1; i<4; i++) {
 		if (fabs(voltages[i]) > calculated_max)
 			calculated_max = fabs(voltages[i]);

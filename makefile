@@ -1,45 +1,25 @@
+CC = g++
 FLAGS = -Wall -c
-ODIR = obj
-SDIR = src
-OBJ = $(ODIR)/analog.o $(ODIR)/compass.o $(ODIR)/DCmotor.o $(ODIR)/gpio.o $(ODIR)/i2cbus.o $(ODIR)/imu.o $(ODIR)/ir.o $(ODIR)/pwm.o
-BIN_DEP = analog.o compass.o DCmotor.o gpio.o i2cbus.o imu.o ir.o pwm.o
-HEADERS = $(SDIR)/analog.hpp $(SDIR)/compass.hpp $(SDIR)/DCmotor.hpp $(SDIR)/gpio.hpp $(SDIR)/i2cbus.hpp $(SDIR)/imu.hpp $(SDIR)/ir.hpp $(SDIR)/pid.hpp $(SDIR)/pwm.hpp
-	
-example: example.o $(BIN_DEP)
-	g++ -Wall -g $(ODIR)/example.o $(OBJ) -o bin/example 
+OBJ_DIR = obj
+SRC_DIR = src
+BIN_DIR = bin
+SRC = $(wildcard $(SRC_DIR)/*.cpp)
+OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+OBJ_RULES = $(SRC:$(SRC_DIR)/%.cpp=%.o)
+DEP = $(wildcard $(SRC_DIR)/*.hpp)
 
-example.o: $(SRC_ALL)
-	g++ $(SDIR)/example.cpp -o $(ODIR)/example.o $(FLAGS)
+$(OBJ_DIR)/%.o:	$(SRC_DIR)/%.cpp $(DEP)
+	$(CC) $(FLAGS) -o $@ -c $<
 
-analog.o:	$(SDIR)/analog.cpp $(HEADERS)
-	g++ $(SDIR)/analog.cpp -o $(ODIR)/analog.o $(FLAGS)
-	
-compass.o:	$(SDIR)/compass.cpp $(HEADERS)
-	g++ $(SDIR)/compass.cpp -o $(ODIR)/compass.o $(FLAGS)
+example:		example.o $(OBJ_RULES)
+	g++ -Wall -g $(OBJ_DIR)/example.o $(OBJ) -o $(BIN_DIR)/example 
 
-DCmotor.o:	$(SDIR)/DCmotor.cpp $(HEADERS)
-	g++ $(SDIR)/DCmotor.cpp -o $(ODIR)/DCmotor.o $(FLAGS)
-	
-gpio.o:		$(SDIR)/gpio.cpp $(HEADERS)
-	g++ $(SDIR)/gpio.cpp -o $(ODIR)/gpio.o $(FLAGS)
-	
-i2cbus.o:	$(SDIR)/i2cbus.cpp $(HEADERS)
-	g++ $(SDIR)/i2cbus.cpp -o $(ODIR)/i2cbus.o  $(FLAGS)
-	
-imu.o:		$(SDIR)/imu.cpp $(HEADERS)
-	g++ $(SDIR)/imu.cpp -o $(ODIR)/imu.o $(FLAGS)
-	
-ir.o:		$(SDIR)/ir.cpp $(HEADERS)
-	g++ $(SDIR)/ir.cpp -o $(ODIR)/ir.o $(FLAGS)
+all_obj:		$(SRC) $(DEP)
+	make $(OBJ_DIR)/*.o
 
-pid.o:		$(SDIR)/pid.cpp $(HEADERS)
-	g++ $(SDIR)/pid.cpp -o $(ODIR)/pid.o $(FLAGS)
-	
-pwm.o:		$(SDIR)/pwm.cpp $(HEADERS)
-	g++ $(SDIR)/pwm.cpp -o $(ODIR)/pwm.o $(FLAGS)
-	
-all_obj:	$(SDIR)/*
-	make example.o analog.o compass.o DCmotor.o gpio.o i2cbus.o imu.o ir.o pwm.o
-	
+.PHONY: clean
 clean:
-	rm obj/*.o
+	rm -f obj/*.o
+
+.PHONY: print-%
+print-%  : ; @echo $* = $($*)
