@@ -22,6 +22,7 @@ class IMU {
 		float getAcclMag(void);
 		float *getDataAll(void);
 		void printData(void);
+		
 	private:
 		static short combineRegisters(unsigned char,unsigned char);
 };

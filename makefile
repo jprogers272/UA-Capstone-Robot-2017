@@ -14,6 +14,9 @@ example.o: $(SRC_ALL)
 analog.o:	$(SDIR)/analog.cpp $(HEADERS)
 	g++ $(SDIR)/analog.cpp -o $(ODIR)/analog.o $(FLAGS)
 	
+compass.o:	$(SDIR)/compass.cpp $(HEADERS)
+	g++ $(SDIR)/compass.cpp -o $(ODIR)/compass.o $(FLAGS)
+
 DCmotor.o:	$(SDIR)/DCmotor.cpp $(HEADERS)
 	g++ $(SDIR)/DCmotor.cpp -o $(ODIR)/DCmotor.o $(FLAGS)
 	
@@ -33,7 +36,7 @@ pwm.o:		$(SDIR)/pwm.cpp $(HEADERS)
 	g++ $(SDIR)/pwm.cpp -o $(ODIR)/pwm.o $(FLAGS)
 	
 all_obj:	$(SDIR)/*
-	make example.o analog.o DCmotor.o gpio.o i2cbus.o imu.o ir.o pwm.o
+	make example.o analog.o compass.o DCmotor.o gpio.o i2cbus.o imu.o ir.o pwm.o
 	
 clean:
 	rm obj/*.o

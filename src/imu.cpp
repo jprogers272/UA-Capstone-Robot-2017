@@ -5,7 +5,7 @@
 
 using namespace std;
 
-IMU::IMU(I2Cbus *sensor_bus) : sensor_bus(sensor_bus) {
+IMU::IMU(I2Cbus *i2c_bus) : sensor_bus(i2c_bus) {
 	sensor_bus->setDevice(imu_address);
 	//set accelerometer and gyro to on
 	sensor_bus->writeRegister(0x10,0x10);
