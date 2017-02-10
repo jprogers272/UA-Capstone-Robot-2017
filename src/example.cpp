@@ -14,14 +14,22 @@ int main(void) {
 	IMU imu(&i2c_bus);
 	Compass compass(&i2c_bus);
 	
-//	PWM new_pwm(PWM1A,50000,0,0);
-//	DCmotor wheel_4(&new_pwm,89);
+	PWM pwm1a(PWM1A,50000,0,0);
+	PWM pwm1b(PWM1B,50000,0,0);
+	PWM pwm2a(PWM2A,50000,0,0);
+	PWM pwm2b(PWM2B,50000,0,0);
 	
-//	wheel_4.setVoltage(3.0,12.6);
-//	wheel_4.off();
+	DCmotor wheel_1a(&pwm1a,89);
+	DCmotor wheel_1b(&pwm1b,11);
+	DCmotor wheel_2a(&pwm2a,75);
+	DCmotor_wheel_2b(&pwm2b,73);
 
-	while (1) {
+	i = 0;
+	while (i < 100000000) {
 		imu.printData();
 		std::cout << "Compass: " << compass.getAngleRaw() << '\n';
+		wheel_1a.setVoltage(3.0,12.6);
+		i++;
 	}
+	wheel_1a.off();
 }
