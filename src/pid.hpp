@@ -1,32 +1,43 @@
-#ifndef PIDCONTROL_HPP
-#define PIDCONTROL_HPP
+#ifndef PID_HPP
+#define PID_HPP
 
-class PIDcontroller {
+#include <string>
+
+class PIcontroller {
 	//members
 	protected:
-		float gainP, gainI;
 		float setpoint;
-		float error, error_prev;
+		float gainP;
+		float gainI;
+		float plant_value;
+		float error;
+		float error_prev;
 		float integral;
 		float output;
 		float time_prev;
 		
-	private:
-		float gainD; //not needed by PI
-		float derivative;
+		std::string fileCSV;
 	
 	//member functions
 	public:
-		PIDcontroller(float,float,float,float);
+		PIcontroller(float,float,float);
 		virtual float calculateOutput(float,float);
 		void setSetpoint(float);
+		void openFileCSV(std::string);
+		void printFileCSV(void);
 };
 
-class PIcontroller: public PIDcontroller (
+class PIDcontroller: public PIcontroller {
+	//members
+	private:
+		float gainD;
+		float derivative;
+		
 	//member functions
 	public:
-		PI(float,float,float);
+		PIDcontroller(float,float,float,float);
 		float calculateOutput(float,float);
-);
+		void printValues(void);
+};
 
 #endif
