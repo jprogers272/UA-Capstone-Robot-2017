@@ -4,3 +4,5 @@
 obj/*
 #include empty obj directory so nobody's make complains about nonexistent directories
 !obj/.keep
+
+test/stage1_test.s
