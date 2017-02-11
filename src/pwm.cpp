@@ -25,9 +25,9 @@ PWM::PWM(PWMchannel channel, int period, int duty_cycle, int state) {
 }
 
 void PWM::setDutyCycle(int duty_cycle) {
-	if (duty_cycle == this->duty_cycle) {
-		return;
-	}
+//	if (duty_cycle == this->duty_cycle) {
+//		return;
+//	}
 	this->duty_cycle = duty_cycle;
 	ofstream file_pwm;
 	ostringstream file_path;

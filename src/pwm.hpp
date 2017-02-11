@@ -5,7 +5,7 @@
 
 #define PWM_PERIOD 50000
 
-#define PWM0_FILE_PREFIX "/sys/devices/platform/ocp/48300000.epwmss/48302200.pwm/pwm/"
+#define PWM0_FILE_PREFIX "/sys/devices/platform/ocp/48300000.epwmss/48300200.pwm/pwm/"
 #define PWM1_FILE_PREFIX "/sys/devices/platform/ocp/48302000.epwmss/48302200.pwm/pwm/"
 #define PWM2_FILE_PREFIX "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/"
 

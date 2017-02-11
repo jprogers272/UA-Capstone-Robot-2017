@@ -5,6 +5,10 @@ config-pin P8.36 pwm
 config-pin P8.45 pwm
 config-pin P8.46 pwm
 
+config-pin P9.31 pwm
+
+#PWM0A - P9.31
+echo 0 > /sys/devices/platform/ocp/48300000.epwmss/48300200.pwm/pwm/pwmchip*/export
 
 #PWM1A - P8.36
 echo 0 > /sys/devices/platform/ocp/48302000.epwmss/48302200.pwm/pwm/pwmchip*/export
