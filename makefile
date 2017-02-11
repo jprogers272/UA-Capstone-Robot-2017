@@ -3,16 +3,21 @@ FLAGS = -Wall -c
 OBJ_DIR = obj
 SRC_DIR = src
 BIN_DIR = bin
-SRC = $(wildcard $(SRC_DIR)/*.cpp)
-OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
-OBJ_RULES = $(SRC:$(SRC_DIR)/%.cpp=%.o)
+EXCLUDES = example compass_test
+SRC_ = $(wildcard $(SRC_DIR)/*.cpp)
+SRC = $(filter-out $(addsuffix .cpp,$(addprefix $(SRC_DIR)/,$(EXCLUDES))),$(SRC_))
+OBJ_ = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+OBJ = $(filter-out $(addsuffix .o,$(addprefix $(OBJ_DIR)/,$(EXCLUDES))),$(OBJ_))
 DEP = $(wildcard $(SRC_DIR)/*.hpp)
 
 $(OBJ_DIR)/%.o:	$(SRC_DIR)/%.cpp $(DEP)
 	$(CC) $(FLAGS) -o $@ -c $<
 
-example:	$(OBJ)
-	g++ -Wall -g $(OBJ) -o $(BIN_DIR)/example 
+example:	$(OBJ) $(OBJ_DIR)/example.o
+	g++ -Wall -g $(OBJ) $(OBJ_DIR)/example.o -o $(BIN_DIR)/example 
+
+compass_test:	$(OBJ) $(OBJ_DIR)/compass_test.o
+	g++ -Wall -g $(OBJ) $(OBJ_DIR)/compass_test.o -o $(BIN_DIR)/compass_test 
 
 all_obj:	$(SRC) $(DEP)
 	make $(OBJ_DIR)/*.o

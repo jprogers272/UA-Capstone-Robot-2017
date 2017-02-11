@@ -28,27 +28,30 @@ int main(void) {
 	wheel_1.setVoltage(3.0,12.6);
 
 	int i = 0;
-	while (i < 100000000) {
+	while (i < 1000) {
 		//imu.printData();
-		//std::cout << "Compass: " << compass.getAngleRaw() << '\n';
+		std::cout << "Compass: " << compass.getAngleRaw() << '\n';
 		i++;
 	}
 	wheel_1.off();
 	wheel_2.setVoltage(3.0,12.6);
 	i = 0;
 	while (i < 100000000) {
+		//std::cout << "Compass: " << compass.getAngleRaw() << '\n';
 		i++;
 	}
 	wheel_2.off();
 	wheel_3.setVoltage(3.0,12.6);
 	i = 0;
 	while (i < 100000000) {
+		//std::cout << "Compass: " << compass.getAngleRaw() << '\n';
 		i++;
 	}
 	wheel_3.off();
 	wheel_4.setVoltage(3.0,12.6);
 	i = 0;
 	while (i < 100000000) {
+		//std::cout << "Compass: " << compass.getAngleRaw() << '\n';
 		i++;
 	}
 	wheel_4.off();
