@@ -16,9 +16,8 @@ int main()
 	Compass compass(&i2c_bus);
 	PWM pwm0a(PWM0A,50000,0,0);
 	DCmotor slapper(&pwm0a,72);
-	
-	slapper.off();
 
+	
 	 vector<float> initReadings;
 
 	for (int i = 0; i < 500; ++i)
@@ -33,10 +32,9 @@ int main()
 	while(1)
 	{
 		temp = compass.getAngleF();
-		cout << "Current Reading " <<temp << endl;
+		cout << "Present Reading " <<temp << endl;
 		if((temp - initAvg) > 10 || (temp - initAvg) < -10)
 		{
-
 			cout << "Stopping Motors " << temp-initAvg << endl;
 			slapper.off();
 		}
@@ -44,14 +42,11 @@ int main()
 		{
 			cout << "Running motors " << temp-initAvg << endl;
 			slapper.setVoltage(4.5,12.6);
-			
 		}
-
-	}
-
-	
+	}	
 	return 0;
 }
+
 float Average(vector<float> const &numbers)
 {
 	float sum = 0;
