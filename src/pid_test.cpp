@@ -31,11 +31,19 @@ int main (void) {
 	DCmotor wheel_4(&pwm1a,89);
 	
 	float *voltages = new float[4];
+	float rotation = 0.0;
+	float vbat;
 	zero_voltages(voltages);
 	RobotTimer timer();
 	timer.start();
 	while (1) {
-		angle_controller.calculateRotation(imu.getGyroZ,timer.getTimeElapsed(PRECISION_MS));
+		rotation = angle_controller.calculateRotation(imu.getGyroZ,timer.getTimeElapsed(PRECISION_MS));
+		addRotation(voltages,rotation,6.0);
+		vbat = getBatterVoltage();
+		wheel_1.setVoltage(voltages[0],vbat);
+		wheel_2.setVoltage(voltages[1],vbat);
+		wheel_3.setVoltage(voltages[2],vbat);
+		wheel_4.setVoltage(voltages[3],vbat);
 		robotWait(0,50); //50ms
 	}
 }
