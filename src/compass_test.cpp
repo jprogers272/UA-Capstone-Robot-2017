@@ -1,51 +1,66 @@
 #include <iostream>
-#include <time.h>
 #include <vector>
+#include <time.h>
 #include "compass.hpp"
 #include "i2cbus.hpp"
+#include "DCmotor.hpp"
+#include "pwm.hpp"
+
 using namespace std;
+
+float Average(vector<float> const &numbers);
 
 int main()
 {
 	I2Cbus i2c_bus(2);
 	Compass compass(&i2c_bus);
-
+	PWM pwm0a(PWM0A,50000,0,0);
+	DCmotor slapper(&pwm0a,72);
 	
-	int count = 0;
+	slapper.off();
 
-	vector<float> init_field_readings;
+	 vector<float> initReadings;
 
-	while(count < 100)
+	for (int i = 0; i < 500; ++i)
 	{
-		init_field_readings.push_back(compass.getAngleF());
-		count++;
+		initReadings.push_back(compass.getAngleF());
 	}
 
-	int total_readings = init_field_readings.size();
-	float initAvg = 0, sum = 0;
-	
-	for (int i = 0; i < total_readings; ++i)
+	float initAvg = Average(initReadings);
+	cout << endl << "Average Initial Reading: " << initAvg << endl;
+
+	float temp = 0;
+	while(1)
 	{
-		sum +=init_field_readings.at(i);
+		temp = compass.getAngleF();
+		cout << "Current Reading " <<temp << endl;
+		if((temp - initAvg) > 10 || (temp - initAvg) < -10)
+		{
+
+			cout << "Stopping Motors " << temp-initAvg << endl;
+			slapper.off();
+		}
+		else
+		{
+			cout << "Running motors " << temp-initAvg << endl;
+			slapper.setVoltage(4.5,12.6);
+			
+		}
+
 	}
-	initAvg = sum / total_readings;
 
-	cout << "Average initial reading " << initAvg << endl
- 		 << "Total number of readings " << total_readings << endl;
-
-
-	/*Delay Stuff
-	clock_t time;
-
-	struct timespec start, finish;
-	double elapsed;
-
-	clock_gettime(CLOCK_MONOTONIC, &start);
-
-	clock_gettime(CLOCK_MONOTONIC, &finish);
-
-	elapsed = (finish.tv_sec - start.tv_sec);
-	elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;*/
 	
 	return 0;
+}
+float Average(vector<float> const &numbers)
+{
+	float sum = 0;
+	int totalvals = numbers.size();
+
+	for (int i = 0; i < totalvals; ++i)
+	{
+		sum += numbers.at(i);
+	}
+	
+	return sum / totalvals;
 }
