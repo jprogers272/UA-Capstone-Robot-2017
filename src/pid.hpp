@@ -14,17 +14,23 @@ class PIcontroller {
 		float error_prev;
 		float integral;
 		float output;
-		float time_prev;
+		int time_prev;
+		float limit_upper;
+		float limit_lower;
 		
 		std::string fileCSV;
 	
 	//member functions
 	public:
-		PIcontroller(float,float,float);
+		PIcontroller(float,float,float,float,float);
 		virtual float calculateOutput(float,float);
 		void setSetpoint(float);
+		float getOutput(float);
 		void openFileCSV(std::string);
 		void printFileCSV(void);
+		
+	protected:
+		void limitOutput(void);
 };
 
 class PIDcontroller: public PIcontroller {

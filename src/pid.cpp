@@ -5,23 +5,27 @@
 
 using namespace std;
 
-PIcontroller::PIcontroller(float setpoint, float gainP, float gainI) :
-	setpoint(setpoint), gainP(gainP), gainI(gainI),
-	error(0.0), error_prev(0.0), integral(0.0), output(0.0)
+PIcontroller::PIcontroller(float setpoint, float gainP, float gainI, float limit_upper, float limit_lower) :
+	setpoint(setpoint), gainP(gainP), gainI(gainI), limit_upper(limit_upper), limit_lower(limit_lower),
+	error(0.0), error_prev(0.0), integral(0.0), output(0.0), time_prev(0)
 { }
 
-float PIcontroller::calculateOutput(float plant_value, float time_cur) {
-	float time_elapsed = time_cur - time_prev;
+void PIcontroller::calculateOutput(float plant_value, int time_cur) {
+	float time_elapsed = (float)(time_cur - time_prev) / 1000.0;
 	time_prev = time_cur;
 	error = setpoint - plant_value;
 	integral += error * time_elapsed;
 	error_prev = error;
 	output = (error * gainP) + (integral * gainI);
-	return output;
+	limitOutput();
 }
 
 void PIcontroller::setSetpoint(float setpoint) {
 	this->setpoint = setpoint;
+}
+
+float PIcontroller::getOutput(void) {
+	return output;
 }
 
 void PIcontroller::openFileCSV(string fileCSV) {
@@ -32,7 +36,7 @@ void PIcontroller::openFileCSV(string fileCSV) {
 	out_file.close();
 }
 
-void PIcontroller::printFileCSV() {
+void PIcontroller::printFileCSV(void) {
 	ofstream out_file;
 	out_file.open(fileCSV.c_str(), fstream::app);
 	out_file << /*unix time*/",";
@@ -41,12 +45,21 @@ void PIcontroller::printFileCSV() {
 	out_file.close();
 }
 
-PIDcontroller::PIDcontroller(float setpoint, float gainP, float gainI, float gainD) :
-	PIcontroller(setpoint,gainP,gainI) 
+void PIcontroller::limitOutput(void) {
+	if (output > limit_upper) {
+		output = limit_upper;
+	}
+	else if (output < limit_lower) {
+		output = limit_lower;
+	}
+}
+
+PIDcontroller::PIDcontroller(float setpoint, float gainP, float gainI, float gainD, float limit_upper, float limit_lower) :
+	PIcontroller(setpoint,gainP,gainI,limit_upper,limit_lower), gainD(gainD)
 { }
 
 float PIDcontroller::calculateOutput(float plant_value, float time_cur) {
-	float time_elapsed = time_cur - time_prev;
+	float time_elapsed = (float)(time_cur - time_prev) / 1000.0;
 	time_prev = time_cur;
 	error = setpoint - plant_value;
 	integral += error * time_elapsed;

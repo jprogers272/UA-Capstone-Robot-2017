@@ -25,7 +25,7 @@ int main(void) {
 	DCmotor wheel_3(&pwm1b,11);
 	DCmotor wheel_4(&pwm1a,89);
 
-	wheel_1.setVoltage(3.0,12.6);
+	wheel_1.setVoltage(3.0,getBatteryVoltage());
 
 	int i = 0;
 	while (i < 1000) {
@@ -34,21 +34,21 @@ int main(void) {
 		i++;
 	}
 	wheel_1.off();
-	wheel_2.setVoltage(3.0,12.6);
+	wheel_2.setVoltage(3.0,getBatteryVoltage());
 	i = 0;
 	while (i < 100000000) {
 		//std::cout << "Compass: " << compass.getAngleRaw() << '\n';
 		i++;
 	}
 	wheel_2.off();
-	wheel_3.setVoltage(3.0,12.6);
+	wheel_3.setVoltage(3.0,getBatteryVoltage());
 	i = 0;
 	while (i < 100000000) {
 		//std::cout << "Compass: " << compass.getAngleRaw() << '\n';
 		i++;
 	}
 	wheel_3.off();
-	wheel_4.setVoltage(3.0,12.6);
+	wheel_4.setVoltage(3.0,getBatteryVoltage());
 	i = 0;
 	while (i < 100000000) {
 		//std::cout << "Compass: " << compass.getAngleRaw() << '\n';
@@ -63,10 +63,10 @@ int main(void) {
 	voltages[2] = 0.0;
 	voltages[3] = 0.0;
 	addRotation(voltages,0.5,3.0);
-	wheel_1.setVoltage(voltages[0],12.6);
-	wheel_2.setVoltage(voltages[1],12.6);
-	wheel_3.setVoltage(voltages[2],12.6);
-	wheel_4.setVoltage(voltages[3],12.6);
+	wheel_1.setVoltage(voltages[0],getBatteryVoltage());
+	wheel_2.setVoltage(voltages[1],getBatteryVoltage());
+	wheel_3.setVoltage(voltages[2],getBatteryVoltage());
+	wheel_4.setVoltage(voltages[3],getBatteryVoltage());
 
 	i = 0;
 	while (i < 500000000) { i++; }
