@@ -13,7 +13,7 @@ class AngleControl : public PIcontroller {
 	//member functions
 	public:
 		AngleControl();
-		void calculateRotation(float,int);
+		float calculateRotation(float,int);
 		void setAverage(float);
 		
 	private:

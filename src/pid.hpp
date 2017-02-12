@@ -9,23 +9,23 @@ class PIcontroller {
 		float setpoint;
 		float gainP;
 		float gainI;
+		float limit_upper;
+		float limit_lower;
 		float plant_value;
 		float error;
 		float error_prev;
 		float integral;
 		float output;
 		int time_prev;
-		float limit_upper;
-		float limit_lower;
 		
 		std::string fileCSV;
 	
 	//member functions
 	public:
 		PIcontroller(float,float,float,float,float);
-		virtual float calculateOutput(float,float);
+		virtual void calculateOutput(float,int);
 		void setSetpoint(float);
-		float getOutput(float);
+		float getOutput(void);
 		void openFileCSV(std::string);
 		void printFileCSV(void);
 		
@@ -41,7 +41,7 @@ class PIDcontroller: public PIcontroller {
 		
 	//member functions
 	public:
-		PIDcontroller(float,float,float,float);
+		PIDcontroller(float,float,float,float,float,float);
 		float calculateOutput(float,float);
 		void printValues(void);
 };
