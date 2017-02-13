@@ -1,11 +1,17 @@
 #include "angleControl.hpp"
 #include "pid.hpp"
 
-AngleControl::AngleControl() : PIcontroller(0.0,0.1,0.1,1.0,-1.0), angle(0), average_dps(0) {
-	openFileCSV(string("/home/angle_pid.csv"));
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+AngleControl::AngleControl() : PIDcontroller(0.0,0.1,0.05,0.2,0.3,-0.3), angle(0), average_dps(0) {
+	openFileCSV(std::string("/home/angle_pid.csv"));
 }
 
 float AngleControl::calculateRotation(float gyro_dps, int time_cur) {
+//	cout << "current,previous,difference: " << time_cur << ", " << time_prev << ", " << time_cur-time_prev << endl;
 	calculateAngle(gyro_dps,time_cur);
 	calculateOutput(angle,time_cur);
 	printFileCSV();
@@ -20,5 +26,8 @@ void AngleControl::calculateAngle(float gyro_dps, int time_cur) {
 	//integrate rotational velocity to get angle
 	//time is in milliseconds, so divide by 1000
 	float time_elapsed = (float)(time_cur - time_prev) / 1000.0;
-	angle += (gyro_dps - average_dps) * time_elapsed;
+//	cout << "time elapsed is " << time_elapsed << " seconds" << endl;
+	cout << "dps, average, difference: " << gyro_dps << ", " << average_dps << ", " << (gyro_dps - average_dps) << endl;
+	angle += ((gyro_dps - average_dps) * time_elapsed * 2.0);
+	cout << "angle is " << angle << endl;
 }

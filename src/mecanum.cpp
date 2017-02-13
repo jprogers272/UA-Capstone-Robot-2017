@@ -26,7 +26,7 @@ void processMecanum(float *voltages, float maximum_voltage, float translation_ve
 //		translation_velocity = 1.0;
 //	else if (translation_velocity < -1.0) 
 //		translation_velocity = -1.0;
-//	translation_angle *= PI/180.0;
+	translation_angle *= PI/180.0;
 //	if (rotation_velocity > 1.0) 
 //		rotation_velocity = 1.0;
 //	else if (rotation_velocity < -1.0) 

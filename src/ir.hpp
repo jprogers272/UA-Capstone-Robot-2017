@@ -6,6 +6,7 @@ class IR {
 	private:
 		int channelGPIO;
 	//member functions
+	public:
 		IR(int);
 		int getData(void);
 };

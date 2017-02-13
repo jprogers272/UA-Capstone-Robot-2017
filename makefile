@@ -4,7 +4,7 @@ LFLAGS = -Wall -g
 OBJ_DIR = obj
 SRC_DIR = src
 BIN_DIR = bin
-EXCLUDES = example compass_test stop pid_test
+EXCLUDES = example compass_test stop pid_test ir_drive_test
 SRC_ = $(wildcard $(SRC_DIR)/*.cpp)
 SRC = $(filter-out $(addsuffix .cpp,$(addprefix $(SRC_DIR)/,$(EXCLUDES))),$(SRC_))
 OBJ_ = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
@@ -19,6 +19,9 @@ compass_test:	$(OBJ) $(OBJ_DIR)/compass_test.o
 
 example:	$(OBJ) $(OBJ_DIR)/example.o
 	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/example.o -o $(BIN_DIR)/example 
+
+ir_drive_test:	$(OBJ) $(OBJ_DIR)/ir_drive_test.o
+	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/ir_drive_test.o -o $(BIN_DIR)/ir_drive_test
 
 pid_test:		$(OBJ) $(OBJ_DIR)/pid_test.o
 	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/pid_test.o -o $(BIN_DIR)/pid_test

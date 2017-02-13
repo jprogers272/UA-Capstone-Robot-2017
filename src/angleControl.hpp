@@ -3,12 +3,11 @@
 
 #include "pid.hpp"
 
-class AngleControl : public PIcontroller {
+class AngleControl : public PIDcontroller {
 	//members
 	private:
 		float angle;
 		float average_dps;
-		int time_prev; //in milliseconds
 		
 	//member functions
 	public:

@@ -61,28 +61,28 @@ int main(int argc, char **argv) {
 	setDirectionGPIO(DIR2B, 0);
 
 	struct timespec time_des;
-	time_des.tv_sec = 5;
-	time_des.tv_nsec = 750000000;
+	time_des.tv_sec = 2;
+	time_des.tv_nsec = 500000000;
 	
-	motorDrive(4.0,1.0,-90.0,0.0); //strafe toward stage 1
+	motorDrive(3.0,1.0,-90.0,0.0); //strafe toward stage 1
 	while(readGPIO(IR1_1) || readGPIO(IR1_2)) {
 		
 	}
-	motorDrive(3.0,1.0,0.0,0.0); //turn motors off when the wall is seen
+	motorDrive(2.0,1.0,0.0,0.0); //turn motors off when the wall is seen
 	while(readGPIO(IR2_1) || readGPIO(IR2_2)) {
 	}
 
-	motorDrive(4.0,1.0,90.0,0.0);
+	motorDrive(3.0,1.0,90.0,0.0);
 	while(readGPIO(IR3_1) || readGPIO(IR3_2)) {
 
 	}
 	motorDrive(0.0,0.0,0.0,0.0);
 
-	motorDrive(3.5,-1.0,0.0,0.0);	
+	motorDrive(4.5,-1.0,0.0,0.0);	
 	nanosleep(&time_des,NULL);
-	motorDrive(6.0,-1.0,0.0,0.0);
-	time_des.tv_sec = 0;
-	time_des.tv_nsec = 900000000;
+	motorDrive(9.0,-1.0,0.0,0.0);
+	time_des.tv_sec = 2;
+	time_des.tv_nsec = 500000000;
 	nanosleep(&time_des,NULL);
 	motorDrive(0.0,0.0,0.0,0.0);
 	time_des.tv_sec = 1;

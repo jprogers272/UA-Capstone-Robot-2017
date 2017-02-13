@@ -17,7 +17,6 @@ class RobotTimer {
 	
 	//member functions
 	public:
-		RobotTimer(int);
 		void start(void);
 		long getTimeElapsed(int);
 };

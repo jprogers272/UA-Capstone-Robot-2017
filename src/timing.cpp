@@ -12,17 +12,22 @@ long RobotTimer::getTimeElapsed(int precision) {
 	switch(precision) {
 		case PRECISION_S:
 			time_elapsed = (long)(time_cur.tv_sec - time_start.tv_sec);
+			break;
 		case PRECISION_MS:
 			time_elapsed = (long)(time_cur.tv_sec - time_start.tv_sec) * 1000;
 			time_elapsed += (time_cur.tv_nsec - time_start.tv_nsec) / 1000000;
+			break;
 		case PRECISION_US:
 			time_elapsed = (long)(time_cur.tv_sec - time_start.tv_sec) * 1000000;
 			time_elapsed += (time_cur.tv_nsec - time_start.tv_nsec) / 1000;
+			break;
 		case PRECISION_NS:			
 			time_elapsed = (long)(time_cur.tv_sec - time_start.tv_sec) * 1000000000;
 			time_elapsed += (time_cur.tv_nsec - time_start.tv_nsec);
+			break;
 		default:
 			time_elapsed = 0;
+			break;
 	}
 	
 	return time_elapsed;

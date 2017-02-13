@@ -42,8 +42,7 @@ class PIDcontroller: public PIcontroller {
 	//member functions
 	public:
 		PIDcontroller(float,float,float,float,float,float);
-		float calculateOutput(float,float);
-		void printValues(void);
+		void calculateOutput(float,float);
 };
 
 #endif

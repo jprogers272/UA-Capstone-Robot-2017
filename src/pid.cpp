@@ -1,5 +1,6 @@
 #include "pid.hpp"
 
+#include <iostream>
 #include <string>
 #include <fstream>
 
@@ -12,8 +13,12 @@ PIcontroller::PIcontroller(float setpoint, float gainP, float gainI, float limit
 
 void PIcontroller::calculateOutput(float plant_value, int time_cur) {
 	float time_elapsed = (float)(time_cur - time_prev) / 1000.0;
+//	cout << "time_prev: " << time_prev << endl;
 	time_prev = time_cur;
-	error = setpoint - plant_value;
+//	cout << "time_prev: " << time_prev << endl;
+	this->plant_value = plant_value;
+	error = setpoint - this->plant_value;
+//	std::cout << "error is " << error << endl;
 	integral += error * time_elapsed;
 	error_prev = error;
 	output = (error * gainP) + (integral * gainI);
@@ -58,13 +63,14 @@ PIDcontroller::PIDcontroller(float setpoint, float gainP, float gainI, float gai
 	PIcontroller(setpoint,gainP,gainI,limit_upper,limit_lower), gainD(gainD)
 { }
 
-float PIDcontroller::calculateOutput(float plant_value, float time_cur) {
+void PIDcontroller::calculateOutput(float plant_value, float time_cur) {
 	float time_elapsed = (float)(time_cur - time_prev) / 1000.0;
 	time_prev = time_cur;
-	error = setpoint - plant_value;
+	this->plant_value = plant_value;
+	error = setpoint - this->plant_value;
 	integral += error * time_elapsed;
 	derivative = (error - error_prev) / time_elapsed;
 	error_prev = error;
 	output = (error * gainP) + (integral * gainI) + (derivative * gainD);
-	return output;
+	limitOutput();
 }
