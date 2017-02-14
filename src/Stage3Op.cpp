@@ -87,3 +87,7 @@ void Stage3Op(int c1, int c2, int c3, int c4, int c5){
 	return;
 
 }
+
+int main(){
+	Stage3Op(1, 2, 3, 4, 5);
+}
