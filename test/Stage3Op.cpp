@@ -30,11 +30,11 @@ void Stage3Op(int c1, int c2, int c3, int c4, int c5){
 
 
 
-	setDirectionGPIO(45, 1); //STEP = GPIO PIN 45
-	setDirectionGPIO(44, 1); //DIR  = GPIO PIN 44
+	setDirectionGPIO(45, 0); //STEP = GPIO PIN 45 (OUTPUT)
+	setDirectionGPIO(44, 0); //DIR  = GPIO PIN 44 (OUTPUT)
 
 	//First code, c1, is to be turned c1 times clockwise
-	writeGPIO(44, int); //DIR = ROTATE CLOCKWISE
+	writeGPIO(44, 0); //DIR = ROTATE CLOCKWISE
 	for (i = 0; i < 200*c1; i++){
 		writeGPIO(45, 1); //STEP
 		//delay
@@ -43,16 +43,16 @@ void Stage3Op(int c1, int c2, int c3, int c4, int c5){
 	}
 
 	//Second code, c2, is to be turned c2 times counter-clockwise
-	writeGPIO(44, int); //DIR = ROTATE COUNTER-CLOCKWISE
+	writeGPIO(44, 1); //DIR = ROTATE COUNTER-CLOCKWISE
 	for (i = 0; i < 200*c2; i++){
-		writeGPIO(gpio,int); //STEP
+		writeGPIO(45, 1); //STEP
 		//delay
 		nanosleep(&time_des, &time_rem);
-		writeGPIO(gpio,int)  //!STEP
+		writeGPIO(45, 0);  //!STEP
 	}
 
 	//Third code, c3, is to be turned c3 times clockwise
-	writeGPIO(44, int); //DIR = ROTATE CLOCKWISE
+	writeGPIO(44, 0); //DIR = ROTATE CLOCKWISE
 	for (i = 0; i < 200*c3; i++){
 		writeGPIO(45, 1); //STEP
 		//delay
@@ -61,7 +61,7 @@ void Stage3Op(int c1, int c2, int c3, int c4, int c5){
 	}
 
 	//Fourth code, c4, is to be turned c4 times counter-clockwise
-	writeGPIO(44, int); //DIR = ROTATE COUNTER-CLOCKWISE
+	writeGPIO(44, 1); //DIR = ROTATE COUNTER-CLOCKWISE
 	for (i = 0; i < 200*c4; i++){
 		writeGPIO(45, 1); //STEP
 		//delay
@@ -70,7 +70,7 @@ void Stage3Op(int c1, int c2, int c3, int c4, int c5){
 	}
 
 	//Fifth code, c5, is to be turned c5 times clockwise
-	writeGPIO(44, int); //DIR = ROTATE COUNTER-CLOCKWISE
+	writeGPIO(44, 0); //DIR = ROTATE COUNTER-CLOCKWISE
 	for (i = 0; i < 200*c5; i++){
 		writeGPIO(45, 1); //STEP
 		//delay
