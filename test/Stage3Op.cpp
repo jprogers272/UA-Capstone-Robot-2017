@@ -2,7 +2,7 @@
 
 /***************************************************
  * Stage3OP.cpp - An IEEE SECON 2017 program file  *
- * Author(s): Brandon Fikes and Bryant Hall        *
+ * Author(s): Brandon Fikes                        *
  * Intent: Drive the stepper motor for Stage 3 by  *
  * taking in 5 integer values corresponding to the *
  * codes obtained from Stage 1 of the competition  *
