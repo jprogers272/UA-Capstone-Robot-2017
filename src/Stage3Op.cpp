@@ -1,4 +1,10 @@
-#include "Stage3OP.hpp"
+#include "Stage3Op.hpp"
+#include "gpio.hpp"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <time.h>
 
 /***************************************************
  * Stage3OP.cpp - An IEEE SECON 2017 program file  *
