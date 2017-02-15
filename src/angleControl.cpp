@@ -29,6 +29,6 @@ void AngleControl::calculateAngle(float gyro_dps, int time_cur) {
 	float time_elapsed = (float)(time_cur - time_prev) / 1000.0;
 //	cout << "time elapsed is " << time_elapsed << " seconds" << endl;
 	cout << "dps, average, difference: " << gyro_dps << ", " << average_dps << ", " << (gyro_dps - average_dps) << endl;
-	angle += ((gyro_dps - average_dps) * time_elapsed * 2.0);
+	angle += ((gyro_dps - average_dps) * time_elapsed);
 	cout << "angle is " << angle << endl;
 }

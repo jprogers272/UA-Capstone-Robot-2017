@@ -28,7 +28,7 @@ float IMU::getGyroX(void) {
 	unsigned char *readBuffer;
 	readBuffer = sensor_bus->readRegisters(0x22,0x23);
 	
-	return 4.375/1000.0*combineRegisters(readBuffer[1],readBuffer[0]);
+	return 8.75/1000.0*combineRegisters(readBuffer[1],readBuffer[0]);
 	delete(readBuffer);
 }
 
@@ -38,7 +38,7 @@ float IMU::getGyroY(void) {
 	unsigned char *readBuffer;
 	readBuffer = sensor_bus->readRegisters(0x24,0x25);
 	
-	return 4.375/1000.0*combineRegisters(readBuffer[1],readBuffer[0]);
+	return 8.75/1000.0*combineRegisters(readBuffer[1],readBuffer[0]);
 	delete(readBuffer);
 }
 
@@ -48,7 +48,7 @@ float IMU::getGyroZ(void) {
 	unsigned char *readBuffer;
 	readBuffer = sensor_bus->readRegisters(0x26,0x27);
 	
-	return 4.375/1000.0*combineRegisters(readBuffer[1],readBuffer[0]);
+	return 8.75/1000.0*combineRegisters(readBuffer[1],readBuffer[0]);
 	delete(readBuffer);
 }
 
@@ -107,7 +107,7 @@ float *IMU::getDataAll(void) {
 	
 	int i;
 	for(i=0; i<6; i+=2) {
-		gyro[i/2] = 4.375/1000.0*combineRegisters(readBuffer[3+i],readBuffer[2+i]);  //in degrees per second
+		gyro[i/2] = 8.75/1000.0*combineRegisters(readBuffer[3+i],readBuffer[2+i]);  //in degrees per second
 		accel[i/2] = 0.061/1000.0*combineRegisters(readBuffer[9+i],readBuffer[8+i]); //in multiples of g
 	}
 	accel[3] = sqrt(accel[0]*accel[0] + accel[1]*accel[1] + accel[2]*accel[2]); //magnitude of accelerometer

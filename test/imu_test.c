@@ -61,7 +61,7 @@ int main (void) {
 		temperature = 25.0 + combineRegisters(readBuffer[1],readBuffer[0]) / 16.0; //in degrees C
 		
 		for(i=0; i<6; i+=2) {
-			gyro[i/2] = 4.375/1000.0*combineRegisters(readBuffer[3+i],readBuffer[2+i]);  //in degrees per second
+			gyro[i/2] = 8.75/1000.0*combineRegisters(readBuffer[3+i],readBuffer[2+i]);  //in degrees per second
 			accel[i/2] = 0.061/1000.0*combineRegisters(readBuffer[9+i],readBuffer[8+i]); //in multiples of g
 		}
 		accel[3] = sqrt(accel[0]*accel[0] + accel[1]*accel[1] + accel[2]*accel[2]); //magnitude of accelerometer
