@@ -1,5 +1,6 @@
 #include "angleControl.hpp"
 #include "pid.hpp"
+#include "robotDefinitions.hpp"
 
 #include <iostream>
 #include <string>

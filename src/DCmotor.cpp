@@ -8,7 +8,7 @@ DCmotor::DCmotor(PWM *motorPWM, int directionGPIO) : motorPWM(motorPWM), directi
 }
 
 void DCmotor::setVoltage(float voltage, float vbat) {
-	int motor_direction = 0;
+	int motor_direction;
 	int duty = 0;
 	
 	if (voltage > 0) {
@@ -30,5 +30,5 @@ void DCmotor::setVoltage(float voltage, float vbat) {
 
 void DCmotor::off(void) {
 	motorPWM->setDutyCycle(0);
-	writeGPIO(directionGPIO,0);
+	writeGPIO(directionGPIO,GPIO_OUTPUT);
 }

@@ -1,9 +1,10 @@
 #include "ir.hpp"
 #include "gpio.hpp"
+#include "robotDefinitions.hpp"
 
 IR::IR(int channelGPIO) : channelGPIO(channelGPIO) {
 	//make sure sensor line is input
-	setDirectionGPIO(channelGPIO,1);
+	setDirectionGPIO(channelGPIO,GPIO_INPUT);
 }
 
 int IR::getData(void) {
