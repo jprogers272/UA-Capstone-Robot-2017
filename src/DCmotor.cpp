@@ -3,7 +3,10 @@
 #include "gpio.hpp"
 #include "pwm.hpp"
 
-DCmotor::DCmotor(PWM *motorPWM, int directionGPIO) : motorPWM(motorPWM), directionGPIO(directionGPIO) {
+DCmotor::DCmotor(PWMchannel channel, int directionGPIO) : 
+	motorPWM(channel,PWM_PERIOD,0,0), 
+	directionGPIO(directionGPIO) 
+{
 	//set direction pin to output - fix confusing name?
 	setDirectionGPIO(directionGPIO,0);
 }
@@ -24,12 +27,12 @@ void DCmotor::setVoltage(float voltage, float vbat) {
 	if (duty < 50) {
 		duty = 0;
 	}
-	motorPWM->setDutyCycle(duty);
+	motorPWM.setDutyCycle(duty);
 	writeGPIO(directionGPIO, motor_direction);
-	motorPWM->setState(1);
+	motorPWM.setState(1);
 }
 
 void DCmotor::off(void) {
-	motorPWM->setDutyCycle(0);
+	motorPWM.setDutyCycle(0);
 	writeGPIO(directionGPIO,GPIO_OUTPUT);
 }

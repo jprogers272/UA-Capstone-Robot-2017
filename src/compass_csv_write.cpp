@@ -7,9 +7,9 @@
 
 using namespace std;
 
-char *file_path = "/home/compass.csv";
-
 int main(void) {
+	char const *file_path = "/home/compass.csv";
+	
 	I2Cbus i2c_bus(2);
 	Compass compass(&i2c_bus);
 	

@@ -14,8 +14,8 @@ int main()
 {
 	I2Cbus i2c_bus(2);
 	Compass compass(&i2c_bus);
-	PWM pwm0a(PWM0A,50000,0,0);
-	DCmotor slapper(&pwm0a,72);
+	//PWM pwm0a(PWM0A,50000,0,0);
+	DCmotor slapper(PWM0A,72);
 
 	
 	 vector<float> initReadings;
