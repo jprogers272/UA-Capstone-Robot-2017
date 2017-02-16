@@ -5,36 +5,37 @@
 #include "sensors.hpp"
 #include "timing.hpp"
 
+#include <iostream>
+
+using namespace std;
+
 Robot::Robot() : 
 	wheel_1(WHEEL1_PWM,WHEEL1_DIR),
 	wheel_2(WHEEL2_PWM,WHEEL2_DIR),
 	wheel_3(WHEEL3_PWM,WHEEL3_DIR),
 	wheel_4(WHEEL4_PWM,WHEEL4_DIR),
-	slapper(SLAPPER_PWM,SLAPPER_DIR)
+	slapper(SLAPPER_PWM,SLAPPER_DIR),
+	angle_controller(PGAIN,IGAIN,DGAIN),
+	i2c_bus(2),
+	sensors(&i2c_bus)
 {
-	I2Cbus i2c_bus(2);
-	Sensors sensors(&i2c_bus);
+	sensorData = new SensorData;
 	
-	AngleControl angle_controller(PGAIN,IGAIN,DGAIN);
-	
-	/*
-	PWM wheel_1_pwm(WHEEL1_PWM,50000,0,0);
-	PWM wheel_2_pwm(WHEEL2_PWM,50000,0,0);
-	PWM wheel_3_pwm(WHEEL3_PWM,50000,0,0);
-	PWM wheel_4_pwm(WHEEL4_PWM,50000,0,0);
-	PWM slapper_pwm(SLAPPER_PWM,50000,0,0);
-	
-	wheel_1 = DCmotor(&wheel_1_pwm,WHEEL1_DIR);
-	DCmotor wheel_2(&wheel_2_pwm,WHEEL2_DIR);
-	DCmotor wheel_3(&wheel_3_pwm,WHEEL3_DIR);
-	DCmotor wheel_4(&wheel_4_pwm,WHEEL4_DIR);
-	DCmotor slapper(&slapper_pwm,SLAPPER_DIR);*/
+	currentState = start;
+	nextState = pre_stage3;
+
+	stateLoopCount = 0;
+	gyroAverage = 0.0;
+
+	inner_state = 0;
 	
 	drive_voltages = new float[4];
 	zeroVoltages();
 }
 
 int Robot::robotLogic(void) {
+	cout << "current state: " << currentState << endl;
+	sensors.getAllSensors(sensorData);
 	switch (currentState) {
 		case start:
 			start_logic();
@@ -87,6 +88,7 @@ int Robot::robotLogic(void) {
 }
 
 void Robot::setOutputs(void) {
+	cout << "battery voltage is " << sensorData->battery_voltage << endl;
 	wheel_1.setVoltage(drive_voltages[0],sensorData->battery_voltage);
 	wheel_2.setVoltage(drive_voltages[1],sensorData->battery_voltage);
 	wheel_3.setVoltage(drive_voltages[2],sensorData->battery_voltage);

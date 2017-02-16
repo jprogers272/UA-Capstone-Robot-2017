@@ -1,8 +1,11 @@
 #ifndef ROBOT_HPP
 #define ROBOT_HPP
 
+#include "angleControl.hpp"
 #include "DCmotor.hpp"
+#include "i2cbus.hpp"
 #include "sensors.hpp"
+#include "timing.hpp"
 
 enum State {
 	start,
@@ -25,16 +28,29 @@ enum State {
 class Robot {
 	//members
 	private:
-		SensorData *sensorData;
 		DCmotor wheel_1;
 		DCmotor wheel_2;
 		DCmotor wheel_3;
 		DCmotor wheel_4;
 		DCmotor slapper;
+		AngleControl angle_controller;
+		I2Cbus i2c_bus;
+		Sensors sensors;
+		SensorData *sensorData;
 		State currentState;
 		State nextState;
+		int stateLoopCount;
+		float gyroAverage;
 		float *drive_voltages;
 		float slapper_voltage;
+		float voltage_max;
+		float translation;
+		float translation_angle;
+		float rotation;
+		float pid_multiplier;
+		RobotTimer timer;
+		RobotTimer state_timer;
+		int inner_state;
 	
 	//member functions
 	public:
@@ -45,6 +61,7 @@ class Robot {
 	private:
 		void zeroVoltages(void);
 		
+		void drive_logic(void);
 		void start_logic(void);
 		void zero_gyro_logic(void);
 		void pre_stage1_logic(void);

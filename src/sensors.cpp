@@ -24,10 +24,10 @@ void Sensors::getAllSensors(SensorData *data) {
 	//data->ir1_4_state = ir1_4.getData();
 	data->ir2_1_state = ir2_1.getData();
 	data->ir2_2_state = ir2_2.getData();
-	//data->ir2_3_state = ir2_3.getData();
-	//data->ir2_4_state = ir2_4.getData();
-	//data->ir4_1_state = ir4_1.getData();
-	//data->ir4_2_state = ir4_2.getData();
+	data->ir2_3_state = ir2_3.getData();
+	data->ir2_4_state = ir2_4.getData();
+	data->ir4_1_state = ir4_1.getData();
+	data->ir4_2_state = ir4_2.getData();
 	data->gyroZ = imu.getGyroZ();
 	data->acclY = imu.getAcclY();
 	data->compass_angle = compass.getAngleF();
