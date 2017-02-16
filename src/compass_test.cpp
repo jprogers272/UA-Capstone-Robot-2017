@@ -33,7 +33,7 @@ int main()
 	{
 		temp = compass.getAngleF();
 		cout << "Present Reading " <<temp << endl;
-		if((temp - initAvg) > 10  || (temp - initAvg) < -10)
+		if((temp - initAvg) > 10 || (temp - initAvg) < -10)
 		{
 			cout << "Stopping Motors " << temp-initAvg << endl;
 			slapper.off();

@@ -15,7 +15,7 @@ int main(void) {
 	
 	ofstream csv_file;
 	csv_file.open(file_path);
-	csv_file << "time,compass\n";
+	csv_file << "time(ms),time(s),compass\n";
 	csv_file.close();
 	
 	RobotTimer timer;
@@ -27,7 +27,7 @@ int main(void) {
 		time_cur = timer.getTimeElapsed(PRECISION_MS);
 		
 		csv_file.open(file_path,ios::app);
-		csv_file << time_cur << "," << compass_value << '\n';
+		csv_file << time_cur << "," << (time_cur/1000.0) << ',' << compass_value << '\n';
 		csv_file.close();
 		
 		robotWait(0,10);

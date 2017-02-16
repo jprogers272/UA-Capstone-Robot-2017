@@ -4,7 +4,7 @@ LFLAGS = -Wall -g
 OBJ_DIR = obj
 SRC_DIR = src
 BIN_DIR = bin
-EXCLUDES = example compass_test stop pid_test ir_drive_test Stage3Op compass_csv_write
+EXCLUDES = example compass_test stop pid_rotate pid_straight ir_drive_test Stage3Op compass_csv_write
 SRC_ = $(wildcard $(SRC_DIR)/*.cpp)
 SRC = $(filter-out $(addsuffix .cpp,$(addprefix $(SRC_DIR)/,$(EXCLUDES))),$(SRC_))
 OBJ_ = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
@@ -29,8 +29,11 @@ example:	$(OBJ) $(OBJ_DIR)/example.o
 ir_drive_test:	$(OBJ) $(OBJ_DIR)/ir_drive_test.o
 	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/ir_drive_test.o -o $(BIN_DIR)/ir_drive_test
 
-pid_test:		$(OBJ) $(OBJ_DIR)/pid_test.o
-	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/pid_test.o -o $(BIN_DIR)/pid_test
+pid_rotate:	$(OBJ) $(OBJ_DIR)/pid_rotate.o
+	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/pid_rotate.o -o $(BIN_DIR)/pid_rotate
+
+pid_straight:	$(OBJ) $(OBJ_DIR)/pid_straight.o
+	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/pid_straight.o -o $(BIN_DIR)/pid_straight
 
 stop:	$(OBJ) $(OBJ_DIR)/stop.o
 	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/stop.o -o $(BIN_DIR)/stop 

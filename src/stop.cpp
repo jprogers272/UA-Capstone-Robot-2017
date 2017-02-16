@@ -21,7 +21,7 @@ int main()
 	wheel_1.off();
 	wheel_2.off();
 	wheel_3.off();
-    wheel_4.off();
-    slapper.off();
+	wheel_4.off();
+	slapper.off();
 
 }

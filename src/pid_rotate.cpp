@@ -25,7 +25,7 @@ int main (void) {
 	I2Cbus i2c_bus(2);
 	IMU imu(&i2c_bus);
 	Compass compass(&i2c_bus);
-	AngleControl angle_controller;
+	AngleControl angle_controller(0.03,0.002,0.005);
 	
 	PWM pwm1a(PWM1A,50000,0,0);
 	PWM pwm1b(PWM1B,50000,0,0);
@@ -40,15 +40,18 @@ int main (void) {
 	averageGyro(&imu,&angle_controller);
 	float *voltages = new float[4];
 	float rotation = 0.0;
+	float translation = -0.0;
+	float multiplier = -3.0;
 	float vbat;
 	zeroVoltages(voltages);
 	cout << "voltages: " << voltages[0] << "," << voltages[1] << "," << voltages[2] << "," << voltages[3] << endl;
 	RobotTimer timer;
 	timer.start();
 	while (1) {
-		rotation = -1.0 * angle_controller.calculateRotation(imu.getGyroZ(),timer.getTimeElapsed(PRECISION_MS));
+		rotation = multiplier * angle_controller.calculateRotation(imu.getGyroZ(),timer.getTimeElapsed(PRECISION_MS));
 		//addRotation(voltages,rotation,1.5);
-		processMecanum(voltages,2.5,1.0,0.0,rotation);
+		//processMecanum(voltages,3.0,0.0,0.0,rotation);
+		processMecanum(voltages,3.0,translation,0.0,rotation);
 		cout << "voltages: " << voltages[0] << "," << voltages[1] << "," << voltages[2] << "," << voltages[3] << endl;
 		vbat = getBatteryVoltage();
 		wheel_1.setVoltage(voltages[0],vbat);
@@ -56,10 +59,35 @@ int main (void) {
 		wheel_3.setVoltage(voltages[2],vbat);
 		wheel_4.setVoltage(voltages[3],vbat);
 		robotWait(0,10); //50ms
-		if (timer.getTimeElapsed(PRECISION_S) > 7) {
-			//angle_controller.setSetpoint(90.0);
+		/*
+		if (timer.getTimeElapsed(PRECISION_S) > 15) {
+			angle_controller.setSetpoint(90.0);
+		}
+		if (timer.getTimeElapsed(PRECISION_S) > 35) {
 			break;
 		}
+		*/
+		if (timer.getTimeElapsed(PRECISION_S) > 8) {
+			angle_controller.setSetpoint(90.0);
+		}
+		if (timer.getTimeElapsed(PRECISION_S) > 16) {
+			break;
+		}
+		/*
+		if (timer.getTimeElapsed(PRECISION_S) > 16) {
+			angle_controller.setSetpoint(180.0);
+		}
+		if (timer.getTimeElapsed(PRECISION_S) > 24) {
+			angle_controller.setSetpoint(270.0);
+		}
+		if (timer.getTimeElapsed(PRECISION_S) > 32) {
+			angle_controller.setSetpoint(360.0);
+		}
+		if (timer.getTimeElapsed(PRECISION_S) > 40) {
+			break;
+		}
+		*/
+		
 	}
 
 	wheel_1.off();
