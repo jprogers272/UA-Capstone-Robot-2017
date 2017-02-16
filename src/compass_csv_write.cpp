@@ -1,0 +1,35 @@
+#include "i2cbus.hpp"
+#include "compass.hpp"
+#include "timing.hpp"
+
+#include <fstream>
+#include <iostream>
+
+using namespace std;
+
+char *file_path = "/home/compass.csv"
+
+int main(void) {
+	I2Cbus i2c_bus(2);
+	Compass compass(&i2c_bus);
+	
+	ofstream csv_file;
+	csv_file.open(file_path);
+	csv_file << "time,compass\n";
+	csv_file.close();
+	
+	robotTimer timer;
+	timer.start();
+	long time_cur;
+	float compass_value;
+	while (1) {
+		compass_value = compass.getAngleF();
+		time_cur = timer.getTimeElapsed(PRECISION_MS);
+		
+		csv_file.open(file_path,ios::app);
+		csv_file << compass_value << "," << time_cur << '\n';
+		csv_file.close();
+		
+		robotWait(0,10);
+	}
+}

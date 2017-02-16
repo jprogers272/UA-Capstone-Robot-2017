@@ -4,7 +4,7 @@ LFLAGS = -Wall -g
 OBJ_DIR = obj
 SRC_DIR = src
 BIN_DIR = bin
-EXCLUDES = example compass_test stop pid_test ir_drive_test Stage3Op
+EXCLUDES = example compass_test stop pid_test ir_drive_test Stage3Op compass_csv_write
 SRC_ = $(wildcard $(SRC_DIR)/*.cpp)
 SRC = $(filter-out $(addsuffix .cpp,$(addprefix $(SRC_DIR)/,$(EXCLUDES))),$(SRC_))
 OBJ_ = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
@@ -13,6 +13,9 @@ DEP = $(wildcard $(SRC_DIR)/*.hpp)
 
 $(OBJ_DIR)/%.o:	$(SRC_DIR)/%.cpp $(DEP)
 	$(CC) $(FLAGS) -o $@ -c $<
+
+compass_csv_write:	$(OBJ) $(OBJ_DIR)/compass_csv_write.o
+	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/compass_csv_write.o -o $(BIN_DIR)/compass_csv_write
 
 compass_test:	$(OBJ) $(OBJ_DIR)/compass_test.o
 	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/compass_test.o -o $(BIN_DIR)/compass_test
