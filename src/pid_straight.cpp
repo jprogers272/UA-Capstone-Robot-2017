@@ -41,7 +41,7 @@ int main (void) {
 	float *voltages = new float[4];
 	float rotation = 0.0;
 	float translation = -1.0;
-	float multiplier = -1.0;
+	float multiplier = -0.4;
 	float vbat;
 	zeroVoltages(voltages);
 	cout << "voltages: " << voltages[0] << "," << voltages[1] << "," << voltages[2] << "," << voltages[3] << endl;
@@ -51,7 +51,7 @@ int main (void) {
 		rotation = multiplier * angle_controller.calculateRotation(imu.getGyroZ(),timer.getTimeElapsed(PRECISION_MS));
 		//addRotation(voltages,rotation,1.5);
 		//processMecanum(voltages,3.0,0.0,0.0,rotation);
-		processMecanum(voltages,0.0,translation,0.0,rotation);
+		processMecanum(voltages,4.0,translation,-90.0,rotation);
 		cout << "voltages: " << voltages[0] << "," << voltages[1] << "," << voltages[2] << "," << voltages[3] << endl;
 		vbat = getBatteryVoltage();
 		wheel_1.setVoltage(voltages[0],vbat);
@@ -67,7 +67,7 @@ int main (void) {
 			break;
 		}
 		*/
-		if (timer.getTimeElapsed(PRECISION_S) > 80) {
+		if (timer.getTimeElapsed(PRECISION_MS) > 2730) {
 			break;
 		}
 		

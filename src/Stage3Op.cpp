@@ -24,7 +24,7 @@
   ***********************************************/
 
 
-#define DELAY_MOTOR 5 //5 milliseconds
+#define DELAY_MOTOR 10 //5 milliseconds
 #define DELAY_NEXT  2 //2 seconds
 
 //robotWait is used as follows: robotWait(seconds, milliseconds)
@@ -49,6 +49,7 @@ void Stage3Op(int c1, int c2, int c3, int c4, int c5){
 		//delay
 		robotWait(0, DELAY_MOTOR);
 		writeGPIO(45, 0);  //!STEP
+		robotWait(0, DELAY_MOTOR);
 	}
 
 	//settle
@@ -61,6 +62,7 @@ void Stage3Op(int c1, int c2, int c3, int c4, int c5){
 		//delay
 		robotWait(0, DELAY_MOTOR);
 		writeGPIO(45, 0);  //!STEP
+		robotWait(0, DELAY_MOTOR);
 	}
 
 	//settle
@@ -73,6 +75,7 @@ void Stage3Op(int c1, int c2, int c3, int c4, int c5){
 		//delay
 		robotWait(0, DELAY_MOTOR);
 		writeGPIO(45, 0);  //!STEP
+		robotWait(0, DELAY_MOTOR);
 	}
 	
 	//settle
@@ -85,6 +88,7 @@ void Stage3Op(int c1, int c2, int c3, int c4, int c5){
 		//delay
 		robotWait(0, DELAY_MOTOR);
 		writeGPIO(45, 0);  //!STEP
+		robotWait(0, DELAY_MOTOR);
 	}
 
 	//settle
@@ -97,6 +101,7 @@ void Stage3Op(int c1, int c2, int c3, int c4, int c5){
 		//delay
 		robotWait(0, DELAY_MOTOR);
 		writeGPIO(45, 0);  //!STEP
+		robotWait(0, DELAY_MOTOR);
 	}
 	
 	//settle
