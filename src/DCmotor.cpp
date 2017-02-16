@@ -1,3 +1,4 @@
+#include "robotDefinitions.hpp"
 #include "DCmotor.hpp"
 #include "gpio.hpp"
 #include "pwm.hpp"

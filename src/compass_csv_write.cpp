@@ -7,7 +7,7 @@
 
 using namespace std;
 
-char *file_path = "/home/compass.csv"
+char *file_path = "/home/compass.csv";
 
 int main(void) {
 	I2Cbus i2c_bus(2);
@@ -18,7 +18,7 @@ int main(void) {
 	csv_file << "time,compass\n";
 	csv_file.close();
 	
-	robotTimer timer;
+	RobotTimer timer;
 	timer.start();
 	long time_cur;
 	float compass_value;
@@ -27,7 +27,7 @@ int main(void) {
 		time_cur = timer.getTimeElapsed(PRECISION_MS);
 		
 		csv_file.open(file_path,ios::app);
-		csv_file << compass_value << "," << time_cur << '\n';
+		csv_file << time_cur << "," << compass_value << '\n';
 		csv_file.close();
 		
 		robotWait(0,10);
