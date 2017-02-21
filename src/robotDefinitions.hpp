@@ -27,8 +27,8 @@
 #define PWM_PERIOD 50000
 
 #define PGAIN 0.1
-#define IGAIN 0.05
-#define DGAIN 0.2
+#define IGAIN 0.03
+#define DGAIN 0.005
 
 #define VBAT_MULTIPLIER 11.2
 

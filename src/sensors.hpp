@@ -1,6 +1,10 @@
 #ifndef SENSORS_HPP
 #define SENSORS_HPP
 
+#include "compass.hpp"
+#include "imu.hpp"
+#include "ir.hpp"
+
 struct SensorData {
 	int ir1_1_state;
 	int ir1_2_state;
@@ -13,8 +17,9 @@ struct SensorData {
 	int ir4_1_state;
 	int ir4_2_state;
 	float gyroZ;
-	float accelY;
+	float acclY;
 	float compass_angle;
+	float battery_voltage
 };
 
 class Sensors {
@@ -35,7 +40,8 @@ class Sensors {
 	
 	//member functions
 	public:
-		SensorData *getAllSensors(void);
+		Sensors(void);
+		void getAllSensors(SensorData*);
 };
 
 #endif
