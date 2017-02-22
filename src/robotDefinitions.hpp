@@ -24,6 +24,8 @@
 #define WHEEL4_PWM PWM1A
 #define SLAPPER_PWM PWM0A
 
+#define LOOP_TIME_MS 10
+
 #define PWM_PERIOD 50000
 
 #define PGAIN 0.1

@@ -6,12 +6,12 @@
 class DCmotor {
 	//members
 	private:
-		PWM *motorPWM;
+		PWM motorPWM;
 		int directionGPIO;
 	
 	//member functions
 	public:
-		DCmotor(PWM*,int);
+		DCmotor(PWMchannel,int);
 		void setVoltage(float,float);
 		void off(void);
 };

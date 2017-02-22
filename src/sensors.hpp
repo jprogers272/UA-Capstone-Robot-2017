@@ -19,7 +19,7 @@ struct SensorData {
 	float gyroZ;
 	float acclY;
 	float compass_angle;
-	float battery_voltage
+	float battery_voltage;
 };
 
 class Sensors {
@@ -40,7 +40,7 @@ class Sensors {
 	
 	//member functions
 	public:
-		Sensors(void);
+		Sensors(I2Cbus*);
 		void getAllSensors(SensorData*);
 };
 

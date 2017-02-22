@@ -5,6 +5,7 @@
 #include "sensors.hpp"
 
 enum State {
+	start,
 	zero_gyro,
 	pre_stage1,
 	stage1,
@@ -17,8 +18,9 @@ enum State {
 	stage3,
 	post_stage3,
 	pre_stage4,
-	stage4
-}
+	stage4,
+	finish
+};
 
 class Robot {
 	//members
@@ -42,6 +44,21 @@ class Robot {
 	
 	private:
 		void zeroVoltages(void);
-}
+		
+		void start_logic(void);
+		void zero_gyro_logic(void);
+		void pre_stage1_logic(void);
+		void stage1_logic(void);
+		void post_stage1_logic(void);
+		void pre_stage2_logic(void);
+		void average_compass_logic(void);
+		void stage2_logic(void);
+		void post_stage2_logic(void);
+		void pre_stage3_logic(void);
+		void stage3_logic(void);
+		void post_stage3_logic(void);
+		void pre_stage4_logic(void); 
+		void stage4_logic(void);
+};
 
 #endif

@@ -1,49 +1,55 @@
 CC = g++
+C_EXT = .cpp
+H_EXT = .hpp
 FLAGS = -Wall -c
-LFLAGS = -Wall -g
+LDFLAGS = -Wall -g
 OBJ_DIR = obj
 SRC_DIR = src
 BIN_DIR = bin
-EXCLUDES = example compass_test stop pid_rotate pid_straight ir_drive_test Stage3Op compass_csv_write
-SRC_ = $(wildcard $(SRC_DIR)/*.cpp)
-SRC = $(filter-out $(addsuffix .cpp,$(addprefix $(SRC_DIR)/,$(EXCLUDES))),$(SRC_))
-OBJ_ = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
-OBJ = $(filter-out $(addsuffix .o,$(addprefix $(OBJ_DIR)/,$(EXCLUDES))),$(OBJ_))
-DEP = $(wildcard $(SRC_DIR)/*.hpp)
+MAINFILES = robotMain example compass_test stop pid_rotate pid_straight ir_drive_test Stage3Op compass_csv_write
+SRC_ = $(wildcard $(SRC_DIR)/*$(C_EXT))
+SRC = $(filter-out $(addsuffix $(C_EXT),$(addprefix $(SRC_DIR)/,$(MAINFILES))),$(SRC_))
+OBJ_ = $(SRC_:$(SRC_DIR)/%$(C_EXT)=$(OBJ_DIR)/%.o)
+OBJ = $(filter-out $(addsuffix .o,$(addprefix $(OBJ_DIR)/,$(MAINFILES))),$(OBJ_))
+DEP = $(wildcard $(SRC_DIR)/*$(H_EXT))
 
-$(OBJ_DIR)/%.o:	$(SRC_DIR)/%.cpp $(DEP)
+$(OBJ_DIR)/%.o:	$(SRC_DIR)/%$(C_EXT) $(DEP)
 	$(CC) $(FLAGS) -o $@ -c $<
 
-compass_csv_write:	$(OBJ) $(OBJ_DIR)/compass_csv_write.o
-	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/compass_csv_write.o -o $(BIN_DIR)/compass_csv_write
+$(MAINFILES): % : $(OBJ_DIR)/%.o $(OBJ)
+	$(CC) $(LDFLAGS) $(OBJ) $< -o $(BIN_DIR)/$@
 
-compass_test:	$(OBJ) $(OBJ_DIR)/compass_test.o
-	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/compass_test.o -o $(BIN_DIR)/compass_test
+#Should be able to remove all the commented lines below this
+#compass_csv_write:	$(OBJ) $(OBJ_DIR)/compass_csv_write.o
+#	$(CC) $(LDFLAGS) $(OBJ) $(OBJ_DIR)/compass_csv_write.o -o $(BIN_DIR)/compass_csv_write
 
-Stage3Op:	$(OBJ) $(OBJ_DIR)/Stage3Op.o
-	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/Stage3Op.o -o $(BIN_DIR)/Stage3Op
+#compass_test:	$(OBJ) $(OBJ_DIR)/compass_test.o
+#	$(CC) $(LDFLAGS) $(OBJ) $(OBJ_DIR)/compass_test.o -o $(BIN_DIR)/compass_test
 
-example:	$(OBJ) $(OBJ_DIR)/example.o
-	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/example.o -o $(BIN_DIR)/example 
+#Stage3Op:	$(OBJ) $(OBJ_DIR)/Stage3Op.o
+#	$(CC) $(LDFLAGS) $(OBJ) $(OBJ_DIR)/Stage3Op.o -o $(BIN_DIR)/Stage3Op
 
-ir_drive_test:	$(OBJ) $(OBJ_DIR)/ir_drive_test.o
-	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/ir_drive_test.o -o $(BIN_DIR)/ir_drive_test
+#example:	$(OBJ) $(OBJ_DIR)/example.o
+#	$(CC) $(LDFLAGS) $(OBJ) $(OBJ_DIR)/example.o -o $(BIN_DIR)/example 
 
-pid_rotate:	$(OBJ) $(OBJ_DIR)/pid_rotate.o
-	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/pid_rotate.o -o $(BIN_DIR)/pid_rotate
+#ir_drive_test:	$(OBJ) $(OBJ_DIR)/ir_drive_test.o
+#	$(CC) $(LDFLAGS) $(OBJ) $(OBJ_DIR)/ir_drive_test.o -o $(BIN_DIR)/ir_drive_test
 
-pid_straight:	$(OBJ) $(OBJ_DIR)/pid_straight.o
-	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/pid_straight.o -o $(BIN_DIR)/pid_straight
+#pid_rotate:	$(OBJ) $(OBJ_DIR)/pid_rotate.o
+#	$(CC) $(LDFLAGS) $(OBJ) $(OBJ_DIR)/pid_rotate.o -o $(BIN_DIR)/pid_rotate
 
-stop:	$(OBJ) $(OBJ_DIR)/stop.o
-	g++ $(LFLAGS) $(OBJ) $(OBJ_DIR)/stop.o -o $(BIN_DIR)/stop 
+#pid_straight:	$(OBJ) $(OBJ_DIR)/pid_straight.o
+#	$(CC) $(LDFLAGS) $(OBJ) $(OBJ_DIR)/pid_straight.o -o $(BIN_DIR)/pid_straight
 
-all_obj:	$(SRC) $(DEP)
-	make $(OBJ_DIR)/*.o
+#stop:	$(OBJ) $(OBJ_DIR)/stop.o
+#	$(CC) $(LDFLAGS) $(OBJ) $(OBJ_DIR)/stop.o -o $(BIN_DIR)/stop 
 
-.PHONY: clean
+#all_obj:	$(SRC) $(DEP)
+#	make $(OBJ_DIR)/*.o
+
+.PHONY: clean print-%
 clean:
 	rm -f obj/*.o
 
-.PHONY: print-%
-print-%  : ; @echo $* = $($*)
+print-%:
+	@echo $* = $($*)

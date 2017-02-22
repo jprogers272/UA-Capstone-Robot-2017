@@ -1,7 +1,8 @@
 #include "sensors.hpp"
+#include "battery.hpp"
 #include "robotDefinitions.hpp"
 
-Sensors::Sensors() ;
+Sensors::Sensors(I2Cbus *i2cbus) :
 	ir1_1(IR1_1_GPIO),
 	ir1_2(IR1_2_GPIO),
 	ir1_3(IR1_3_GPIO),
@@ -12,8 +13,8 @@ Sensors::Sensors() ;
 	ir2_4(IR2_4_GPIO),
 	ir4_1(IR4_1_GPIO),
 	ir4_2(IR4_2_GPIO),
-	imu(&i2cbus),
-	compass(&i2cbus)
+	imu(i2cbus),
+	compass(i2cbus)
 { }
 
 void Sensors::getAllSensors(SensorData *data) {
@@ -27,7 +28,7 @@ void Sensors::getAllSensors(SensorData *data) {
 	//data->ir2_4_state = ir2_4.getData();
 	//data->ir4_1_state = ir4_1.getData();
 	//data->ir4_2_state = ir4_2.getData();
-	data->gyroZ = getGyroZ();
+	data->gyroZ = imu.getGyroZ();
 	data->acclY = imu.getAcclY();
 	data->compass_angle = compass.getAngleF();
 	data->battery_voltage = getBatteryVoltage();

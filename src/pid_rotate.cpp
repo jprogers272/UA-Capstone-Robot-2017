@@ -26,16 +26,16 @@ int main (void) {
 	IMU imu(&i2c_bus);
 	Compass compass(&i2c_bus);
 	AngleControl angle_controller(0.03,0.002,0.005);
-	
+	/*
 	PWM pwm1a(PWM1A,50000,0,0);
 	PWM pwm1b(PWM1B,50000,0,0);
 	PWM pwm2a(PWM2A,50000,0,0);
 	PWM pwm2b(PWM2B,50000,0,0);
-	
-	DCmotor wheel_1(&pwm2b,73);
-	DCmotor wheel_2(&pwm2a,75);
-	DCmotor wheel_3(&pwm1b,11);
-	DCmotor wheel_4(&pwm1a,89);
+	*/
+	DCmotor wheel_1(PWM2B,73);
+	DCmotor wheel_2(PWM2A,75);
+	DCmotor wheel_3(PWM1B,11);
+	DCmotor wheel_4(PWM1A,89);
 	
 	averageGyro(&imu,&angle_controller);
 	float *voltages = new float[4];
