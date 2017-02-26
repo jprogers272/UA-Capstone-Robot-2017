@@ -20,8 +20,8 @@ Sensors::Sensors(I2Cbus *i2cbus) :
 void Sensors::getAllSensors(SensorData *data) {
 	data->ir1_1_state = ir1_1.getData();
 	data->ir1_2_state = ir1_2.getData();
-	//data->ir1_3_state = ir1_3.getData();
-	//data->ir1_4_state = ir1_4.getData();
+	data->ir1_3_state = ir1_3.getData();
+	data->ir1_4_state = ir1_4.getData();
 	data->ir2_1_state = ir2_1.getData();
 	data->ir2_2_state = ir2_2.getData();
 	data->ir2_3_state = ir2_3.getData();

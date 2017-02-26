@@ -76,6 +76,7 @@ void Robot::zero_gyro_logic(void) {
 }
 
 void Robot::pre_stage1_logic(void) {
+	cout << "inner state is " << inner_state << endl;
 	switch (inner_state) {
 		case 0:
 			state_timer.start();
@@ -90,12 +91,13 @@ void Robot::pre_stage1_logic(void) {
 			break;
 		case 2:
 			if ((sensorData->ir1_1_state == 0) && (sensorData->ir1_2_state == 0)) {
+				setDriveDirection(STRAFE_RIGHT,3.5);
 				state_timer.start();
 				inner_state++;
 			}
 			break;
 		case 3:
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 200) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 100) {
 				setDriveDirection(STRAIGHT_FORWARD,3.0);
 				inner_state++;
 			}
@@ -107,13 +109,14 @@ void Robot::pre_stage1_logic(void) {
 			}
 			break;
 		case 5:
-			if (sensorData->ir1_4_state == 0) {
-				setDriveDirection(STRAFE_LEFT,3.0);
+			if ((sensorData->ir1_4_state == 0) && (sensorData->ir1_3_state == 1)) {
+				setDriveDirection(STRAFE_LEFT,2.5);
 				inner_state = 0;
 				currentState = stage1_solving;
 			}
 			break;
 	}
+	drive_logic();
 }
 
 void Robot::stage1_logic(void) {
@@ -126,6 +129,7 @@ void Robot::stage1_logic(void) {
 		case 1:
 			if ((stage1.currentComponent < 5) && (state_timer.getTimeElapsed(PRECISION_MS) > STAGE1_CHARGING_TIME)) {
 				stage1.identifyComponent();
+				//cout << "identified component " << stage1.currentComponent << " as " << stage1.components[stage1.currentComponent] << endl;
 				stage1.currentComponent++;
 				inner_state = 0;
 			}
@@ -139,6 +143,7 @@ void Robot::stage1_logic(void) {
 			if (state_timer.getTimeElapsed(PRECISION_MS) > STAGE1_CHARGING_TIME) {
 				stage1.checkCapacitorDiode();
 				if (stage1.detectProblems() == 0) {
+					setDriveDirection(STOPPED,0);
 					inner_state = 0;
 					currentState = post_stage1;
 				}
@@ -150,9 +155,27 @@ void Robot::stage1_logic(void) {
 		case 3:
 			cout << "fuck\n";
 			cout << "reorient robot?\n";
-			inner_state = 0;
+			if (translation_angle > -85.0) {
+				translation_angle = -145.0;
+			}
+			else if (translation_angle < -95.0) {
+				translation_angle = -75.0;
+			}
+			else {
+				//it's 90.0, accounting for floating point error
+				translation_angle = -75.0;
+			}
+		       	state_timer.start();
+			inner_state = 4;
+			stage1.currentComponent = 0;
+			break;
+		case 4:
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 500) {
+				inner_state = 0;
+			}
 			break;
 	}
+	drive_logic();
 }
 
 void Robot::post_stage1_logic(void) {

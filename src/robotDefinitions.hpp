@@ -13,19 +13,19 @@
 #define STRAFE_RIGHT 3
 #define STOPPED 4
 
-#define STAGE1_GPIO1 112
-#define STAGE1_GPIO2 7
-#define STAGE1_GPIO3 15
-#define STAGE1_GPIO4 113
-#define STAGE1_GPIO5 14
+#define STAGE1_GPIO1 14
+#define STAGE1_GPIO2 112
+#define STAGE1_GPIO3 7
+#define STAGE1_GPIO4 15
+#define STAGE1_GPIO5 113
 #define STAGE1_GPIO_COM 51
 #define STAGE1_ADC 0
 #define STAGE1_CHARGING_TIME 10
 
 #define IR1_1_GPIO 8
 #define IR1_2_GPIO 76
-#define IR1_3_GPIO 0
-#define IR1_4_GPIO 0
+#define IR1_3_GPIO 27
+#define IR1_4_GPIO 47
 #define IR2_1_GPIO 78
 #define IR2_2_GPIO 86
 #define IR2_3_GPIO 69

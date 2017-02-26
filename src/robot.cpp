@@ -24,7 +24,7 @@ Robot::Robot() :
 	sensorData = new SensorData;
 	
 	currentState = start;
-	nextState = pre_stage3;
+	nextState = pre_stage1;
 
 	stateLoopCount = 0;
 	gyroAverage = 0.0;

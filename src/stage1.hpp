@@ -12,14 +12,7 @@ class Stage1 {
 		int components[5];
 		
 	private:
-		const int testGPIOs[6] = {
-			STAGE1_GPIO1,
-			STAGE1_GPIO2,
-			STAGE1_GPIO3,
-			STAGE1_GPIO4,
-			STAGE1_GPIO5,
-			STAGE1_GPIO_COM};
-		
+		int testGPIOs[6];		
 	//member functions
 	public:
 		Stage1(void);

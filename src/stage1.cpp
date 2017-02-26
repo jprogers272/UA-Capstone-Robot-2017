@@ -7,6 +7,12 @@
 #include "timing.hpp"
 
 Stage1::Stage1(void) {
+	testGPIOs[0] = STAGE1_GPIO1;
+	testGPIOs[1] = STAGE1_GPIO2;
+	testGPIOs[2] = STAGE1_GPIO3;
+	testGPIOs[3] = STAGE1_GPIO4;
+	testGPIOs[4] = STAGE1_GPIO5;
+	testGPIOs[5] = STAGE1_GPIO_COM;
 	int i;
 	for (i=0; i<6; i++) {
 		setDirectionGPIO(testGPIOs[i],GPIO_INPUT);
