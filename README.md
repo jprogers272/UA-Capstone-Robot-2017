@@ -6,7 +6,7 @@ To configure BeagleBone with 4.4.x kernel for use on our robot or with our code:
   3. In /boot/uEnv.txt, uncomment the line (near the top):
       dtb=am335x-boneblack-emmc-overlay.dtb
   4. In /boot/uEnv.txt, add the line:
-      cape_enable=bone_capemgr.enable_partno=cape-universalh
+      cape_enable=bone_capemgr.enable_partno=cape-universalh,BB-ADC,BB-I2C2
   5. reboot
 
 Networking:

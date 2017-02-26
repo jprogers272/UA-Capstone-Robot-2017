@@ -27,7 +27,7 @@ dtb=am335x-boneblack-emmc-overlay.dtb
 #cmdline=coherent_pool=1M quiet cape_universal=enable
 
 #cape_enable=bone_capemgr.enable_partno=cape-universaln,cape-univ-hdmi,cape-univ-audio
-cape_enable=bone_capemgr.enable_partno=cape-universalh
+cape_enable=bone_capemgr.enable_partno=cape-universalh,BB-ADC,BB-I2C2
 
 #In the event of edid real failures, uncomment this next line:
 #cmdline=coherent_pool=1M quiet cape_universal=enable video=HDMI-A-1:1024x768@60e

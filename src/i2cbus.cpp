@@ -73,7 +73,7 @@ int I2Cbus::setRegisterAddress(unsigned int registerAddress) {
 }
 
 int I2Cbus::writeRegister(unsigned int registerAddress, unsigned char value) {
-	unsigned char writeBuffer[1];
+	unsigned char writeBuffer[2];
 	writeBuffer[0] = registerAddress;
 	writeBuffer[1] = value;
 	if (write(file_i2c, writeBuffer, 2) != 2) {
