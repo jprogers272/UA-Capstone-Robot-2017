@@ -9,6 +9,7 @@
 #include "sensors.hpp"
 #include "stage1.hpp"
 #include "timing.hpp"
+#include "display.hpp"
 
 enum State {
 	start,

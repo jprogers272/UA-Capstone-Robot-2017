@@ -18,6 +18,7 @@ class I2Cbus {
 		unsigned char *readRegisters(unsigned int,unsigned int);
 		int setRegisterAddress(unsigned int);
 		int writeRegister(unsigned int,unsigned char);
+    int writebytesRegister(unsigned int, unsigned char*, unsigned int);
 };
 
 #endif

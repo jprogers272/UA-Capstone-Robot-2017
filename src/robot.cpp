@@ -6,6 +6,7 @@
 #include "robotDefinitions.hpp"
 #include "sensors.hpp"
 #include "timing.hpp"
+#include "display.hpp"
 
 #include <iostream>
 
