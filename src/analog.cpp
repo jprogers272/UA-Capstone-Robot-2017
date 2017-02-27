@@ -1,3 +1,5 @@
+//Author(s): John Rogers
+
 #include "analog.hpp"
 #include <iostream>
 #include <fstream>

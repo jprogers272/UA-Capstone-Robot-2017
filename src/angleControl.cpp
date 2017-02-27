@@ -1,3 +1,5 @@
+//Author(s): John Rogers
+
 #include "angleControl.hpp"
 #include "pid.hpp"
 #include "robotDefinitions.hpp"

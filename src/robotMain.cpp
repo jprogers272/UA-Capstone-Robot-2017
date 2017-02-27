@@ -1,3 +1,5 @@
+//Author(s): John Rogers
+
 #include "robot.hpp"
 
 int main(void) {

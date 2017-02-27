@@ -1,3 +1,5 @@
+//Author(s): John Rogers
+
 #ifndef ANGLECONTROL_HPP
 #define ANGLECONTROL_HPP
 

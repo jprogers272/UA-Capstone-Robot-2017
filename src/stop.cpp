@@ -1,3 +1,5 @@
+//Author(s): William Khan
+
 #include <iostream>
 #include "DCmotor.hpp"
 #include "pwm.hpp"

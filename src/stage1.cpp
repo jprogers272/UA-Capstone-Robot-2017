@@ -1,0 +1,90 @@
+//Author(s): John Rogers
+
+#include "stage1.hpp"
+#include "analog.hpp"
+#include "gpio.hpp"
+#include "robotDefinitions.hpp"
+#include "timing.hpp"
+
+Stage1::Stage1(void) {
+	int i;
+	for (i=0; i<6; i++) {
+		setDirectionGPIO(testGPIOs[i],GPIO_INPUT);
+	}
+	currentComponent = 0;
+}
+
+void Stage1::energizeComponent(void) {
+	setDirectionGPIO(testGPIOs[currentComponent],GPIO_OUTPUT);
+	writeGPIO(testGPIOs[currentComponent],1);
+}
+
+void Stage1::energizeCommon(void) {
+	setDirectionGPIO(STAGE1_GPIO_COM,GPIO_OUTPUT);
+	writeGPIO(STAGE1_GPIO_COM,1);
+}
+
+void Stage1::checkCapacitorDiode(void) {
+	int i;
+	for (i=0; i<5; i++) {
+		if (components[i] == 0) {
+			if (readGPIO(testGPIOs[i])) {
+				components[i] = 5;
+			}
+			else {
+				components[i] = 3;
+			}
+		}
+	}
+	writeGPIO(STAGE1_GPIO_COM,0);
+	setDirectionGPIO(STAGE1_GPIO_COM,GPIO_INPUT);
+}
+
+void Stage1::identifyComponent(void) {
+	int mV = readADC_mv(STAGE1_ADC);
+	if (mV < 100) components[currentComponent] = 0;
+	else if ( (mV > 100) && (mV < 350) ) components[currentComponent] = 2;
+	else if ( (mV > 850) && (mV < 1200) ) components[currentComponent] = 4;
+	else if ( (mV > 1300) && (mV < 1500) ) components[currentComponent] = 5;
+	else if (mV > 1600) components[currentComponent] = 1;
+	else components[currentComponent] = 0;
+
+	writeGPIO(testGPIOs[currentComponent],0);
+	setDirectionGPIO(testGPIOs[currentComponent],GPIO_INPUT);
+}
+
+int Stage1::detectProblems(void) {
+	int i,j;
+	int opens = 0;
+	int shorts = 0;
+	for (i=0; i<5; i++) {
+		for (j=0; j<5; j++) {
+			if ( (i != j) && (components[i] == components[j]) ) {
+				if (components[i] == 3) {
+					if (detectShort(testGPIOs[i],testGPIOs[j]))
+						shorts++;
+					else 
+						opens++;
+				}
+				else
+					shorts++;
+			}
+		}
+	}
+	if (shorts && opens) return 3;
+	else if (opens && !shorts) return 2;
+	else if (shorts && !opens) return 1;
+	else return 0;
+}
+
+int Stage1::detectShort(int gpio1, int gpio2) {
+	int shorted = 0;
+	setDirectionGPIO(gpio1,GPIO_OUTPUT);
+	writeGPIO(gpio1,1);
+	if (readGPIO(gpio2)) {
+		shorted = 1;
+	}
+	writeGPIO(gpio1,0);
+	setDirectionGPIO(gpio1,GPIO_INPUT);
+	return shorted;
+}

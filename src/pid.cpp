@@ -1,3 +1,5 @@
+//Author(s): John Rogers
+
 #include "pid.hpp"
 
 #include <iostream>
@@ -8,7 +10,7 @@ using namespace std;
 
 PIDcontroller::PIDcontroller(float setpoint, float gainP, float gainI, float gainD,  float limit_upper, float limit_lower) :
 	setpoint(setpoint), gainP(gainP), gainI(gainI), gainD(gainD), limit_upper(limit_upper), limit_lower(limit_lower),
-	error(0.0), error_prev(0.0), integral(0.0), output(0.0), time_prev(0)
+	error(0.0), error_prev(0.0), integral(0.0), output(0.0), time_prev(0), gainI_stored(gainI)
 { }
 
 void PIDcontroller::calculateOutput(float plant_value, int time_cur) {
@@ -50,6 +52,15 @@ void PIDcontroller::printFileCSV(void) {
 		<< derivative << ',' << output << ',' 
 		<< plant_value << '\n';
 	out_file.close();
+}
+
+void PIDcontroller::disableIntegral(void) {
+	gainI = 0.0;
+}
+
+void PIDcontroller::enableIntegral(float gainI) {
+	this->gainI = gainI;
+	integral = 0.0;
 }
 
 void PIDcontroller::limitOutput(void) {

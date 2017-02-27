@@ -158,9 +158,8 @@ int detectProblems(int *components) {
 		for (j=0; j<5; j++) {
 			if ( (i != j) && (components[i] == components[j]) ) {
 				if (components[i] == 3) {
-					if (detectShort(test_gpios[i],
-						test_gpios[j]))
-						 shorts++;
+					if (detectShort(test_gpios[i],test_gpios[j]))
+						shorts++;
 					else 
 						opens++;
 				}

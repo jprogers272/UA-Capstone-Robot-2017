@@ -1,3 +1,5 @@
+//Author(s): John Rogers, William Khan
+
 #include "battery.hpp"
 #include "analog.hpp"
 #include "robotDefinitions.hpp"

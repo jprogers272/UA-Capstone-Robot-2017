@@ -1,3 +1,5 @@
+//Author(s): John Rogers
+
 #include "compass.hpp"
 #include "i2cbus.hpp"
 

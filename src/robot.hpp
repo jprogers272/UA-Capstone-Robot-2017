@@ -1,3 +1,5 @@
+//Author(s): John Rogers
+
 #ifndef ROBOT_HPP
 #define ROBOT_HPP
 
@@ -5,13 +7,14 @@
 #include "DCmotor.hpp"
 #include "i2cbus.hpp"
 #include "sensors.hpp"
+#include "stage1.hpp"
 #include "timing.hpp"
 
 enum State {
 	start,
 	zero_gyro,
 	pre_stage1,
-	stage1,
+	stage1_solving,
 	post_stage1,
 	pre_stage2,
 	average_compass,
@@ -51,6 +54,7 @@ class Robot {
 		RobotTimer timer;
 		RobotTimer state_timer;
 		int inner_state;
+		Stage1 stage1;
 	
 	//member functions
 	public:
@@ -62,6 +66,7 @@ class Robot {
 		void zeroVoltages(void);
 		
 		void drive_logic(void);
+		void setDriveDirection(int,float);
 		void start_logic(void);
 		void zero_gyro_logic(void);
 		void pre_stage1_logic(void);

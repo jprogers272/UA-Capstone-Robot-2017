@@ -1,3 +1,5 @@
+//Author(s): John Rogers
+
 #include "robot.hpp"
 #include "angleControl.hpp"
 #include "i2cbus.hpp"
@@ -46,7 +48,7 @@ int Robot::robotLogic(void) {
 		case pre_stage1:
 			pre_stage1_logic();
 			break;
-		case stage1:
+		case stage1_solving:
 			stage1_logic();
 			break;
 		case post_stage1:

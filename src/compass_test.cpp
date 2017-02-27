@@ -1,3 +1,5 @@
+//Author(s): William Khan
+
 #include <iostream>
 #include <vector>
 #include <time.h>

@@ -1,6 +1,27 @@
 #ifndef ROBOTDEFINITIONS_HPP
 #define ROBOTDEFINITIONS_HPP
 
+#define TRUE 1
+#define FALSE 0
+
+#define GPIO_OUTPUT 0
+#define GPIO_INPUT 1
+
+#define STRAIGHT_FORWARD 0
+#define STRAIGHT_BACKWARD 1
+#define STRAFE_LEFT 2
+#define STRAFE_RIGHT 3
+#define STOPPED 4
+
+#define STAGE1_GPIO1 112
+#define STAGE1_GPIO2 7
+#define STAGE1_GPIO3 15
+#define STAGE1_GPIO4 113
+#define STAGE1_GPIO5 14
+#define STAGE1_GPIO_COM 51
+#define STAGE1_ADC 0
+#define STAGE1_CHARGING_TIME 10
+
 #define IR1_1_GPIO 8
 #define IR1_2_GPIO 76
 #define IR1_3_GPIO 0

@@ -1,3 +1,5 @@
+//Author(s): John Rogers
+
 #ifndef PID_HPP
 #define PID_HPP
 
@@ -30,6 +32,8 @@ class PIDcontroller {
 		float getOutput(void);
 		void openFileCSV(std::string);
 		void printFileCSV(void);
+		void disableIntegral(void);
+		void enableIntegral(float gainI);
 		
 	private:
 		void limitOutput(void);

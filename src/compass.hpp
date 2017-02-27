@@ -1,3 +1,5 @@
+//Author(s): John Rogers
+
 #ifndef COMPASS_HPP
 #define COMPASS_HPP
 
