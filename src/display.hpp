@@ -19,21 +19,20 @@ class Display {
     ~Display();
     void clearBuffer();
     void clearDisplay();
-    bool writeDisplay();
-    bool writeCenter(std::string txt, unsigned char row);
-    bool writeText(std::string txt, unsigned char row, unsigned char col);
-    bool writeImage(unsigned char* img);
+    void writeDisplay();
+    void writeCenter(std::string txt, unsigned char row);
+    void writeText(std::string txt, unsigned char row, unsigned char col);
+    void writeImage(unsigned char* img);
   
   private:
-    bool init ();
+    void init ();
     unsigned char reverseByte (unsigned char b);
     void getTileFromBitmap (int index);
     void setTileInBuffer(int index);
     void rotateTile();
 
-    unsigned char* displayBuf_;
-    unsigned char* dataBuf_;
-    unsigned char* tmpBuf_;
+    unsigned char *dataBuf_;
+    unsigned char *tmpBuf_;
     I2Cbus *dispi2c_;
 };
 
