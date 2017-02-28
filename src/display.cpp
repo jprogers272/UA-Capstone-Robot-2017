@@ -70,7 +70,7 @@ Display::~Display() {
 }
 
 void Display::clearBuffer() {
-  memset(displayBuf_,0, WIDTH*HEIGHT);
+  memset(displayBuf_, 0, WIDTH*HEIGHT);
 }
 
 void Display::clearDisplay() {
@@ -79,20 +79,16 @@ void Display::clearDisplay() {
 }
 
 void Display::writeDisplay() {
-  unsigned char uchTemp[16] = {0};
   dispi2c_->writeRegister(0x00, 0x21); // Set column start addr
   dispi2c_->writeRegister(0x00, 0x00); // 0x00
   dispi2c_->writeRegister(0x00, 127);  // Set column end addr, end 127
   dispi2c_->writeRegister(0x00, 0x22);  // Set page addr
   dispi2c_->writeRegister(0x00, 0x00); // Page start address
   dispi2c_->writeRegister(0x00, 0x07); // Command for 7
-  for(unsigned short i = 0; i < WIDTH * HEIGHT; i++) {
-    for(unsigned char j = 0; j < 16; j++) {
-      uchTemp[j] = displayBuf_[i];
-      i++;
-    }
-    i--;
-    dispi2c_->writebytesRegister(0x40,uchTemp, 16); 
+
+  
+  for(unsigned short i = 0; i < WIDTH*HEIGHT; i++) {
+    dispi2c_->writeRegister(0x40, displayBuf_[i]);
   }
 }
 

@@ -6,7 +6,7 @@ LDFLAGS = -Wall -g
 OBJ_DIR = obj
 SRC_DIR = src
 BIN_DIR = bin
-MAINFILES = robotMain example compass_test stop pid_rotate pid_straight ir_drive_test Stage3Op compass_csv_write
+MAINFILES = robotMain example compass_test stop pid_rotate pid_straight ir_drive_test Stage3Op compass_csv_write display_test
 SRC_ = $(wildcard $(SRC_DIR)/*$(C_EXT))
 SRC = $(filter-out $(addsuffix $(C_EXT),$(addprefix $(SRC_DIR)/,$(MAINFILES))),$(SRC_))
 OBJ_ = $(SRC_:$(SRC_DIR)/%$(C_EXT)=$(OBJ_DIR)/%.o)
