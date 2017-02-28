@@ -12,7 +12,7 @@ using namespace std;
 
 void Robot::drive_logic(void) {
 	rotation = pid_multiplier * angle_controller.calculateRotation(sensorData->gyroZ,timer.getTimeElapsed(PRECISION_MS));
-	processMecanum(drive_voltages,voltage_max,translation,translation_angle,rotation);
+	processMecanum(drive_voltages,voltage_max,translation,translation_angle,rotation*3.0/voltage_max);
 	cout << "drive voltages are " << drive_voltages[0] << ", " <<
 		drive_voltages[1] << ", " <<
 		drive_voltages[2] << ", " <<
@@ -185,12 +185,84 @@ void Robot::post_stage1_logic(void) {
 		<< stage1.components[2] << ' '
 		<< stage1.components[3] << ' '
 		<< stage1.components[4] << endl;
-	currentState = finish;
+		cout << "inner state is " << inner_state << endl;
+		switch(inner_state)
+		{
+			case 0:
+				state_timer.start();
+				inner_state++;
+				break;
+			case 1:
+				setDriveDirection(STRAFE_RIGHT,3.0);
+				if((sensorData->ir1_1_state == 1) && (sensorData->ir1_2_state == 1))
+				{
+					setDriveDirection(STOPPED,0.0);
+					inner_state++;
+				}
+				break;
+			case 2:
+				setDriveDirection(STRAIGHT_FORWARD,6.0);
+				inner_state++;
+				break;
+			case 3:
+				if((sensorData->ir2_1_state == 0) && (sensorData->ir2_2_state == 0))
+				{
+					setDriveDirection(STOPPED,0.0);
+					inner_state = 0;
+					currentState = pre_stage2;
+				}
+				break;
+			default:
+				setDriveDirection(STOPPED,0.0);
+				currentState = finish;
+				break;
+		}
+	drive_logic();
 }
 
 void Robot::pre_stage2_logic(void) {
-	
+	cout << "inner state is " << inner_state << endl;
+	switch (inner_state) {
+		case 0:
+			setDriveDirection(STRAFE_RIGHT,3.5);
+			inner_state++;
+			break;
+		case 1:
+			if (sensorData->ir2_4_state == 0)
+			{
+				setDriveDirection(STRAFE_RIGHT,3.0);
+				inner_state++;
+			}	
+			break;
+		case 2:
+			if (sensorData->ir2_3_state == 0)
+			{
+				setDriveDirection(STOPPED,0.0);
+				inner_state++;
+			}
+			break;
+		case 3:
+			setDriveDirection(STRAIGHT_FORWARD,2.0);
+			state_timer.start();
+			inner_state++;
+			break;
+		case 4:
+			if (state_timer.getTimeElapsed(PRECISION_MS)>200)
+			{
+				setDriveDirection(STOPPED,0.0);
+				inner_state = 0;
+				currentState = finish;
+			}
+			break;
+		default:
+			setDriveDirection(STOPPED,0.0);
+			inner_state = 0;
+			currentState = finish;
+			break;
+	}
+	drive_logic();
 }
+
 
 void Robot::average_compass_logic(void) {
 	
