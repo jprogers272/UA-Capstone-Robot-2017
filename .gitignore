@@ -2,6 +2,8 @@
 
 #ignore the auto generated vim whatever they are files
 *~
+
+bin/*
 #keep out .o garbage - everyone can build their own with make
 obj/*
 #include empty obj directory so nobody's make complains about nonexistent directories
