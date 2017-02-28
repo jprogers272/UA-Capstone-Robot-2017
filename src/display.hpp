@@ -31,9 +31,9 @@ class Display {
     void setTileInBuffer(int index);
     void rotateTile();
 
-    unsigned char* displayBuf_;
-    unsigned char* dataBuf_;
-    unsigned char* tmpBuf_;
+    static unsigned char displayBuf_[WIDTH * HEIGHT];
+    static unsigned char dataBuf_[TILE_SIZE];
+    static unsigned char tmpBuf_[TILE_SIZE];
     I2Cbus *dispi2c_;
 };
 
