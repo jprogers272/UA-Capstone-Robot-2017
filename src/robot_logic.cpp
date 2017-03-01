@@ -1,4 +1,4 @@
-//Author(s): John Rogers, tbd
+//Author(s): John Rogers, William Khan
 
 #include "robot.hpp"
 #include "mecanum.hpp"
@@ -25,6 +25,7 @@ void Robot::drive_logic(void) {
 
 void Robot::setDriveDirection(int direction, float voltage) {
 	voltage_max = voltage;
+	angle_controller.enableIntegral(IGAIN);
 	if (direction == STRAIGHT_FORWARD) {
 		translation = 1.0;
 		translation_angle = 0.0;
@@ -45,6 +46,12 @@ void Robot::setDriveDirection(int direction, float voltage) {
 		translation_angle = 90.0;
 		pid_multiplier = -0.4;
 	}
+	else if (direction == ROTATE) {
+		angle_controller.disableIntegral();
+		translation = 0.0;
+		translation = 0.0;
+		pid_multiplier = -3.0;
+	}
 	else {//direction == STOPPED
 		translation = 0.0;
 		translation_angle = 0.0;
@@ -60,18 +67,20 @@ void Robot::start_logic(void) {
 }
 
 void Robot::zero_gyro_logic(void) {
-	cout << "gyroAverage is " << gyroAverage << endl;
+	cout << "gyroAverage is " << gyroAverageZ << endl;
 	if (stateLoopCount < 50) {
-		gyroAverage += sensorData->gyroZ;
+		gyroAverageZ += sensorData->gyroZ;
+		gyroAverageY += sensorData->gyroY;
 		stateLoopCount++;
 	}
 	else {
-		gyroAverage /= 50.0;
-		angle_controller.setAverage(gyroAverage);
+		gyroAverageZ /= (float)(stateLoopCount);
+		gyroAverageY /= (float)(stateLoopCount);
+		angle_controller.setAverage(gyroAverageZ);
 		stateLoopCount = 0;
 		currentState = nextState;
 		cout << "measuring took " << timer.getTimeElapsed(PRECISION_MS) << " ms.\n";
-		cout << "average is " << gyroAverage << endl;
+		cout << "average is " << gyroAverageZ << endl;
 	}
 }
 
@@ -81,6 +90,7 @@ void Robot::pre_stage1_logic(void) {
 		case 0:
 			state_timer.start();
 			setDriveDirection(STRAIGHT_BACKWARD,3.0);
+			
 			inner_state++;
 			break;
 		case 1:
@@ -186,37 +196,34 @@ void Robot::post_stage1_logic(void) {
 		<< stage1.components[3] << ' '
 		<< stage1.components[4] << endl;
 		cout << "inner state is " << inner_state << endl;
-		switch(inner_state)
-		{
-			case 0:
-				state_timer.start();
-				inner_state++;
-				break;
-			case 1:
-				setDriveDirection(STRAFE_RIGHT,3.0);
-				if((sensorData->ir1_1_state == 1) && (sensorData->ir1_2_state == 1))
-				{
-					setDriveDirection(STOPPED,0.0);
-					inner_state++;
-				}
-				break;
-			case 2:
-				setDriveDirection(STRAIGHT_FORWARD,6.0);
-				inner_state++;
-				break;
-			case 3:
-				if((sensorData->ir2_1_state == 0) && (sensorData->ir2_2_state == 0))
-				{
-					setDriveDirection(STOPPED,0.0);
-					inner_state = 0;
-					currentState = pre_stage2;
-				}
-				break;
-			default:
+	switch(inner_state) {
+		case 0:
+			state_timer.start();
+			inner_state++;
+			break;
+		case 1:
+			setDriveDirection(STRAFE_RIGHT,3.0);
+			if((sensorData->ir1_1_state == 1) && (sensorData->ir1_2_state == 1)) {
 				setDriveDirection(STOPPED,0.0);
-				currentState = finish;
-				break;
-		}
+				inner_state++;
+			}
+			break;
+		case 2:
+			setDriveDirection(STRAIGHT_FORWARD,4.5);
+			inner_state++;
+			break;
+		case 3:
+			if((sensorData->ir2_1_state == 0) && (sensorData->ir2_2_state == 0)) {
+				setDriveDirection(STOPPED,0.0);
+				inner_state = 0;
+				currentState = pre_stage2;
+			}
+			break;
+		default:
+			setDriveDirection(STOPPED,0.0);
+			currentState = finish;
+			break;
+	}
 	drive_logic();
 }
 
@@ -228,15 +235,13 @@ void Robot::pre_stage2_logic(void) {
 			inner_state++;
 			break;
 		case 1:
-			if (sensorData->ir2_4_state == 0)
-			{
+			if (sensorData->ir2_4_state == 0) {
 				setDriveDirection(STRAFE_RIGHT,3.0);
 				inner_state++;
 			}	
 			break;
 		case 2:
-			if (sensorData->ir2_3_state == 0)
-			{
+			if (sensorData->ir2_3_state == 0) {
 				setDriveDirection(STOPPED,0.0);
 				inner_state++;
 			}
@@ -247,11 +252,10 @@ void Robot::pre_stage2_logic(void) {
 			inner_state++;
 			break;
 		case 4:
-			if (state_timer.getTimeElapsed(PRECISION_MS)>200)
-			{
+			if (state_timer.getTimeElapsed(PRECISION_MS)>200) {
 				setDriveDirection(STOPPED,0.0);
 				inner_state = 0;
-				currentState = finish;
+				currentState = average_compass;
 			}
 			break;
 		default:
@@ -266,14 +270,78 @@ void Robot::pre_stage2_logic(void) {
 
 void Robot::average_compass_logic(void) {
 	
+	if (stateLoopCount < 50) {
+		compAverage += sensorData->compass_angle;
+		stateLoopCount++;
+	}
+	else {
+		compAverage /= 50.0;
+		stateLoopCount = 0;
+		cout << "average is " << compAverage << endl;
+		currentState = stage2;
+	}
 }
 
 void Robot::stage2_logic(void) {
+	if (stateLoopCount == 0) {
+		state_timer.start();
+		stateLoopCount++;
+	}
 	
+	if((sensorData->compass_angle - compAverage) > 10 || (sensorData->compass_angle - compAverage) < -10) {
+		cout << "Stopping. Field Diff: " << sensorData->compass_angle - compAverage << endl;
+		slapper_voltage = 0;
+	}
+	else {
+		cout << "Slapping. Field Diff: " << sensorData->compass_angle - compAverage << endl;
+		slapper_voltage = 4.5;
+	}
+
+	if (state_timer.getTimeElapsed(PRECISION_S) > 5) {
+		slapper_voltage = 0;
+		stateLoopCount = 0;
+		inner_state = 0;
+		currentState = post_stage2;
+	}	
 }
 
 void Robot::post_stage2_logic(void) {
-	
+	switch(inner_state) {
+		case 0:
+			setDriveDirection(STRAIGHT_BACKWARD,3.0);
+			inner_state++;
+			break;
+		case 1:
+			if ((sensorData->ir2_4_state == 1) && (sensorData->ir2_3_state == 1))
+			{
+				angle_controller.setSetpoint(-90.0);
+				setDriveDirection(ROTATE,3.0);
+				inner_state++;
+			}
+			break;
+		case 2:
+			//setDriveDirection(STRAFE_RIGHT,4.5);
+			if ((angle_controller.getAngle() < -85.0) && (angle_controller.getAngle() > -95.0)) {
+				setDriveDirection(STRAIGHT_FORWARD,5.0);
+				inner_state++;
+			}
+			break;
+		case 3:
+			if ((sensorData->ir2_1_state == 0) && (sensorData->ir2_2_state == 0))
+			{
+				setDriveDirection(STOPPED,0.0);
+				slapper_voltage = 0.0;
+				inner_state = 0;
+				currentState = pre_stage3;
+			}
+			break;
+		default:
+			setDriveDirection(STOPPED,0.0);
+			inner_state = 0;
+			currentState = finish;
+			break;
+	}
+	drive_logic();
 }
 
 void Robot::pre_stage3_logic(void) {
@@ -284,27 +352,27 @@ void Robot::pre_stage3_logic(void) {
 	switch (inner_state) {
 		case 0:
 			setDriveDirection(STRAFE_RIGHT,3.5);
-			if (state_timer.getTimeElapsed(PRECISION_S) > 2) {
-				inner_state = 1;
+			if (state_timer.getTimeElapsed(PRECISION_S) > 1) {
+				inner_state++;
 			}
 			break;
 		case 1:
 			if (sensorData->ir2_4_state == 0) {
-				setDriveDirection(STRAFE_RIGHT,2.5);
-				inner_state = 2;
+				setDriveDirection(STRAFE_RIGHT,3.0);
+				inner_state++;
 			}
 			break;
 		case 2:
 			if (sensorData->ir2_3_state == 0) {
 				setDriveDirection(STRAIGHT_FORWARD,3.0);
-				inner_state = 3;
+				inner_state++;
 			}
 			break;
 		case 3:
 			if ((sensorData->ir2_1_state == 1) && (sensorData->ir2_2_state == 1)) {
 				setDriveDirection(STRAIGHT_BACKWARD,2.0);
 				state_timer.start();
-				inner_state = 4;
+				inner_state++;
 			}
 			break;
 		case 4:
@@ -312,7 +380,8 @@ void Robot::pre_stage3_logic(void) {
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 50) {
 				setDriveDirection(STOPPED,0.0);
 				inner_state = 0;
-				currentState = finish;
+				currentState = stage3;
+				slapper_voltage = 0.0;
 			}
 			break;
 	}
@@ -321,15 +390,63 @@ void Robot::pre_stage3_logic(void) {
 }
 
 void Robot::stage3_logic(void) {
-	
+	currentState = post_stage3;
 }
 
 void Robot::post_stage3_logic(void) {
-	
+		switch(inner_state) {
+		case 0:
+			setDriveDirection(STRAIGHT_BACKWARD,3.0);
+			inner_state++;
+			break;
+		case 1:
+			if ((sensorData->ir2_4_state == 1) && (sensorData->ir2_3_state == 1))
+			{
+				angle_controller.setSetpoint(-180.0);
+				setDriveDirection(ROTATE,3.0);
+				inner_state++;
+			}
+			break;
+		case 2:
+			//setDriveDirection(STRAFE_RIGHT,4.5);
+			if ((angle_controller.getAngle() < -175.0) && (angle_controller.getAngle() > -185.0)) {
+				setDriveDirection(STRAIGHT_FORWARD,3.0);
+				inner_state++;
+			}
+			break;
+		case 3:
+			if ((sensorData->gyroY - gyroAverageY) > 2.0) {
+				inner_state++;
+			}
+			break;
+		case 4:
+			if ((sensorData->gyroY - gyroAverageY) < -2.0) {
+				inner_state++;
+				voltage_max = 6.0;
+			}
+			break;
+		case 5:
+			if ((sensorData->gyroY - gyroAverageY) > 10.0) {
+				inner_state++;
+				inner_state = 0;
+				currentState = pre_stage4;
+			}
+			break;
+		case 6:
+			if ((sensorData->gyroY - gyroAverageY) < 16.0) {
+				inner_state = 0;
+				currentState = pre_stage4;
+			}
+			break;
+	}
+	cout << "gyro Y is " << sensorData->gyroY << endl;
+	drive_logic();
 }
 
 void Robot::pre_stage4_logic(void) {
-	
+	setDriveDirection(STOPPED,0.0);
+	drive_logic();
+	currentState = finish;
 }
 
 void Robot::stage4_logic(void) {

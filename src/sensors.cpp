@@ -1,3 +1,5 @@
+//Author(s): John Rogers
+
 #include "sensors.hpp"
 #include "battery.hpp"
 #include "robotDefinitions.hpp"
@@ -29,6 +31,7 @@ void Sensors::getAllSensors(SensorData *data) {
 	data->ir4_1_state = ir4_1.getData();
 	data->ir4_2_state = ir4_2.getData();
 	data->gyroZ = imu.getGyroZ();
+	data->gyroY = imu.getGyroY();
 	data->acclY = imu.getAcclY();
 	data->compass_angle = compass.getAngleF();
 	data->battery_voltage = getBatteryVoltage();

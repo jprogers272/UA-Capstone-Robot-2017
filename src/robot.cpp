@@ -28,7 +28,8 @@ Robot::Robot() :
 	nextState = pre_stage1;
 
 	stateLoopCount = 0;
-	gyroAverage = 0.0;
+	gyroAverageZ = 0.0;
+	gyroAverageY = 0.0;
 
 	inner_state = 0;
 	

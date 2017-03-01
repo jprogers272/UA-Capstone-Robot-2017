@@ -44,7 +44,9 @@ class Robot {
 		State currentState;
 		State nextState;
 		int stateLoopCount;
-		float gyroAverage;
+		float gyroAverageZ;
+		float gyroAverageY;
+		float compAverage;
 		float *drive_voltages;
 		float slapper_voltage;
 		float voltage_max;

@@ -11,7 +11,8 @@
 #define STRAIGHT_BACKWARD 1
 #define STRAFE_LEFT 2
 #define STRAFE_RIGHT 3
-#define STOPPED 4
+#define ROTATE 4
+#define STOPPED 5
 
 #define STAGE1_GPIO1 14
 #define STAGE1_GPIO2 112

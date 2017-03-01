@@ -25,6 +25,10 @@ void AngleControl::setAverage(float average_dps) {
 	this->average_dps = average_dps;
 }
 
+float AngleControl::getAngle(void) {
+	return this->angle;
+}
+
 void AngleControl::calculateAngle(float gyro_dps, int time_cur) {
 	//integrate rotational velocity to get angle
 	//time is in milliseconds, so divide by 1000

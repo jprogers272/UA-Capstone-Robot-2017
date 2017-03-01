@@ -1,3 +1,5 @@
+//Author(s): John Rogers
+
 #ifndef SENSORS_HPP
 #define SENSORS_HPP
 
@@ -17,6 +19,7 @@ struct SensorData {
 	int ir4_1_state;
 	int ir4_2_state;
 	float gyroZ;
+	float gyroY;
 	float acclY;
 	float compass_angle;
 	float battery_voltage;

@@ -16,6 +16,7 @@ class AngleControl : public PIDcontroller {
 		AngleControl(float,float,float);
 		float calculateRotation(float,int);
 		void setAverage(float);
+		float getAngle(void);
 		
 	private:
 		void calculateAngle(float,int);
