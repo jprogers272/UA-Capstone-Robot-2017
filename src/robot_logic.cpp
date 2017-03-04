@@ -64,17 +64,17 @@ void Robot::setDriveDirection(int direction, float voltage) {
 }
 
 void Robot::start_logic(void) {
-    disp.writeCenter("Robot Starting Up...",0);
-    disp.writeDisplay();
+    //disp.writeCenter("Robot Starting Up...",0);
+    //disp.writeDisplay();
     currentState = zero_gyro;
 	stateLoopCount = 0;
 	timer.start();
-    disp.clearDisplay();
+    //disp.clearDisplay();
 }
 
 void Robot::zero_gyro_logic(void) {
-    disp.writeCenter("Zeroing Gyro...",0);
-    disp.writeDisplay();
+    //disp.writeCenter("Zeroing Gyro...",0);
+    //disp.writeDisplay();
 	cout << "gyroAverage is " << gyroAverageZ << endl;
 	if (stateLoopCount < 50) {
 		gyroAverageZ += sensorData->gyroZ;
@@ -93,7 +93,7 @@ void Robot::zero_gyro_logic(void) {
 		cout << "measuring took " << timer.getTimeElapsed(PRECISION_MS) << " ms.\n";
 		cout << "average is " << gyroAverageZ << endl;
 	}
-    disp.clearDisplay();
+    //disp.clearDisplay();
 }
 
 void Robot::pre_stage1_logic(void) {
@@ -119,7 +119,7 @@ void Robot::pre_stage1_logic(void) {
 			}
 			break;
 		case 3:
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 300) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 200) {
 				setDriveDirection(STRAIGHT_FORWARD,3.0);
 				inner_state++;
 			}
@@ -127,11 +127,22 @@ void Robot::pre_stage1_logic(void) {
 		case 4:
 			if (sensorData->ir1_3_state == 0) {
 				setDriveDirection(STRAIGHT_FORWARD,2.0);
+				stateLoopCount = 0;
 				inner_state++;
 			}
 			break;
+		/*	
 		case 5:
-			if ((sensorData->ir1_4_state == 0) && (sensorData->ir1_3_state == 1)) {
+			if (sensorData->ir1_4_state == 1) {
+				stateLoopCount++;
+			}
+			if (stateLoopCount == 5) {
+				inner_state++;
+			} 
+			break;
+		*/
+		case 5:
+			if ((sensorData->ir1_4_state == 0) && (sensorData->ir1_3_state == 0))  {
 				setDriveDirection(STRAFE_LEFT,2.5);
 				inner_state = 0;
 				currentState = stage1_solving;
@@ -179,11 +190,11 @@ void Robot::stage1_logic(void) {
 			cout << "reorient robot?\n";
 			if (translation_angle > -85.0) {
 				translation_angle = -145.0;
-				voltage_max = 3.5;
+				voltage_max = 3.0;
 			}
 			else if (translation_angle < -95.0) {
-				translation_angle = -75.0;
-				voltage_max = 3.5;
+				translation_angle = -65.0;
+				voltage_max = 3.0;
 			}
 			else {
 				//it's 90.0, accounting for floating point error
@@ -394,7 +405,7 @@ void Robot::pre_stage3_logic(void) {
 			}
 			break;
 		case 2:
-			if (sensorData->ir2_3_state == 0) {
+			if ((sensorData->ir2_3_state == 0) && (sensorData->ir2_4_state == 0)) {
 				setDriveDirection(STRAIGHT_FORWARD,3.0);
 				state_timer.start();
 				inner_state++;
@@ -423,7 +434,8 @@ void Robot::pre_stage3_logic(void) {
 }
 
 void Robot::stage3_logic(void) {
-	currentState = post_stage3;
+	//currentState = post_stage3;
+	currentState = finish;
 }
 
 void Robot::post_stage3_logic(void) {
