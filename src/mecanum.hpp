@@ -1,3 +1,5 @@
+//Author(s): John Rogers
+
 #ifndef MECANUM_HPP
 #define MECANUM_HPP
 

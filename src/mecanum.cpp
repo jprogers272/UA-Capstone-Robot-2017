@@ -1,8 +1,8 @@
+//Author(s): John Rogers
+
 #include "mecanum.hpp"
-
+#include "robotDefinitions.hpp"
 #include <cmath>
-
-#define PI 3.14159
 
 /*calculates voltages required for each mecanum wheel given 4 parameters, plus a pointer where the voltages will be stored
  * parameters:

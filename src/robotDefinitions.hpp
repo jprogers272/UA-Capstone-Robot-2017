@@ -1,5 +1,9 @@
+//Author(s): John Rogers
+
 #ifndef ROBOTDEFINITIONS_HPP
 #define ROBOTDEFINITIONS_HPP
+
+#define PI 3.14159
 
 #define TRUE 1
 #define FALSE 0
