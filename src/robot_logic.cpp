@@ -1,6 +1,7 @@
 //Author(s): John Rogers, William Khan
 
 #include "robot.hpp"
+#include "gpio.hpp"
 #include "mecanum.hpp"
 #include "positionTracker.hpp"
 #include "sensors.hpp"
@@ -219,7 +220,7 @@ void Robot::post_stage1_logic(void) {
 			break;
 		case 3:
 			if((sensorData->ir2_1_state == 0) && (sensorData->ir2_2_state == 0)) {
-				setDriveDirection(STRAFE_LEFT,4.0);
+				setDriveDirection(STRAFE_LEFT,3.0);
 				state_timer.start();
 				inner_state++;
 			}
@@ -260,8 +261,14 @@ void Robot::pre_stage2_logic(void) {
 			inner_state++;
 			break;
 		case 4:
-			if (state_timer.getTimeElapsed(PRECISION_MS)>300) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 600) {
 				setDriveDirection(STOPPED,0.0);
+				state_timer.start();
+				inner_state++;
+			}
+			break;
+		case 5:
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
 				inner_state = 0;
 				currentState = average_compass;
 			}
@@ -277,7 +284,7 @@ void Robot::pre_stage2_logic(void) {
 
 
 void Robot::average_compass_logic(void) {
-	
+	angle_controller.disableIntegral();	
 	if (stateLoopCount < 50) {
 		compAverage += sensorData->compass_angle;
 		stateLoopCount++;
@@ -314,6 +321,7 @@ void Robot::stage2_logic(void) {
 }
 
 void Robot::post_stage2_logic(void) {
+	angle_controller.enableIntegral(IGAIN);
 	switch(inner_state) {
 		case 0:
 			setDriveDirection(STRAIGHT_BACKWARD,3.0);
@@ -373,11 +381,13 @@ void Robot::pre_stage3_logic(void) {
 		case 2:
 			if (sensorData->ir2_3_state == 0) {
 				setDriveDirection(STRAIGHT_FORWARD,3.0);
+				state_timer.start();
 				inner_state++;
 			}
 			break;
 		case 3:
-			if ((sensorData->ir2_1_state == 1) && (sensorData->ir2_2_state == 1)) {
+			//if ((sensorData->ir2_1_state == 1) && (sensorData->ir2_2_state == 1)) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
 				setDriveDirection(STRAIGHT_BACKWARD,2.0);
 				state_timer.start();
 				inner_state++;
@@ -431,11 +441,12 @@ void Robot::post_stage3_logic(void) {
 		case 4:
 			if ((position_tracker.getAngle(X) - angleX_before_step) > -1.5) {
 				inner_state++;
-				voltage_max = 6.0;
+				voltage_max = 7.0;
 			}
 			break;
 		case 5:
 			if ((position_tracker.getAngle(X) - angleX_before_step) < -4.0) {
+				//state_timer.start();
 				inner_state++;
 			}
 			break;
@@ -443,26 +454,74 @@ void Robot::post_stage3_logic(void) {
 			if ((position_tracker.getAngle(X) - angleX_before_step) > -1.0) {
 				inner_state = 0;
 				currentState = pre_stage4;
+				//inner_state++;
+				//voltage_max = 6.0;
+			}
+			/*else if (state_timer.getTimeElapsed(PRECISION_MS) > 500) {
+				state_timer.start();
+				voltage_max += 0.1;
+			}*/
+			break;
+		/*
+		case 7:
+			if ((position_tracker.getAngle(X) - angleX_before_step) < -4.0) {
+				state_timer.start();
+				inner_state++;
 			}
 			break;
+		case 8:
+			if ((position_tracker.getAngle(X) - angleX_before_step) > -2.0) {
+				inner_state = 0;
+				currentState = pre_stage4;
+			}
+			//else if (state_timer.getTimeElapsed(PRECISION_MS) > 500) {
+			//	state_timer.start();
+			//	voltage_max += 0.1;
+			//}
+			break;
+		*/
+			
 	}
 	cout << "angle x is " << position_tracker.getAngle(X) << endl;
 	drive_logic();
 }
 
 void Robot::pre_stage4_logic(void) {
+	static float angleX_before_step = position_tracker.getAngle(X);
+	cout << "difference is " << position_tracker.getAngle(X) - angleX_before_step << endl;
 	switch (inner_state) {
 		case 0:
 			angle_controller.setSetpoint(-90.0);
 			setDriveDirection(ROTATE,3.0);
 			inner_state++;
+			break;
 		case 1:
 			if ((angle_controller.getAngle() < -85.0) && (angle_controller.getAngle() > -95.0)) {
 				setDriveDirection(STRAFE_RIGHT,4.0);
+				//setDriveDirection(STRAIGHT_BACKWARD,8.4);
 				state_timer.start();
 				inner_state++;
 			}
 			break;
+		//case 2:
+		//	if ((position_tracker.getAngle(X) - angleX_before_step) > 5.0) {
+		//		state_timer.start();
+		//		setDriveDirection(STRAIGHT_BACKWARD,4.0);
+		//		inner_state++;
+		//	}
+		//	/*else if (state_timer.getTimeElapsed(PRECISION_MS) > 500) {
+		//		state_timer.start();
+		//		voltage_max += 0.1;
+		//	}*/
+		//	break;
+		//case 3:
+		//	if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
+		//		setDriveDirection(STOPPED,0.0);
+		//		inner_state = 0;
+		//		currentState = stage4;
+		//	}
+		//	break;
+		
 		case 2:
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 1500) {
 				setDriveDirection(STOPPED,3.0);
@@ -472,29 +531,38 @@ void Robot::pre_stage4_logic(void) {
 			}
 			break;
 		case 3:
-			setDriveDirection(STRAIGHT_FORWARD,3.0);
+			angle_controller.disableIntegral();
+			angle_controller.enableIntegral(IGAIN);
+			setDriveDirection(STRAFE_LEFT,3.0);
+			state_timer.start();
 			inner_state++;
 			break;
 		case 4:
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 500) {
+				setDriveDirection(STRAIGHT_FORWARD,3.0);
+				inner_state++;
+			}
+			break;
+		case 5:
 			if ((sensorData->ir2_1_state == 0) && (sensorData->ir2_2_state == 0)) {
 				setDriveDirection(STRAIGHT_BACKWARD,3.0);
 				inner_state++;
 			}
 			break;
-		case 5:
+		case 6:
 			if (sensorData->ir4_2_state == 0) {
 				setDriveDirection(STRAIGHT_BACKWARD,2.0);
 				inner_state++;
 			}
 			break;
-		case 6:
+		case 7:
 			if (sensorData->ir4_1_state == 0) {
 				setDriveDirection(STRAFE_RIGHT,3.0);
 				state_timer.start();
 				inner_state++;
 			}
 			break;
-		case 7:
+		case 8:
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
 				setDriveDirection(STRAIGHT_FORWARD,2.0);
 				setDriveDirection(STOPPED,0.0);
@@ -503,24 +571,49 @@ void Robot::pre_stage4_logic(void) {
 				currentState = stage4;
 			}
 			break;
-		case 8:
+		case 9:
 			if (sensorData->ir4_1_state == 1) {
 				setDriveDirection(STRAIGHT_BACKWARD,2.0);
 				inner_state++;
 			}
 			break;
-		case 9:
+		case 10:
 			if (sensorData->ir4_1_state == 0) {
 				setDriveDirection(STOPPED,0.0);
 				inner_state = 0;
 				currentState = stage4;
 			}
 			break;
+		
 	}
 	drive_logic();
 }
 
 void Robot::stage4_logic(void) {
-	cout << "\nFIRE\n\n";
-	currentState = finish;	
+	switch (inner_state) {
+		case 0:
+			state_timer.start();
+			setDirectionGPIO(GUN_GPIO,GPIO_OUTPUT);
+			writeGPIO(GUN_GPIO,1);
+			inner_state++;
+			break;
+		case 1:
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
+				writeGPIO(GUN_GPIO,0);
+				setDirectionGPIO(GUN_GPIO,GPIO_INPUT);
+				inner_state = 0;
+				currentState = finish;
+				cout << "\nFIRE\n\n";
+			}
+			break;
+	}
+}
+
+void Robot::finish_logic(void) {
+	cout << "Stage 1 code is " << 
+		stage1.components[0] << ' ' <<
+		stage1.components[1] << ' ' <<
+		stage1.components[2] << ' ' <<
+		stage1.components[3] << ' ' <<
+		stage1.components[4] << endl;
 }

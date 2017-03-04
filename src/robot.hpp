@@ -87,6 +87,7 @@ class Robot {
 		void post_stage3_logic(void);
 		void pre_stage4_logic(void); 
 		void stage4_logic(void);
+		void finish_logic(void);
 };
 
 #endif

@@ -54,8 +54,8 @@ int main(int argc, char **argv) {
 	}
 	
 	float voltage_max = atof(argv[1]);
-	if (voltage_max > 6.0) 
-		voltage_max = 6.0;
+	if (voltage_max > 9.0) 
+		voltage_max = 9.0;
 	else if (voltage_max < 0.0) 
 		voltage_max = 0.0;
 	float velocity_translation = atof(argv[2]);

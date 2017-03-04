@@ -85,6 +85,7 @@ int Robot::robotLogic(void) {
 			stage4_logic();
 			break;
 		case finish:
+			finish_logic();
 			return 1;
 			break;
 	}

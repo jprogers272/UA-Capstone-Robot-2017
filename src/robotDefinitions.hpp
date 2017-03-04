@@ -38,6 +38,8 @@
 #define IR4_1_GPIO 87
 #define IR4_2_GPIO 10
 
+#define GUN_GPIO 9
+
 #define WHEEL1_DIR 73
 #define WHEEL2_DIR 75
 #define WHEEL3_DIR 11
