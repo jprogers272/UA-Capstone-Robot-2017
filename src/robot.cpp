@@ -30,6 +30,7 @@ Robot::Robot() :
 	stateLoopCount = 0;
 	gyroAverageZ = 0.0;
 	gyroAverageY = 0.0;
+	gyroAverageX = 0.0;
 
 	inner_state = 0;
 	

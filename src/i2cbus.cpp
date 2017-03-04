@@ -86,11 +86,11 @@ int I2Cbus::writeRegister(unsigned int registerAddress, unsigned char value) {
 
 int I2Cbus::writebytesRegister(unsigned int registerAddress, unsigned char* data, unsigned int size) {
 	unsigned char* writeBuffer;
-  writeBuffer = new unsigned char[size];
+	writeBuffer = new unsigned char[size];
 	writeBuffer[0] = registerAddress;
-  for(unsigned int i = 1; i < size; i++) writeBuffer[i] = data[i-1];
+	for(unsigned int i = 1; i < size; i++) writeBuffer[i] = data[i-1];
 	delete[] writeBuffer;
-  if (write(file_i2c, writeBuffer, size) != size) {
+	if (write(file_i2c, writeBuffer, size) != (int)size) {
 		perror("Failed to write to device");
 		return 1;
 	}

@@ -24,6 +24,7 @@ class PositionTracker {
 	//member functions
 	public:
 		PositionTracker(void);
+		void calculateAnglesOnly(float,float,float,long);
 		void calculateAll(float*,long);
 		void calculateAll(float,float,float,float,float,float,long);
 		void setTime(long);
@@ -33,6 +34,7 @@ class PositionTracker {
 		float getVelocity(int);
 		float getPosition(int);
 		void setAverages(float*);
+		void setGyroAverages(float,float,float);
 		
 	private:
 		float **multiplyMatrices(float**,float**,int,int,int,int);

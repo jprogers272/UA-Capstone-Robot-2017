@@ -3,6 +3,10 @@
 #include "positionTracker.hpp"
 #include "robotDefinitions.hpp"
 #include <cmath>
+#include <cstddef>
+#include <iostream>
+
+using namespace std;
 
 PositionTracker::PositionTracker(void) {
 	int i;
@@ -13,19 +17,35 @@ PositionTracker::PositionTracker(void) {
 		imu_averages[i] = 0.0;
 		imu_averages[i+3] = 0.0;
 	}
-	time_prev = 0.0;
+	time_prev = 0;
 }
 
+void PositionTracker::calculateAnglesOnly(float dps_x, float dps_y, float dps_z, long time_cur) {
+	int i;
+	float dps_data[3] = {dps_x,dps_y,dps_z};
+	float time_elapsed = (float)(time_cur - time_prev) / 1000.0;
+	for (i=0; i<3; i++) {
+		angle[i] += ((dps_data[i] - imu_averages[i]) * time_elapsed);
+	}
+	time_prev = time_cur;
+}
+
+//note that position tracking doesn't work as of now; more filtering would be required
 void PositionTracker::calculateAll(float *imu_data, long time_cur) {
 	int i;
 	float **robotAcclMatrix = new float*[3];
 	float **fieldCentricAcclMatrix = new float*[3];
 	float time_elapsed = (float)(time_cur - time_prev) / 1000.0;
+	cout << "time elapsed is " << time_elapsed << endl;
+	//cout << "allocated rows of accl matrices" << endl;
 	for (i=0; i<3; i++) {
-		angle[i] += ((imu_data[i] - imu_averages[i]) * time_elapsed);
-		robotAcclMatrix[i][0] = imu_data[i+3] - imu_averages[i+3];
 		robotAcclMatrix[i] = new float;
 		fieldCentricAcclMatrix[i] = new float;
+		angle[i] += ((imu_data[i] - imu_averages[i]) * time_elapsed);
+		//cout << "angular velocity" << i << " is " << imu_data[i] << " and the average is " << imu_averages[i] << endl;
+		//cout << "and the angle is " << angle[i] << endl;
+		robotAcclMatrix[i][0] = imu_data[i+3] - imu_averages[i+3];
+		//cout << "accl " << i << " is " << imu_data[i+3] << " and the average is " << imu_averages[i+3] << endl;
 	}
 	float **xRotMatrix = calculateXRotMatrix();
 	float **yRotMatrix = calculateYRotMatrix();
@@ -33,20 +53,31 @@ void PositionTracker::calculateAll(float *imu_data, long time_cur) {
 	
 	//A_f = R_z * R_y * R_x * A_r
 	fieldCentricAcclMatrix = multiplyMatrices(xRotMatrix,robotAcclMatrix,3,3,3,1);
+	//cout << "multiplied x rotation matrix and accl matrix" << endl;
 	fieldCentricAcclMatrix = multiplyMatrices(yRotMatrix,fieldCentricAcclMatrix,3,3,3,1);
+	//cout << "multiplied y rotation matrix and accl matrix" << endl;
 	fieldCentricAcclMatrix = multiplyMatrices(zRotMatrix,fieldCentricAcclMatrix,3,3,3,1);
+	//cout << "multiplied z rotation matrix and accl matrix" << endl;
 	
 	for (i=0; i<3; i++) {
-		//convert acceleration from milli-Gs to m/s^2, then integrate twice
-		velocity[i] += fieldCentricAcclMatrix[i][0] * 9.81 / 1000.0;
+		//convert acceleration from g to m/s^2, then integrate twice
+		velocity[i] += fieldCentricAcclMatrix[i][0] * 9.81;
 		position[i] += velocity[i];
 	}
+	//cout << "calculated velocity and position vectors" << endl;
 	
 	deleteMatrix(robotAcclMatrix,3);
+	//cout << "deleted robot accl matrix" << endl;
 	deleteMatrix(fieldCentricAcclMatrix,3);
+	//cout << "deleted field centric accl matrix" << endl;
 	deleteMatrix(xRotMatrix,3);
+	//cout << "deleted robot x rotation matrix" << endl;
 	deleteMatrix(yRotMatrix,3);
+	//cout << "deleted robot y rotation matrix" << endl;
 	deleteMatrix(zRotMatrix,3);
+	//cout << "deleted robot z rotation matrix" << endl;
+	
+	time_prev = time_cur;
 }
 
 void PositionTracker::calculateAll(float gyroX, float gyroY, float gyroZ, float acclX, float acclY, float acclZ, long time_cur) {
@@ -70,7 +101,7 @@ float ** PositionTracker::multiplyMatrices(float **matrixA, float **matrixB, int
 			matrixResult[i][j] = 0.0;
 			for (k = 0; k < columnsA; k++) {
 				matrixResult[i][j] += matrixA[i][k] * matrixB[k][j];
-			}			
+			}
 		}
 	}
 	return matrixResult;
@@ -196,4 +227,10 @@ void PositionTracker::setAverages(float *averages) {
 	for (i=0; i<6; i++) {
 		imu_averages[i] = averages[i];
 	}
+}
+ 
+void PositionTracker::setGyroAverages(float gyroAverageX, float gyroAverageY, float gyroAverageZ) {
+	imu_averages[0] = gyroAverageX;
+	imu_averages[1] = gyroAverageY;
+	imu_averages[2] = gyroAverageZ;
 }

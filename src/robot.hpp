@@ -10,6 +10,7 @@
 #include "stage1.hpp"
 #include "timing.hpp"
 #include "display.hpp"
+#include "positionTracker.hpp"
 
 enum State {
 	start,
@@ -38,6 +39,7 @@ class Robot {
 		DCmotor wheel_4;
 		DCmotor slapper;
 		AngleControl angle_controller;
+		PositionTracker position_tracker;
 		I2Cbus i2c_bus;
 		Sensors sensors;
 		SensorData *sensorData;
@@ -46,6 +48,7 @@ class Robot {
 		int stateLoopCount;
 		float gyroAverageZ;
 		float gyroAverageY;
+		float gyroAverageX;
 		float compAverage;
 		float *drive_voltages;
 		float slapper_voltage;

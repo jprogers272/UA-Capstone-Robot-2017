@@ -6,6 +6,8 @@
 #include "positionTracker.hpp"
 #include "timing.hpp"
 #include <iostream>
+#include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -18,6 +20,12 @@ int main (void) {
 	
 	averageIMU(&imu,&position_tracker);
 	
+	string csv_path("/home/position.csv");
+	ofstream csv_file;
+	csv_file.open(csv_path.c_str());
+	csv_file << "Time(s),dps_x,dps_y,dps_z,angle_x,angle_y,angle_z,accl_x,accl_y,accl_z,vel_x,vel_y,vel_z,pos_x,pos_y,pos_z\n";
+	csv_file.close();
+
 	RobotTimer timer;
 	timer.start();
 	while (1) {
@@ -26,7 +34,7 @@ int main (void) {
 			imu.getAcclX(),imu.getAcclY(),imu.getAcclZ(),
 			timer.getTimeElapsed(PRECISION_MS));
 		
-		cout << "Angles(Â°): " << 
+		cout << "Angles(Â): " << 
 			position_tracker.getValue(ANGLE,X) << ", " <<
 			position_tracker.getValue(ANGLE,Y) << ", " <<
 			position_tracker.getValue(ANGLE,Z) << endl;
@@ -38,12 +46,32 @@ int main (void) {
 			position_tracker.getValue(POSITION,X) << ", " <<
 			position_tracker.getValue(POSITION,Y) << ", " <<
 			position_tracker.getValue(POSITION,Z) << endl;
-		
+		cout << '\n';	
+
+		csv_file.open(csv_path.c_str(),ios::app);
+		csv_file << timer.getTimeElapsed(PRECISION_MS)/1000.0 << ',' <<
+			imu.getGyroX() << ',' <<
+			imu.getGyroY() << ',' <<
+			imu.getGyroZ() << ',' <<
+			position_tracker.getValue(ANGLE,X) << ',' <<
+			position_tracker.getValue(ANGLE,Y) << ',' <<
+			position_tracker.getValue(ANGLE,Z) << ',' <<
+			imu.getAcclX() << ',' <<
+			imu.getAcclY() << ',' <<
+			imu.getAcclZ() << ',' <<
+			position_tracker.getValue(VELOCITY,X) << ',' <<
+			position_tracker.getValue(VELOCITY,Y) << ',' <<
+			position_tracker.getValue(VELOCITY,Z) << ',' <<
+			position_tracker.getValue(POSITION,X) << ',' <<
+			position_tracker.getValue(POSITION,Y) << ',' <<
+			position_tracker.getValue(POSITION,Z) << ',' << endl;
+		csv_file.close();
+
 		robotWait(0,10);
 	}
 }
 
-void zeroIMU(IMU *imu, PositionTracker *position_tracker) {
+void averageIMU(IMU *imu, PositionTracker *position_tracker) {
 	float imu_averages[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
 	int i = 0;
 	int j;
@@ -60,7 +88,8 @@ void zeroIMU(IMU *imu, PositionTracker *position_tracker) {
 		i++;
 	}
 	for (j=0; j<6; j++) {
-		imu_averages[i] /= (float)(i+1);
+		imu_averages[j] /= 50.0;
+		cout << "average is " << imu_averages[j] << endl;
 	}
 	position_tracker->setAverages(imu_averages);
 }

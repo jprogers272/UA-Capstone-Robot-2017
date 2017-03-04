@@ -18,8 +18,9 @@ struct SensorData {
 	int ir2_4_state;
 	int ir4_1_state;
 	int ir4_2_state;
-	float gyroZ;
+	float gyroX;
 	float gyroY;
+	float gyroZ;
 	float acclY;
 	float compass_angle;
 	float battery_voltage;

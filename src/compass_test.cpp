@@ -24,17 +24,17 @@ int main()
 	I2Cbus i2c_bus(2);
 	Compass compass(&i2c_bus);
 	
-	RobotTimer time;
+//	RobotTimer time;
 
-	time.start();
-	wheel_1.setVoltage(2.5,12.6);
-	wheel_2.setVoltage(-2.5,12.6);
-	wheel_3.setVoltage(-2.5,12.6);
-	wheel_4.setVoltage(2.5,12.6);
-	while(time.getTimeElapsed(0)<2)
-	{
-		cout << time.getTimeElapsed(0) << endl;
-	}
+//	time.start();
+//	wheel_1.setVoltage(2.5,12.6);
+//	wheel_2.setVoltage(-2.5,12.6);
+//	wheel_3.setVoltage(-2.5,12.6);
+//	wheel_4.setVoltage(2.5,12.6);
+//	while(time.getTimeElapsed(0)<2)
+//	{
+//		cout << time.getTimeElapsed(0) << endl;
+//	}
 	wheel_1.off();
 	wheel_2.off();
 	wheel_3.off();
@@ -53,23 +53,23 @@ int main()
 	// 		break;
 
 	// 	case stage2:
-	// 		float initReading = initialReading(500);
-	// 		float temp = 0;
-	// 		while(1)
-	// 		{
-	// 			temp = compass.getAngleF();
-	// 			cout << "Present Reading " <<temp << endl;
-	// 			if((temp - initReading) > 10 || (temp - initReading) < -10)
-	// 			{
-	// 				cout << "Slapping. Field Diff: " << temp-initReading << endl;
-	// 				slapper.off();
-	// 			}
-	// 			else
-	// 			{
-	// 				cout << "Stopping. Field Diff: " << temp-initReading << endl;
-	// 				slapper.setVoltage(4.5,12.6);
-	// 			}
-	// 		}
+	 		float initReading = initialReading(500);
+	 		float temp = 0;
+	 		while(1)
+	 		{
+	 			temp = compass.getAngleF();
+	 			cout << "Present Reading " <<temp << endl;
+	 			if((temp - initReading) > 10 || (temp - initReading) < -10)
+	 			{
+	 				cout << "Slapping. Field Diff: " << temp-initReading << endl;
+	 				slapper.off();
+	 			}
+	 			else
+	 			{
+	 				cout << "Stopping. Field Diff: " << temp-initReading << endl;
+	 				slapper.setVoltage(4.5,12.6);
+	 			}
+	 		}
 	// 		break;	
 
 	// 	case poststage2:

@@ -2,6 +2,7 @@
 
 #include "robot.hpp"
 #include "mecanum.hpp"
+#include "positionTracker.hpp"
 #include "sensors.hpp"
 #include "stage1.hpp"
 #include "timing.hpp"
@@ -11,16 +12,17 @@
 using namespace std;
 
 void Robot::drive_logic(void) {
+	position_tracker.calculateAnglesOnly(sensorData->gyroX,sensorData->gyroY,sensorData->gyroZ,timer.getTimeElapsed(PRECISION_MS));
 	rotation = pid_multiplier * angle_controller.calculateRotation(sensorData->gyroZ,timer.getTimeElapsed(PRECISION_MS));
 	processMecanum(drive_voltages,voltage_max,translation,translation_angle,rotation*3.0/voltage_max);
 	cout << "drive voltages are " << drive_voltages[0] << ", " <<
 		drive_voltages[1] << ", " <<
 		drive_voltages[2] << ", " <<
 		drive_voltages[3] << endl;
-	cout << "maximum voltage is " << voltage_max << endl;
-	cout << "translation multiplier is " << translation << endl;
-	cout << "translation angle is " << translation_angle << endl;
-	cout << "rotation multipler is " << rotation << endl;
+	//cout << "maximum voltage is " << voltage_max << endl;
+	//cout << "translation multiplier is " << translation << endl;
+	//cout << "translation angle is " << translation_angle << endl;
+	//cout << "rotation multipler is " << rotation << endl;
 }
 
 void Robot::setDriveDirection(int direction, float voltage) {
@@ -71,12 +73,15 @@ void Robot::zero_gyro_logic(void) {
 	if (stateLoopCount < 50) {
 		gyroAverageZ += sensorData->gyroZ;
 		gyroAverageY += sensorData->gyroY;
+		gyroAverageX += sensorData->gyroX;
 		stateLoopCount++;
 	}
 	else {
 		gyroAverageZ /= (float)(stateLoopCount);
 		gyroAverageY /= (float)(stateLoopCount);
+		gyroAverageX /= (float)(stateLoopCount);
 		angle_controller.setAverage(gyroAverageZ);
+		position_tracker.setGyroAverages(gyroAverageX,gyroAverageY,gyroAverageZ);
 		stateLoopCount = 0;
 		currentState = nextState;
 		cout << "measuring took " << timer.getTimeElapsed(PRECISION_MS) << " ms.\n";
@@ -209,20 +214,23 @@ void Robot::post_stage1_logic(void) {
 			}
 			break;
 		case 2:
-			setDriveDirection(STRAIGHT_FORWARD,4.5);
+			setDriveDirection(STRAIGHT_FORWARD,3.5);
 			inner_state++;
 			break;
 		case 3:
 			if((sensorData->ir2_1_state == 0) && (sensorData->ir2_2_state == 0)) {
-				setDriveDirection(STOPPED,0.0);
-				inner_state = 0;
-				currentState = pre_stage2;
+				setDriveDirection(STRAFE_LEFT,4.0);
+				state_timer.start();
+				inner_state++;
 			}
 			break;
-		default:
-			setDriveDirection(STOPPED,0.0);
-			currentState = finish;
-			break;
+		case 4:
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
+				setDriveDirection(STOPPED,0.0);
+				inner_state = 0;
+				nextState = pre_stage2;
+				currentState = zero_gyro;
+			}
 	}
 	drive_logic();
 }
@@ -252,7 +260,7 @@ void Robot::pre_stage2_logic(void) {
 			inner_state++;
 			break;
 		case 4:
-			if (state_timer.getTimeElapsed(PRECISION_MS)>200) {
+			if (state_timer.getTimeElapsed(PRECISION_MS)>300) {
 				setDriveDirection(STOPPED,0.0);
 				inner_state = 0;
 				currentState = average_compass;
@@ -297,7 +305,7 @@ void Robot::stage2_logic(void) {
 		slapper_voltage = 4.5;
 	}
 
-	if (state_timer.getTimeElapsed(PRECISION_S) > 5) {
+	if (state_timer.getTimeElapsed(PRECISION_S) > 32) {
 		slapper_voltage = 0;
 		stateLoopCount = 0;
 		inner_state = 0;
@@ -394,7 +402,9 @@ void Robot::stage3_logic(void) {
 }
 
 void Robot::post_stage3_logic(void) {
-		switch(inner_state) {
+	static float angleX_before_step = position_tracker.getAngle(X);
+	cout << "difference is " << position_tracker.getAngle(X) - angleX_before_step << endl;
+	switch(inner_state) {
 		case 0:
 			setDriveDirection(STRAIGHT_BACKWARD,3.0);
 			inner_state++;
@@ -408,47 +418,109 @@ void Robot::post_stage3_logic(void) {
 			}
 			break;
 		case 2:
-			//setDriveDirection(STRAFE_RIGHT,4.5);
 			if ((angle_controller.getAngle() < -175.0) && (angle_controller.getAngle() > -185.0)) {
-				setDriveDirection(STRAIGHT_FORWARD,3.0);
+				setDriveDirection(STRAIGHT_FORWARD,4.0);
 				inner_state++;
 			}
 			break;
 		case 3:
-			if ((sensorData->gyroY - gyroAverageY) > 2.0) {
+			if ((position_tracker.getAngle(X) - angleX_before_step) < -2.0) {
 				inner_state++;
 			}
 			break;
 		case 4:
-			if ((sensorData->gyroY - gyroAverageY) < -2.0) {
+			if ((position_tracker.getAngle(X) - angleX_before_step) > -1.5) {
 				inner_state++;
 				voltage_max = 6.0;
 			}
 			break;
 		case 5:
-			if ((sensorData->gyroY - gyroAverageY) > 10.0) {
+			if ((position_tracker.getAngle(X) - angleX_before_step) < -4.0) {
 				inner_state++;
-				inner_state = 0;
-				currentState = pre_stage4;
 			}
 			break;
 		case 6:
-			if ((sensorData->gyroY - gyroAverageY) < 16.0) {
+			if ((position_tracker.getAngle(X) - angleX_before_step) > -1.0) {
 				inner_state = 0;
 				currentState = pre_stage4;
 			}
 			break;
 	}
-	cout << "gyro Y is " << sensorData->gyroY << endl;
+	cout << "angle x is " << position_tracker.getAngle(X) << endl;
 	drive_logic();
 }
 
 void Robot::pre_stage4_logic(void) {
-	setDriveDirection(STOPPED,0.0);
+	switch (inner_state) {
+		case 0:
+			angle_controller.setSetpoint(-90.0);
+			setDriveDirection(ROTATE,3.0);
+			inner_state++;
+		case 1:
+			if ((angle_controller.getAngle() < -85.0) && (angle_controller.getAngle() > -95.0)) {
+				setDriveDirection(STRAFE_RIGHT,4.0);
+				state_timer.start();
+				inner_state++;
+			}
+			break;
+		case 2:
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1500) {
+				setDriveDirection(STOPPED,3.0);
+				inner_state++;
+				nextState = currentState;
+				currentState = zero_gyro;
+			}
+			break;
+		case 3:
+			setDriveDirection(STRAIGHT_FORWARD,3.0);
+			inner_state++;
+			break;
+		case 4:
+			if ((sensorData->ir2_1_state == 0) && (sensorData->ir2_2_state == 0)) {
+				setDriveDirection(STRAIGHT_BACKWARD,3.0);
+				inner_state++;
+			}
+			break;
+		case 5:
+			if (sensorData->ir4_2_state == 0) {
+				setDriveDirection(STRAIGHT_BACKWARD,2.0);
+				inner_state++;
+			}
+			break;
+		case 6:
+			if (sensorData->ir4_1_state == 0) {
+				setDriveDirection(STRAFE_RIGHT,3.0);
+				state_timer.start();
+				inner_state++;
+			}
+			break;
+		case 7:
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
+				setDriveDirection(STRAIGHT_FORWARD,2.0);
+				setDriveDirection(STOPPED,0.0);
+				inner_state++;
+				inner_state = 0;
+				currentState = stage4;
+			}
+			break;
+		case 8:
+			if (sensorData->ir4_1_state == 1) {
+				setDriveDirection(STRAIGHT_BACKWARD,2.0);
+				inner_state++;
+			}
+			break;
+		case 9:
+			if (sensorData->ir4_1_state == 0) {
+				setDriveDirection(STOPPED,0.0);
+				inner_state = 0;
+				currentState = stage4;
+			}
+			break;
+	}
 	drive_logic();
-	currentState = finish;
 }
 
 void Robot::stage4_logic(void) {
-	
+	cout << "\nFIRE\n\n";
+	currentState = finish;	
 }
