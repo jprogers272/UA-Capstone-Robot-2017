@@ -24,7 +24,7 @@
   ***********************************************/
 
 
-#define DELAY_MOTOR 10 //5 milliseconds
+#define DELAY_MOTOR 5 //5 milliseconds
 #define DELAY_NEXT  2 //2 seconds
 
 //robotWait is used as follows: robotWait(seconds, milliseconds)
