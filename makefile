@@ -2,8 +2,9 @@
 CC = g++
 C_EXT = .cpp
 H_EXT = .hpp
-FLAGS = -Wall -c
+FLAGS = -Wall -c -I/usr/local/include
 LDFLAGS = -Wall -g
+LDLIBS = -L/usr/local/lib -lopencv_core -lopencv_highgui -lopencv_videoio -lopencv_imgproc -lopencv_imgcodecs -lpthread
 OBJ_DIR = obj
 SRC_DIR = src
 BIN_DIR = bin
@@ -18,7 +19,7 @@ $(OBJ_DIR)/%.o:	$(SRC_DIR)/%$(C_EXT) $(DEP)
 	$(CC) $(FLAGS) -o $@ -c $<
 
 $(MAINFILES): % : $(OBJ_DIR)/%.o $(OBJ)
-	$(CC) $(LDFLAGS) $(OBJ) $< -o $(BIN_DIR)/$@
+	$(CC) $(LDFLAGS) $(LDLIBS) $(OBJ) $< -o $(BIN_DIR)/$@
 
 .PHONY: clean print-%
 clean:
