@@ -42,6 +42,7 @@ class Robot {
 		PositionTracker position_tracker;
 		I2Cbus i2c_bus;
 		Sensors sensors;
+		Display disp;
 		SensorData *sensorData;
 		State currentState;
 		State nextState;

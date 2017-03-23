@@ -20,6 +20,7 @@ Robot::Robot() :
 	slapper(SLAPPER_PWM,SLAPPER_DIR),
 	angle_controller(PGAIN,IGAIN,DGAIN),
 	i2c_bus(2),
+	disp(&i2c_bus),
 	sensors(&i2c_bus)
 {
 	sensorData = new SensorData;
