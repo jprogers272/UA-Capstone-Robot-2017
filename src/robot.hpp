@@ -6,10 +6,10 @@
 #include "angleControl.hpp"
 #include "DCmotor.hpp"
 #include "i2cbus.hpp"
+#include "display.hpp"
 #include "sensors.hpp"
 #include "stage1.hpp"
 #include "timing.hpp"
-#include "display.hpp"
 #include "positionTracker.hpp"
 
 enum State {
@@ -41,8 +41,8 @@ class Robot {
 		AngleControl angle_controller;
 		PositionTracker position_tracker;
 		I2Cbus i2c_bus;
-		Sensors sensors;
 		Display disp;
+		Sensors sensors;
 		SensorData *sensorData;
 		State currentState;
 		State nextState;
