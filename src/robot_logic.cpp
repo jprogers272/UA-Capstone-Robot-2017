@@ -64,17 +64,17 @@ void Robot::setDriveDirection(int direction, float voltage) {
 }
 
 void Robot::start_logic(void) {
-    disp->writeCenter("Robot Starting Up...",0);
-    disp->writeDisplay();
+    disp.writeCenter("Robot Starting Up...",0);
+    disp.writeDisplay();
     currentState = zero_gyro;
 	stateLoopCount = 0;
 	timer.start();
-    disp->clearDisplay();
+    disp.clearDisplay();
 }
 
 void Robot::zero_gyro_logic(void) {
-    disp->writeCenter("Zeroing Gyro...",0);
-    disp->writeDisplay();
+    disp.writeCenter("Zeroing Gyro...",0);
+    disp.writeDisplay();
 	cout << "gyroAverage is " << gyroAverageZ << endl;
 	if (stateLoopCount < 50) {
 		gyroAverageZ += sensorData->gyroZ;
@@ -93,7 +93,7 @@ void Robot::zero_gyro_logic(void) {
 		cout << "measuring took " << timer.getTimeElapsed(PRECISION_MS) << " ms.\n";
 		cout << "average is " << gyroAverageZ << endl;
 	}
-    disp->clearDisplay();
+    disp.clearDisplay();
 }
 
 void Robot::pre_stage1_logic(void) {
