@@ -64,12 +64,17 @@ void Robot::setDriveDirection(int direction, float voltage) {
 }
 
 void Robot::start_logic(void) {
-	currentState = zero_gyro;
+    disp->writeCenter("Robot Starting Up...",0);
+    disp->writeDisplay();
+    currentState = zero_gyro;
 	stateLoopCount = 0;
 	timer.start();
+    disp->clearDisplay();
 }
 
 void Robot::zero_gyro_logic(void) {
+    disp->writeCenter("Zeroing Gyro...",0);
+    disp->writeDisplay();
 	cout << "gyroAverage is " << gyroAverageZ << endl;
 	if (stateLoopCount < 50) {
 		gyroAverageZ += sensorData->gyroZ;
@@ -88,6 +93,7 @@ void Robot::zero_gyro_logic(void) {
 		cout << "measuring took " << timer.getTimeElapsed(PRECISION_MS) << " ms.\n";
 		cout << "average is " << gyroAverageZ << endl;
 	}
+    disp->clearDisplay();
 }
 
 void Robot::pre_stage1_logic(void) {
@@ -96,7 +102,7 @@ void Robot::pre_stage1_logic(void) {
 		case 0:
 			state_timer.start();
 			setDriveDirection(STRAIGHT_BACKWARD,3.0);
-			
+
 			inner_state++;
 			break;
 		case 1:
@@ -195,7 +201,7 @@ void Robot::stage1_logic(void) {
 }
 
 void Robot::post_stage1_logic(void) {
-	cout << "code is " 
+	cout << "code is "
 		<< stage1.components[0] << ' '
 		<< stage1.components[1] << ' '
 		<< stage1.components[2] << ' '
@@ -247,7 +253,7 @@ void Robot::pre_stage2_logic(void) {
 			if (sensorData->ir2_4_state == 0) {
 				setDriveDirection(STRAFE_RIGHT,3.0);
 				inner_state++;
-			}	
+			}
 			break;
 		case 2:
 			if (sensorData->ir2_3_state == 0) {
@@ -284,7 +290,7 @@ void Robot::pre_stage2_logic(void) {
 
 
 void Robot::average_compass_logic(void) {
-	angle_controller.disableIntegral();	
+	angle_controller.disableIntegral();
 	if (stateLoopCount < 50) {
 		compAverage += sensorData->compass_angle;
 		stateLoopCount++;
@@ -302,7 +308,7 @@ void Robot::stage2_logic(void) {
 		state_timer.start();
 		stateLoopCount++;
 	}
-	
+
 	if((sensorData->compass_angle - compAverage) > 10 || (sensorData->compass_angle - compAverage) < -10) {
 		cout << "Stopping. Field Diff: " << sensorData->compass_angle - compAverage << endl;
 		slapper_voltage = 0;
@@ -317,7 +323,7 @@ void Robot::stage2_logic(void) {
 		stateLoopCount = 0;
 		inner_state = 0;
 		currentState = post_stage2;
-	}	
+	}
 }
 
 void Robot::post_stage2_logic(void) {
@@ -361,10 +367,10 @@ void Robot::post_stage2_logic(void) {
 }
 
 void Robot::pre_stage3_logic(void) {
-	if (stateLoopCount == 0) {		
+	if (stateLoopCount == 0) {
 		state_timer.start();
 	}
-	cout << "state timer is " << state_timer.getTimeElapsed(PRECISION_MS) << "ms\n";	
+	cout << "state timer is " << state_timer.getTimeElapsed(PRECISION_MS) << "ms\n";
 	switch (inner_state) {
 		case 0:
 			setDriveDirection(STRAFE_RIGHT,3.5);
@@ -480,7 +486,7 @@ void Robot::post_stage3_logic(void) {
 			//}
 			break;
 		*/
-			
+
 	}
 	cout << "angle x is " << position_tracker.getAngle(X) << endl;
 	drive_logic();
@@ -521,7 +527,7 @@ void Robot::pre_stage4_logic(void) {
 		//		currentState = stage4;
 		//	}
 		//	break;
-		
+
 		case 2:
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 1500) {
 				setDriveDirection(STOPPED,3.0);
@@ -584,7 +590,7 @@ void Robot::pre_stage4_logic(void) {
 				currentState = stage4;
 			}
 			break;
-		
+
 	}
 	drive_logic();
 }
@@ -610,7 +616,7 @@ void Robot::stage4_logic(void) {
 }
 
 void Robot::finish_logic(void) {
-	cout << "Stage 1 code is " << 
+	cout << "Stage 1 code is " <<
 		stage1.components[0] << ' ' <<
 		stage1.components[1] << ' ' <<
 		stage1.components[2] << ' ' <<
