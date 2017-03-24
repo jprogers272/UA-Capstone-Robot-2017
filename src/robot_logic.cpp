@@ -107,19 +107,19 @@ void Robot::pre_stage1_logic(void) {
 			break;
 		case 1:
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 750) {
-				setDriveDirection(STRAFE_LEFT,3.5);
+				setDriveDirection(STRAFE_LEFT,4.0);
 				inner_state++;
 			}
 			break;
 		case 2:
 			if ((sensorData->ir1_1_state == 0) && (sensorData->ir1_2_state == 0)) {
-				setDriveDirection(STRAFE_RIGHT,3.5);
+				setDriveDirection(STRAFE_RIGHT,3.0);
 				state_timer.start();
 				inner_state++;
 			}
 			break;
 		case 3:
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 100) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 300) {
 				setDriveDirection(STRAIGHT_FORWARD,3.0);
 				inner_state++;
 			}
@@ -179,9 +179,11 @@ void Robot::stage1_logic(void) {
 			cout << "reorient robot?\n";
 			if (translation_angle > -85.0) {
 				translation_angle = -145.0;
+				voltage_max = 3.5;
 			}
 			else if (translation_angle < -95.0) {
 				translation_angle = -75.0;
+				voltage_max = 3.5;
 			}
 			else {
 				//it's 90.0, accounting for floating point error
@@ -232,6 +234,13 @@ void Robot::post_stage1_logic(void) {
 			}
 			break;
 		case 4:
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
+				setDriveDirection(STRAFE_LEFT,4.0);
+				state_timer.start();
+				inner_state++;
+			}
+			break;
+		case 5:
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
 				setDriveDirection(STOPPED,0.0);
 				inner_state = 0;
@@ -436,28 +445,60 @@ void Robot::post_stage3_logic(void) {
 		case 2:
 			if ((angle_controller.getAngle() < -175.0) && (angle_controller.getAngle() > -185.0)) {
 				setDriveDirection(STRAIGHT_FORWARD,4.0);
-				inner_state++;
+				state_timer.start();
+				inner_state = 5;
 			}
 			break;
+		/*	
 		case 3:
-			if ((position_tracker.getAngle(X) - angleX_before_step) < -2.0) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
+				setDriveDirection(STRAFE_LEFT,4.0);
+				state_timer.start();
 				inner_state++;
 			}
 			break;
 		case 4:
-			if ((position_tracker.getAngle(X) - angleX_before_step) > -1.5) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
+				setDriveDirection(STOPPED,0.0);
+				stateLoopCount = 0;
+				nextState = currentState;
+				currentState = zero_gyro;
+				angle_controller.disableIntegral();
+				angle_controller.enableIntegral(IGAIN);
+				inner_state++;
+			}
+			break;
+		*/
+		case 5:
+			setDriveDirection(STRAFE_RIGHT,4.0);
+			state_timer.start();
+			inner_state++;
+			break;
+		case 6:
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
+				setDriveDirection(STRAIGHT_FORWARD,4.5);
+				inner_state++;
+			}
+			break;
+		case 7:
+			if ((position_tracker.getAngle(X) - angleX_before_step) < -0.1) {
+				inner_state++;
+			}
+			break;
+		case 8:
+			if ((position_tracker.getAngle(X) - angleX_before_step) > 0.0) {
 				inner_state++;
 				voltage_max = 7.0;
 			}
 			break;
-		case 5:
-			if ((position_tracker.getAngle(X) - angleX_before_step) < -4.0) {
+		case 9:
+			if ((position_tracker.getAngle(X) - angleX_before_step) < -0.5) {
 				//state_timer.start();
 				inner_state++;
 			}
 			break;
-		case 6:
-			if ((position_tracker.getAngle(X) - angleX_before_step) > -1.0) {
+		case 10:
+			if ((position_tracker.getAngle(X) - angleX_before_step) > 0.0) {
 				inner_state = 0;
 				currentState = pre_stage4;
 				//inner_state++;
@@ -544,7 +585,7 @@ void Robot::pre_stage4_logic(void) {
 			inner_state++;
 			break;
 		case 4:
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 500) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 400) {
 				setDriveDirection(STRAIGHT_FORWARD,3.0);
 				inner_state++;
 			}
