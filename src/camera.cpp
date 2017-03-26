@@ -51,7 +51,7 @@ void *locate(void *data)
 
 		//draw contours
 		contour_out = Mat::zeros( canny_out.size(), CV_8UC3 );
-		for( int i = 0; i< contours.size(); i++ )
+		for( unsigned int i = 0; i< contours.size(); i++ )
 		{
 			drawContours( contour_out, contours, i, Scalar(255.), -2, 8, hierarchy, 0, Point() );
 		}
@@ -72,7 +72,7 @@ void *locate(void *data)
 
 		//find outer corners
 		//determine outer corners
-		for (int i = 0; i < corners.size(); i++) {
+		for (unsigned int i = 0; i < corners.size(); i++) {
 			if ((corners[i].x <= top_l.x + TOLERANCE && corners[i].y >= top_l.y) ||
 					(corners[i].x <= top_l.x && corners[i].y >= top_l.y - TOLERANCE))
 				top_l = corners[i];
@@ -99,7 +99,7 @@ void *locate(void *data)
 		pthread_mutex_unlock(dir_mutex);
 
 		pthread_mutex_lock(end_mutex);
-		if(*end)
+		if(*end_thread)
 			pthread_exit(0);
 		pthread_mutex_unlock(end_mutex);
 

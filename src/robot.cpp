@@ -34,9 +34,12 @@ Robot::Robot() :
 	gyroAverageX = 0.0;
 
 	inner_state = 0;
+	display_flag = 0;
 
 	drive_voltages = new float[4];
 	zeroVoltages();
+
+	disp.clearDisplayAll();
 }
 
 int Robot::robotLogic(void) {

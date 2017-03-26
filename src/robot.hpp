@@ -61,6 +61,7 @@ class Robot {
 		RobotTimer timer;
 		RobotTimer state_timer;
 		int inner_state;
+		int display_flag;
 		Stage1 stage1;
 	
 	//member functions

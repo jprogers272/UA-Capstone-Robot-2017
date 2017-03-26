@@ -13,7 +13,7 @@
 #define MIN_DISTANCE 50
 #define BLOCK_SIZE 3
 #define USE_HARRIS false
-#define TOLERENCE 20
+#define TOLERANCE 20
 #define LEFT 100
 #define RIGHT 115
 #define MOVE_RIGHT 1

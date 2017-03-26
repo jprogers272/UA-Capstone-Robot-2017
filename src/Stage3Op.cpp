@@ -24,7 +24,7 @@
   ***********************************************/
 
 
-#define DELAY_MOTOR 10 //5 milliseconds
+#define DELAY_MOTOR 20 //5 milliseconds
 #define DELAY_NEXT  2 //2 seconds
 
 #define STEP 45

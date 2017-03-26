@@ -19,6 +19,8 @@ class Display {
     ~Display();
     void clearBuffer();
     void clearDisplay();
+    void clearAll();
+    void clearDisplayAll();
     void writeDisplay();
     void writeCenter(std::string txt, unsigned char row);
     void writeText(std::string txt, unsigned char row, unsigned char col);
