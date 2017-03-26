@@ -100,7 +100,7 @@ int Robot::robotLogic(void) {
 			//disp.writeDisplay();
 			pre_stage3_logic();
 			break;
-		case stage3:
+		case stage3_solving:
 			//disp.writeCenter("Solving Stage 3...",1);
 			//disp.writeDisplay();
 			stage3_logic();

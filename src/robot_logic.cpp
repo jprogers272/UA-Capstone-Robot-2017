@@ -482,7 +482,7 @@ void Robot::pre_stage3_logic(void) {
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 50) {
 				setDriveDirection(STOPPED,0.0);
 				inner_state = 0;
-				currentState = stage3;
+				currentState = stage3_solving;
 				slapper_voltage = 0.0;
 			}
 			break;
@@ -502,7 +502,7 @@ void Robot::stage3_logic(void) {
 			writeGPIO(ENABLEDRIVER, 1); //wake the driver from sleep
 			writeGPIO(STEPDIRECTION, 1); //set rotation direction to clockwise
 			stage3.waiting = 0;
-			stage3.calculateRotations(stage1.components*);
+			stage3.calculateRotations(stage1.components);
 			inner_state++;
 			break;
 		case 1: //First Rotation
@@ -513,7 +513,7 @@ void Robot::stage3_logic(void) {
 				stage3.waiting = 1; //Indicate that Stage 3 is waiting to complete the pulse
 			}
 			//Check to see if we are waiting to complete a step - wait time is 10 milliseconds
-			if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 10)){
+			if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 5)){
 				writeGPIO(STEP, 0); //Complete Pulse
 				stage3.waiting = 0; //clear wait variable
 				--stage3.rotate1;   //decrement loop variable used to track rotations
@@ -531,7 +531,7 @@ void Robot::stage3_logic(void) {
 				state_timer.start(); //start timer for pulse
 				stage3.waiting = 1; //Indicate that Stage 3 is waiting to complete the pulse
 			}
-			if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 10)){
+			if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 5)){
 				writeGPIO(STEP, 0); //Complete Pulse
 				stage3.waiting = 0; 
 				--stage3.rotate2; 
@@ -548,7 +548,7 @@ void Robot::stage3_logic(void) {
 				state_timer.start(); //start timer for pulse
 				stage3.waiting = 1; //Indicate that Stage 3 is waiting to complete the pulse
 			}
-			if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 10)){
+			if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 5)){
 				writeGPIO(STEP, 0); //Complete Pulse
 				stage3.waiting = 0;
 				--stage3.rotate3;
@@ -565,7 +565,7 @@ void Robot::stage3_logic(void) {
 				state_timer.start(); //start timer for pulse
 				stage3.waiting = 1; //Indicate that Stage 3 is waiting to complete the pulse
 			}
-			if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 10)){
+			if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 5)){
 				writeGPIO(STEP, 0); //Complete Pulse
 				stage3.waiting = 0;
 				--stage3.rotate4;
@@ -582,7 +582,7 @@ void Robot::stage3_logic(void) {
 				state_timer.start(); //start timer for pulse
 				stage3.waiting = 1; //Indicate that Stage 3 is waiting to complete the pulse
 			}
-			if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 10)){
+			if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 5)){
 				writeGPIO(STEP, 0); //Complete Pulse
 				stage3.waiting = 0;
 				--stage3.rotate5;

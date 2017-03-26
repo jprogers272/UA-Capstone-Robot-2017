@@ -1,7 +1,7 @@
 //Author(s): Brandon Fikes
 
-ifndef STAGE3_HPP
-#define STAGE1_HPP
+#ifndef STAGE3_HPP
+#define STAGE3_HPP
 
 #include "robotDefinitions.hpp"
 

@@ -24,7 +24,7 @@ enum State {
 	stage2,
 	post_stage2,
 	pre_stage3,
-	stage3,
+	stage3_solving,
 	post_stage3,
 	pre_stage4,
 	stage4,
