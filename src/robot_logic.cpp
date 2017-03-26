@@ -1,4 +1,4 @@
-//Author(s): John Rogers, William Khan
+//Author(s): John Rogers, William Khan, Brandon Fikes
 
 #include "robot.hpp"
 #include "gpio.hpp"
@@ -7,6 +7,7 @@
 #include "sensors.hpp"
 #include "stage1.hpp"
 #include "timing.hpp"
+#include "stage3.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -491,9 +492,111 @@ void Robot::pre_stage3_logic(void) {
 }
 
 void Robot::stage3_logic(void) {
-	disp.writeCenter("Solving Stage 3...",3); // Once logic is in place, place inside if (display_flag == 0)
-	disp.writeDisplay();
-	currentState = post_stage3;
+	// disp.writeCenter("Solving Stage 3...",3); // Once logic is in place, place inside if (display_flag == 0)
+	// disp.writeDisplay();
+	switch(inner_state){
+		case 0: //configure pins used, setup variables
+			setDirectionGPIO(STEP, 0); //STEP  = GPIO PIN 45 (OUTPUT)
+			setDirectionGPIO(STEPDIRECTION, 0); //DIR   = GPIO PIN 44 (OUTPUT)
+			setDirectionGPIO(ENABLEDRIVER, 0); //SLEEP PIN used for Enable = GPIO PIN 46 (OUTPUT)
+			writeGPIO(ENABLEDRIVER, 1); //wake the driver from sleep
+			writeGPIO(STEPDIRECTION, 1); //set rotation direction to clockwise
+			stage3.waiting = 0;
+			stage3.calculateRotations(stage1.components*);
+			inner_state++;
+			break;
+		case 1: //First Rotation
+			//Check to see if loop variable has not expired, and if the robot is not in a wait state
+			if (stage3.rotate1 != 0 && stage3.waiting != 1){
+				writeGPIO(STEP, 1); //Begin Pulse
+				state_timer.start(); //start timer for pulse
+				stage3.waiting = 1; //Indicate that Stage 3 is waiting to complete the pulse
+			}
+			//Check to see if we are waiting to complete a step - wait time is 10 milliseconds
+			if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 10)){
+				writeGPIO(STEP, 0); //Complete Pulse
+				stage3.waiting = 0; //clear wait variable
+				--stage3.rotate1;   //decrement loop variable used to track rotations
+			}
+			//Check to see if loop variable has expired
+			if (stage3.rotate1 == 0){
+				writeGPIO(STEPDIRECTION, 0); //set rotation direction to counter-clockwise
+				stage3.waiting = 0; //ensure wait is cleared
+				inner_state++; //move to second rotation state
+			}
+			break;
+		case 2: //Second Rotation
+			if (stage3.rotate2 != 0 && stage3.waiting != 1){
+				writeGPIO(STEP, 1); //Begin Pulse
+				state_timer.start(); //start timer for pulse
+				stage3.waiting = 1; //Indicate that Stage 3 is waiting to complete the pulse
+			}
+			if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 10)){
+				writeGPIO(STEP, 0); //Complete Pulse
+				stage3.waiting = 0; 
+				--stage3.rotate2; 
+			}
+			if (stage3.rotate2 == 0){
+				writeGPIO(STEPDIRECTION, 1); //set rotation direction to clockwise
+				stage3.waiting = 0; //ensure wait is cleared
+				inner_state++;
+			}
+			break;
+		case 3: //Third Rotation
+			if (stage3.rotate3 != 0 && stage3.waiting != 1){
+				writeGPIO(STEP, 1); //Begin Pulse
+				state_timer.start(); //start timer for pulse
+				stage3.waiting = 1; //Indicate that Stage 3 is waiting to complete the pulse
+			}
+			if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 10)){
+				writeGPIO(STEP, 0); //Complete Pulse
+				stage3.waiting = 0;
+				--stage3.rotate3;
+			}
+			if (stage3.rotate3 == 0){
+				writeGPIO(STEPDIRECTION, 0); //set rotation direction to counter-clockwise
+				stage3.waiting = 0; //ensure wait is cleared
+				inner_state++;
+			}
+			break;
+		case 4: //Fourth Rotation
+			if (stage3.rotate4 != 0 && stage3.waiting != 1){
+				writeGPIO(STEP, 1); //Begin Pulse
+				state_timer.start(); //start timer for pulse
+				stage3.waiting = 1; //Indicate that Stage 3 is waiting to complete the pulse
+			}
+			if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 10)){
+				writeGPIO(STEP, 0); //Complete Pulse
+				stage3.waiting = 0;
+				--stage3.rotate4;
+			}
+			if (stage3.rotate4 == 0){
+				writeGPIO(STEPDIRECTION, 1); //set rotation direction to clockwise
+				stage3.waiting = 0; //ensure wait is cleared
+				inner_state++;
+			}
+			break;
+		case 5: //Fifth Rotation
+			if (stage3.rotate5 != 0 && stage3.waiting != 1){
+				writeGPIO(STEP, 1); //Begin Pulse
+				state_timer.start(); //start timer for pulse
+				stage3.waiting = 1; //Indicate that Stage 3 is waiting to complete the pulse
+			}
+			if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 10)){
+				writeGPIO(STEP, 0); //Complete Pulse
+				stage3.waiting = 0;
+				--stage3.rotate5;
+			}
+			if (stage3.rotate5 == 0){
+				stage3.waiting = 0; //ensure wait is cleared
+				inner_state++;
+			}
+			break;
+		case 6: //Clean Up
+			writeGPIO(ENABLEDRIVER, 0); //put driver to sleep and release stepper
+			inner_state = 0;
+			currentState = post_stage3;
+	}
 }
 
 void Robot::post_stage3_logic(void) {

@@ -11,6 +11,7 @@
 #include "stage1.hpp"
 #include "timing.hpp"
 #include "positionTracker.hpp"
+#include "stage3.hpp"
 
 enum State {
 	start,
@@ -63,6 +64,7 @@ class Robot {
 		int inner_state;
 		int display_flag;
 		Stage1 stage1;
+		Stage3 stage3;
 	
 	//member functions
 	public:

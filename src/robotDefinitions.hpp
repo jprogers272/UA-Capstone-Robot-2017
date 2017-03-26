@@ -62,4 +62,8 @@
 
 #define VBAT_MULTIPLIER 11.2
 
+#define STEP 45
+#define STEPDIRECTION 44
+#define ENABLEDRIVER 46
+
 #endif
