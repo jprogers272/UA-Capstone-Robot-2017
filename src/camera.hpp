@@ -7,15 +7,19 @@
 #include <opencv2/imgcodecs.hpp>
 #include <pthread.h>
 
-#define THRESHOLD 210
+#define THRESHOLD 160
 #define MAX_CORNERS 20
 #define QUALITY_LEVEL 0.2
 #define MIN_DISTANCE 50
 #define BLOCK_SIZE 3
 #define USE_HARRIS false
-#define TOLERENCE 20
-#define LEFT 100
-#define RIGHT 115
+#define TOLERANCE 20
+#define LEFT 175
+#define RIGHT 275
+#define CROP_TOP 90
+#define CROP_LEFT 0
+#define CROP_HEIGHT 240
+#define CROP_WIDTH 640
 #define MOVE_RIGHT 1
 #define MOVE_LEFT -1
 #define STOP 0

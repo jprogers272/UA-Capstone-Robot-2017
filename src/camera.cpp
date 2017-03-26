@@ -21,26 +21,34 @@ void *locate(void *data)
 	pthread_mutex_t *end_mutex = my_data->end_mutex_ptr;
 
 	//initialize Mats for processing each frame
-	Mat src, src_gray, canny_out, contour_out, contour_out_8U;
+	Mat src, cropped, src_gray, canny_out, contour_out, contour_out_8U;
 
 	//initialize video input stream
 	VideoCapture stream(-1);
 
+	//set cropping region of interest
+	Rect myROI(0, 90, 640, 240);
+
+	//initialize arrays needed for contour detection
+	vector<vector<Point> > contours;
+	vector<Vec4i> hierarchy;
+
+	//initialize array for corners returned from corner detector
+	vector<Point2f> corners;
+
 	while(true)
 	{
-		//initialize arrays needed for contour detection
-		vector<vector<Point> > contours;
-		vector<Vec4i> hierarchy;
-		//initialize array for corners returned from corner detector
-		vector<Point2f> corners;
+
 		//initialize four corner points
 		Point2f top_l(1000.f, -1000.f), top_r(-1000.f, -1000.f),
 				bot_l(1000.f, 1000.f), bot_r(-1000.f, 1000.f);
 
 		//load frame from camera
 		stream.read(src);
+		//crop image
+		cropped = src(myROI);
 		//convert to grayscale and blur
-		cvtColor( src, src_gray, CV_BGR2GRAY );
+		cvtColor( cropped, src_gray, CV_BGR2GRAY );
 		blur( src_gray, src_gray, Size(3,3) );
 
 		//Perform edge detection
