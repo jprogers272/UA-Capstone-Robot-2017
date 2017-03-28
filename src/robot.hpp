@@ -63,6 +63,7 @@ class Robot {
 		RobotTimer state_timer;
 		int inner_state;
 		int display_flag;
+		int start_switch_flag;
 		Stage1 stage1;
 		Stage3 stage3;
 	

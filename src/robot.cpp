@@ -28,6 +28,7 @@ Robot::Robot() :
 	drive_voltages = new float[4];
 
 	resetRobot();
+	start_switch_flag = 0;
 
 	disp.clearDisplayAll();
 }
@@ -52,8 +53,10 @@ void Robot::resetRobot(void) {
 }
 
 int Robot::robotLogic(void) {
-	//cout << "current state: " << currentState << endl;
+//	cout << "current state: " << currentState << endl;
+//	cout << "inner state: " << inner_state << endl;
 	sensors.getAllSensors(sensorData);
+	if (currentState != start) cout << position_tracker.getAngle(X) << endl;
 	if (readGPIO(START_SWITCH_GPIO) == 1) {
 		resetRobot();
 	}
@@ -137,7 +140,7 @@ int Robot::robotLogic(void) {
 		case finish:
 			//disp.writeCenter("Shutting Down...",0);
 			finish_logic();
-			return 1;
+			//return 1;
 			break;
 	}
 	robotWait(0,LOOP_TIME_MS);

@@ -24,10 +24,10 @@ void PIDcontroller::calculateOutput(float plant_value, int time_cur) {
 	output = (error * gainP) + (integral * gainI) + (derivative * gainD);
 	limitOutput();
 
-	cout << "setpoint: " << setpoint << endl;
-	cout << "error: " << error << endl;
-	cout << "integral: " << integral << endl;
-	cout << "derivative: " << derivative << endl;
+//	cout << "setpoint: " << setpoint << endl;
+//	cout << "error: " << error << endl;
+//	cout << "integral: " << integral << endl;
+//	cout << "derivative: " << derivative << endl;
 }
 
 void PIDcontroller::setSetpoint(float setpoint) {
