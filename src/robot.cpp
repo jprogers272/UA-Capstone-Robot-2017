@@ -35,7 +35,7 @@ Robot::Robot() :
 
 void Robot::resetRobot(void) {
 	currentState = start;
-	nextState = pre_stage1;
+	nextState = post_stage3;
 	inner_state = 0;
 	stateLoopCount = 0;
 
@@ -46,8 +46,8 @@ void Robot::resetRobot(void) {
 	gyroAverageX = 0.0;
 	zeroVoltages();
 
-	angle_controller.setSetpoint(0.0);
-	angle_controller.setAngle(0.0);
+	angle_controller.setSetpoint(-90.0);
+	angle_controller.setAngle(-90.0);
 
 	stage1.zeroComponentArray();
 }
@@ -56,7 +56,6 @@ int Robot::robotLogic(void) {
 //	cout << "current state: " << currentState << endl;
 //	cout << "inner state: " << inner_state << endl;
 	sensors.getAllSensors(sensorData);
-	if (currentState != start) cout << position_tracker.getAngle(X) << endl;
 	if (readGPIO(START_SWITCH_GPIO) == 1) {
 		resetRobot();
 	}

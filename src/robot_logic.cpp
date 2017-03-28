@@ -8,6 +8,7 @@
 #include "stage1.hpp"
 #include "timing.hpp"
 #include "stage3.hpp"
+#include "camera.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -200,18 +201,20 @@ void Robot::stage1_logic(void) {
 			if(display_flag == 0) {
 				disp.writeCenter("Solving Stage 1...",1);
 				disp.writeDisplay();
-				display_flag =1;
+				display_flag = 1;
 			}
 			stage1.energizeComponent();
 			state_timer.start();
 			inner_state++;
 			break;
 		case 1:
-			if ((stage1.currentComponent < 5) && (state_timer.getTimeElapsed(PRECISION_MS) > STAGE1_CHARGING_TIME)) {
-				stage1.identifyComponent();
-				//cout << "identified component " << stage1.currentComponent << " as " << stage1.components[stage1.currentComponent] << endl;
-				stage1.currentComponent++;
-				inner_state = 0;
+			if (stage1.currentComponent < 5) {
+				if (state_timer.getTimeElapsed(PRECISION_MS) > STAGE1_CHARGING_TIME) {
+					stage1.identifyComponent();
+					//cout << "identified component " << stage1.currentComponent << " as " << stage1.components[stage1.currentComponent] << endl;
+					stage1.currentComponent++;
+					inner_state = 0;
+				}
 			}
 			else {
 				stage1.energizeCommon();
@@ -627,8 +630,8 @@ void Robot::stage3_logic(void) {
 }
 
 void Robot::post_stage3_logic(void) {
-	static float angleX_before_step = position_tracker.getAngle(X);
-//	cout << "difference is " << position_tracker.getAngle(X) - angleX_before_step << endl;
+	static float angleX_before_step = position_tracker.getAngle(X_DIR);
+//	cout << "difference is " << position_tracker.getAngle(X_DIR) - angleX_before_step << endl;
 	switch(inner_state) {
 		case 0:
 			setDriveDirection(STRAIGHT_BACKWARD,3.0);
@@ -683,37 +686,39 @@ void Robot::post_stage3_logic(void) {
 			break;
 		case 7:
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 3000) {
-				setDriveDirection(STRAIGHT_FORWARD,7.0);
-				state_timer.start();
-				inner_state++;
+				//setDriveDirection(STRAIGHT_FORWARD,7.0);
+				//state_timer.start();
+				inner_state = 0;
+				currentState = pre_stage4;
 			}
 			break;
+		/*	
 		case 8:
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
 				inner_state = 0;
 				currentState = pre_stage4;
 			}
 			break;
-		/*
+		
 		case 7:
-			if ((position_tracker.getAngle(X) - angleX_before_step) < -0.5) {
+			if ((position_tracker.getAngle(X_DIR) - angleX_before_step) < -0.5) {
 				inner_state++;
 			}
 			break;
 		case 8:
-			if ((position_tracker.getAngle(X) - angleX_before_step) > -0.5) {
+			if ((position_tracker.getAngle(X_DIR) - angleX_before_step) > -0.5) {
 				inner_state++;
 				voltage_max = 7.0;
 			}
 			break;
 		case 9:
-			if ((position_tracker.getAngle(X) - angleX_before_step) < -0.6) {
+			if ((position_tracker.getAngle(X_DIR) - angleX_before_step) < -0.6) {
 				//state_timer.start();
 				inner_state++;
 			}
 			break;
 		case 10:
-			if ((position_tracker.getAngle(X) - angleX_before_step) > -0.6) {
+			if ((position_tracker.getAngle(X_DIR) - angleX_before_step) > -0.6) {
 				inner_state = 0;
 				currentState = pre_stage4;
 				//inner_state++;
@@ -752,7 +757,7 @@ void Robot::post_stage3_logic(void) {
 }
 
 void Robot::pre_stage4_logic(void) {
-	static float angleX_before_step = position_tracker.getAngle(X);
+	static float angleX_before_step = position_tracker.getAngle(X_DIR);
 //	cout << "difference is " << position_tracker.getAngle(X) - angleX_before_step << endl;
 	if(display_flag == 0) {
 		disp.writeCenter("Prepping Stage 4...",4);
@@ -822,36 +827,38 @@ void Robot::pre_stage4_logic(void) {
 				pthread_mutex_init(&cam_direction_mutex, NULL);
 				pthread_mutex_init(&end_thread_flag_mutex, NULL);
 
-				camera_data data;
 				data.direction_ptr = &camera_direction;
 				data.end_thread_ptr = &end_thread_flag;
 				data.dir_mutex_ptr = &cam_direction_mutex;
 				data.end_mutex_ptr = &end_thread_flag_mutex;
-
+				
 				pthread_create(&camera_thread, NULL, locate, (void *)&data);
-
 				inner_state++;
+				state_timer.start();
 			}
 			break;
 		case 6:
-			pthread_mutex_lock(&cam_direction_mutex);
-			switch(camera_direction) {
-				case MOVE_RIGHT:
-					setDriveDirection(STRAIGHT_BACKWARD, 2.0);
-					break;
-				case MOVE_LEFT:
-					setDriveDirection(STRAIGHT_FORWARD, 2.0);
-					break;
-				case STOP:
-					setDriveDirection(STOPPED, 0.0);
-					pthread_mutex_lock(&end_thread_flag_mutex);
-					end_thread_flag = 1;
-					pthread_mutex_unlock(&end_thread_flag_mutex);
-					inner_state = 0;
-					currentState = stage4;
-					break;
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
+				pthread_mutex_lock(&cam_direction_mutex);
+				switch(camera_direction) {
+					case MOVE_RIGHT:
+						setDriveDirection(STRAIGHT_BACKWARD, 1.5);
+						break;
+					case MOVE_LEFT:
+						setDriveDirection(STRAIGHT_FORWARD, 1.5);
+						break;
+					case STOP:
+						setDriveDirection(STOPPED, 0.0);
+						pthread_mutex_lock(&end_thread_flag_mutex);
+						end_thread_flag = 1;
+						pthread_mutex_unlock(&end_thread_flag_mutex);
+						inner_state = 0;
+						currentState = stage4;
+						break;
+				}
+				cout << camera_direction << endl;
+				pthread_mutex_unlock(&cam_direction_mutex);
 			}
-			pthread_mutex_unlock(&cam_direction_mutex);
 			break;
 
 

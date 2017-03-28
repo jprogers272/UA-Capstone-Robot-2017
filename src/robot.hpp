@@ -13,6 +13,7 @@
 #include "positionTracker.hpp"
 #include <pthread.h>
 #include "stage3.hpp"
+#include "camera.hpp"
 
 
 enum State {
@@ -72,6 +73,7 @@ class Robot {
 		pthread_mutex_t cam_direction_mutex;
 		pthread_mutex_t end_thread_flag_mutex;
 		pthread_t camera_thread;
+		camera_data data;
 		Stage3 stage3;
 
 	

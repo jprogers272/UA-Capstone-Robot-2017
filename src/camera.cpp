@@ -40,7 +40,7 @@ void *locate(void *data)
 
 	while(true)
 	{
-
+		
 		//initialize four corner points
 		Point2f top_l(1000.f, -1000.f), top_r(-1000.f, -1000.f),
 				bot_l(1000.f, 1000.f), bot_r(-1000.f, 1000.f);
@@ -52,13 +52,15 @@ void *locate(void *data)
 		//convert to grayscale and blur
 		cvtColor( cropped, src_gray, CV_BGR2GRAY );
 		blur( src_gray, src_gray, Size(3,3) );
-
+		 
 		//Perform edge detection
 		Canny(src_gray, canny_out, THRESHOLD, THRESHOLD*2, 3 );
 
+		
+
 		//Perform contour detection, don't include children
 		findContours( canny_out, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
-
+		
 		//draw contours
 		contour_out = Mat::zeros( canny_out.size(), CV_8UC3 );
 		for( unsigned int i = 0; i< contours.size(); i++ )
@@ -69,7 +71,7 @@ void *locate(void *data)
 		//convert to 8U for corner detector
 		cvtColor(contour_out, contour_out_8U, CV_BGR2GRAY);
 		contour_out_8U.convertTo(contour_out_8U, CV_8U);
-
+		
 		//detect corners
 		goodFeaturesToTrack(contour_out_8U,
 				corners,
@@ -97,8 +99,8 @@ void *locate(void *data)
 				bot_r = corners[i];
 		}
 
-
 		pthread_mutex_lock(dir_mutex);
+		cout << top_l.x << endl;
 		//determine if left, right, or centered
 		if (top_l.x < LEFT && bot_l.x < LEFT)
 			*direction = MOVE_LEFT;

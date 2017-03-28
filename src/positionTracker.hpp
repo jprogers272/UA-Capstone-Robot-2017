@@ -3,9 +3,9 @@
 #ifndef POSITIONTRACKER_HPP
 #define POSITIONTRACKER_HPP
 
-#define X 0
-#define Y 1
-#define Z 2
+#define X_DIR 0
+#define Y_DIR 1
+#define Z_DIR 2
 #define ANGLE 0
 #define VELOCITY 1
 #define POSITION 2
