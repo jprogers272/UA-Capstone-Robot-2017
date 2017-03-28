@@ -24,15 +24,20 @@ void *find(void *data)
 	pthread_mutex_t *mute = my_data->mute_ptr;
 
 	//initialize Mats for processing each frame
-	Mat src, src_gray, canny_out, contour_out, contour_out_8U;
+	Mat src, cropped, src_gray, canny_out, contour_out, contour_out_8U;
 	//set edge detector threshold
-	int threshold = 210;
+	int threshold = 160;
 
 	//initialize video input stream
 	VideoCapture stream(-1);
 
-	Size frameSize = Size((int) stream.get(CV_CAP_PROP_FRAME_WIDTH),
-							(int) stream.get(CV_CAP_PROP_FRAME_HEIGHT));
+	//set cropping region of interest
+	Rect myROI(0, 90, 640, 240);
+
+	stream.read(src);
+	cropped = src(myROI);
+
+	Size frameSize = cropped.size();
 	int fcc = static_cast<int>(stream.get(CV_CAP_PROP_FOURCC));
 	int fps = static_cast<int>(stream.get(CV_CAP_PROP_FPS));
 
@@ -42,8 +47,8 @@ void *find(void *data)
 		pthread_exit(0);
 	}
 
-	VideoWriter save("../../media/out.avi", fcc, fps, frameSize, true);
-	VideoWriter save2("../../media/out2.avi", fcc, fps, frameSize, true);
+	VideoWriter save("/home/media/out.avi", fcc, fps, frameSize, true);
+	VideoWriter save2("/home/media/out2.avi", fcc, fps, frameSize, true);
 
 	if(!save.isOpened())
 	{
@@ -51,13 +56,14 @@ void *find(void *data)
 		pthread_exit(0);
 	}
 
+
+
 	//set corner detector parameters
 	int maxCorners = 20;
 	double qualityLevel = 0.2;
 	double minDistance = 50;
 	int blocksize = 3;
 	bool useHarrisDetector = false;
-	double k = 0.04;
 	double tolerance = 20.0;
 
 	struct timespec start;
@@ -79,8 +85,10 @@ void *find(void *data)
 
 		//load frame from camera
 		stream.read(src);
+		//crop image
+		cropped = src(myROI);
 		//convert to grayscale and blur
-		cvtColor( src, src_gray, CV_BGR2GRAY );
+		cvtColor( cropped, src_gray, CV_BGR2GRAY );
 		blur( src_gray, src_gray, Size(3,3) );
 
 		//Perform edge detection
@@ -91,7 +99,7 @@ void *find(void *data)
 
 		//draw contours
 		contour_out = Mat::zeros( canny_out.size(), CV_8UC3 );
-		for( int i = 0; i< contours.size(); i++ )
+		for( unsigned int i = 0; i< contours.size(); i++ )
 		{
 			drawContours( contour_out, contours, i, Scalar(255.), -2, 8, hierarchy, 0, Point() );
 		}
@@ -112,7 +120,7 @@ void *find(void *data)
 
 		//find outer corners
 		//determine outer corners
-		for (int i = 0; i < corners.size(); i++) {
+		for (unsigned int i = 0; i < corners.size(); i++) {
 			if ((corners[i].x <= top_l.x + tolerance && corners[i].y >= top_l.y) ||
 					(corners[i].x <= top_l.x && corners[i].y >= top_l.y - tolerance))
 				top_l = corners[i];
@@ -156,12 +164,13 @@ void *find(void *data)
 		clock_gettime(CLOCK_MONOTONIC, &end);
 
 		save.write(contour_out);
-		save2.write(src);
+		save2.write(cropped);
 
 		long elapsed = (long)(end.tv_sec - start.tv_sec)*1000;
 		elapsed += (end.tv_nsec - start.tv_nsec)/1000000;
 
 		cout << "Took " << elapsed << "ms to process" << endl;
+		cout << "top left x" << top_l.x << endl;
 
 
 	}

@@ -1,5 +1,5 @@
 //Author(s): William Khan
-
+#include "robotDefinitions.hpp"
 #include <iostream>
 #include "DCmotor.hpp"
 #include "pwm.hpp"
@@ -15,11 +15,11 @@ int main()
 	PWM pwm2b(PWM2B,50000,0,0);
 	PWM pwm0a(PWM0A,50000,0,0);
 	*/
-	DCmotor wheel_1(PWM2B,73);
-	DCmotor wheel_2(PWM2A,75);
-	DCmotor wheel_3(PWM1B,11);
-	DCmotor wheel_4(PWM1A,89);
-	DCmotor slapper(PWM0A,72);
+	DCmotor wheel_1(WHEEL1_PWM,WHEEL1_DIR);
+	DCmotor wheel_2(WHEEL2_PWM,WHEEL2_DIR);
+	DCmotor wheel_3(WHEEL3_PWM,WHEEL3_DIR);
+	DCmotor wheel_4(WHEEL4_PWM,WHEEL4_DIR);
+	DCmotor slapper(SLAPPER_PWM,SLAPPER_DIR);
 
 	wheel_1.off();
 	wheel_2.off();

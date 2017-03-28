@@ -70,7 +70,16 @@ Display::~Display() {
 }
 
 void Display::clearBuffer() {
+  memset(displayBuf_, 0, WIDTH*HEIGHT-(WIDTH*HEIGHT/8));
+}
+
+void Display::clearAll() {
   memset(displayBuf_, 0, WIDTH*HEIGHT);
+}
+
+void Display::clearDisplayAll () {
+  clearAll();
+  writeDisplay();
 }
 
 void Display::clearDisplay() {
@@ -79,6 +88,7 @@ void Display::clearDisplay() {
 }
 
 void Display::writeDisplay() {
+  dispi2c_->setDevice(DISP_ADDRESS);
   dispi2c_->writeRegister(0x00, 0x21); // Set column start addr
   dispi2c_->writeRegister(0x00, 0x00); // 0x00
   dispi2c_->writeRegister(0x00, 127);  // Set column end addr, end 127
@@ -86,10 +96,10 @@ void Display::writeDisplay() {
   dispi2c_->writeRegister(0x00, 0x00); // Page start address
   dispi2c_->writeRegister(0x00, 0x07); // Command for 7
 
-  
-  for(unsigned short i = 0; i < WIDTH*HEIGHT; i++) {
-    dispi2c_->writeRegister(0x40, displayBuf_[i]);
-  }
+  dispi2c_->writebytesRegister(0x40, displayBuf_, WIDTH*HEIGHT+1); 
+ // for(unsigned short i = 0; i < WIDTH*HEIGHT; i++) {
+ //   dispi2c_->writeRegister(0x40, displayBuf_[i]);
+ // }
 }
 
 void Display::writeCenter(string txt, unsigned char row) {
@@ -119,6 +129,7 @@ void Display::writeText(string txt, unsigned char row, unsigned char col) {
 }
 
 void Display::init() {
+  dispi2c_->setDevice(DISP_ADDRESS);
   dispi2c_->writeRegister(0x00,0xAE); // Display Off = 0xAE
   dispi2c_->writeRegister(0x00,0xD5); // ClockDiv = 0xD5
   dispi2c_->writeRegister(0x00,0x80); // Ratio 0x80

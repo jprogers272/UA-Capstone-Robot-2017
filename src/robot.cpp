@@ -1,5 +1,6 @@
 //Author(s): John Rogers
 
+#include "gpio.hpp"
 #include "robot.hpp"
 #include "angleControl.hpp"
 #include "i2cbus.hpp"
@@ -24,105 +25,122 @@ Robot::Robot() :
 	sensors(&i2c_bus)
 {
 	sensorData = new SensorData;
+	drive_voltages = new float[4];
 
+	resetRobot();
+	start_switch_flag = 0;
+
+	disp.clearDisplayAll();
+}
+
+void Robot::resetRobot(void) {
 	currentState = start;
 	nextState = pre_stage1;
-
+	inner_state = 0;
 	stateLoopCount = 0;
+
+	display_flag = 0;
+
 	gyroAverageZ = 0.0;
 	gyroAverageY = 0.0;
 	gyroAverageX = 0.0;
-
-	inner_state = 0;
-
-	drive_voltages = new float[4];
 	zeroVoltages();
+
+	angle_controller.setSetpoint(0.0);
+	angle_controller.setAngle(0.0);
+
+	stage1.zeroComponentArray();
 }
 
 int Robot::robotLogic(void) {
-	cout << "current state: " << currentState << endl;
+//	cout << "current state: " << currentState << endl;
+//	cout << "inner state: " << inner_state << endl;
 	sensors.getAllSensors(sensorData);
+	if (currentState != start) cout << position_tracker.getAngle(X) << endl;
+	if (readGPIO(START_SWITCH_GPIO) == 1) {
+		resetRobot();
+	}
 	switch (currentState) {
 		case start:
-			disp.writeCenter("Robot Starting Up...",0);
-			disp.writeDisplay();
+			//disp.writeCenter("Robot Starting Up...",0);
+			//disp.writeDisplay();
 			start_logic();
-			disp.clearDisplay();
+			//disp.clearDisplay();
 			break;
 		case zero_gyro:
-			disp.writeCenter("Zeroing Gyro...",0);
-			disp.writeDisplay();
+			//disp.writeCenter("Zeroing Gyro...",0);
+			//disp.writeDisplay();
 			zero_gyro_logic();
-			disp.clearDisplay();
+			//disp.clearDisplay();
 			break;
 		case pre_stage1:
-			disp.writeCenter("Prepping Stage 1...",0);
-			disp.writeDisplay();
+			//disp.writeCenter("Prepping Stage 1...",0);
+			//disp.writeDisplay();
 			pre_stage1_logic();
 			break;
 		case stage1_solving:
-			disp.writeCenter("Solving Stage 1...",1);
-			disp.writeDisplay();
+			//disp.writeCenter("Solving Stage 1...",1);
+			//disp.writeDisplay();
 			stage1_logic();
 			break;
 		case post_stage1:
-			disp.writeCenter("Leaving Stage 1...",2);
-			disp.writeDisplay();
+			//disp.writeCenter("Leaving Stage 1...",2);
+			//disp.writeDisplay();
 			post_stage1_logic();
-			disp.clearDisplay();
+			//disp.clearDisplay();
 			break;
 		case pre_stage2:
-			disp.writeCenter("Prepping Stage 2...",0);
-			disp.writeDisplay();
+			//disp.writeCenter("Prepping Stage 2...",0);
+			//disp.writeDisplay();
 			pre_stage2_logic();
 			break;
 		case average_compass:
-			disp.writeCenter("Averaging Compass...",1);
-			disp.writeDisplay();
+			//disp.writeCenter("Averaging Compass...",1);
+			//disp.writeDisplay();
 			average_compass_logic();
 			break;
 		case stage2:
-			disp.writeCenter("Completing Stage 2...",2);
-			disp.writeDisplay();
+			//disp.writeCenter("Completing Stage 2...",2);
+			//disp.writeDisplay();
 			stage2_logic();
 			break;
 		case post_stage2:
-			disp.writeCenter("Leaving Stage 2...",3);
-			disp.writeDisplay();
+			//disp.writeCenter("Leaving Stage 2...",3);
+			//disp.writeDisplay();
 			post_stage2_logic();
-			disp.clearDisplay();
+			//disp.clearDisplay();
 			break;
 		case pre_stage3:
-			disp.writeCenter("Prepping Stage 3...",0);
-			disp.writeDisplay();
+			//disp.writeCenter("Prepping Stage 3...",0);
+			//disp.writeDisplay();
 			pre_stage3_logic();
 			break;
-		case stage3:
-			disp.writeCenter("Solving Stage 3...",1);
-			disp.writeDisplay();
+		case stage3_solving:
+			//disp.writeCenter("Solving Stage 3...",1);
+			//disp.writeDisplay();
 			stage3_logic();
 			break;
 		case post_stage3:
-			disp.writeCenter("Leaving Stage 3...",2);
-			disp.writeDisplay();
+			//disp.writeCenter("Leaving Stage 3...",2);
+			//disp.writeDisplay();
 			post_stage3_logic();
-			disp.clearDisplay();
+			//disp.clearDisplay();
 			break;
 		case pre_stage4:
-			disp.writeCenter("Prepping Stage 4...",0);
-			disp.writeDisplay();
+			//disp.writeCenter("Prepping Stage 4...",0);
+			//disp.writeDisplay();
 			pre_stage4_logic();
 			break;
 		case stage4:
-			disp.writeCenter("Completing Stage 4...",1);
-			disp.writeDisplay();
+			//disp.writeCenter("Completing Stage 4...",1);
+			//disp.writeDisplay();
 			stage4_logic();
-			disp.clearDisplay();
+			//disp.clearDisplay();
 			break;
 		case finish:
-			disp.writeCenter("Shutting Down...",0);
+			//disp.writeCenter("Shutting Down...",0);
 			finish_logic();
-			return 1;
+			//return 1;
 			break;
 	}
 	robotWait(0,LOOP_TIME_MS);
@@ -130,7 +148,7 @@ int Robot::robotLogic(void) {
 }
 
 void Robot::setOutputs(void) {
-	cout << "battery voltage is " << sensorData->battery_voltage << endl;
+	//cout << "battery voltage is " << sensorData->battery_voltage << endl;
 	wheel_1.setVoltage(drive_voltages[0],sensorData->battery_voltage);
 	wheel_2.setVoltage(drive_voltages[1],sensorData->battery_voltage);
 	wheel_3.setVoltage(drive_voltages[2],sensorData->battery_voltage);

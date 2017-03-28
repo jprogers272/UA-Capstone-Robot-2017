@@ -23,6 +23,11 @@ void PIDcontroller::calculateOutput(float plant_value, int time_cur) {
 	error_prev = error;
 	output = (error * gainP) + (integral * gainI) + (derivative * gainD);
 	limitOutput();
+
+//	cout << "setpoint: " << setpoint << endl;
+//	cout << "error: " << error << endl;
+//	cout << "integral: " << integral << endl;
+//	cout << "derivative: " << derivative << endl;
 }
 
 void PIDcontroller::setSetpoint(float setpoint) {
@@ -56,11 +61,11 @@ void PIDcontroller::printFileCSV(void) {
 
 void PIDcontroller::disableIntegral(void) {
 	gainI = 0.0;
+	integral = 0.0;
 }
 
 void PIDcontroller::enableIntegral(float gainI) {
 	this->gainI = gainI;
-	integral = 0.0;
 }
 
 void PIDcontroller::limitOutput(void) {

@@ -10,12 +10,12 @@
 #define TEST5 3
 #define TEST6 14
 #define BUTTON 112*/
-#define TEST1 112
-#define TEST2 7
-#define TEST3 15
-#define TEST4 113
-#define TEST5 14
-#define TEST6 51
+#define TEST1 20
+#define TEST2 115
+#define TEST3 14
+#define TEST4 117
+#define TEST5 49
+#define TEST6 7
 
 int testComponent(int,struct timespec*); 
 int componentID(int);
@@ -140,11 +140,11 @@ int testComponent(int gpio, struct timespec *time_des) {
 }
 
 int componentID(int mV) {
-//	printf("Vtest = %dmV\n",mV);
+	//printf("Vtest = %dmV\n",mV);
 	if (mV < 100) return 0;
-	else if ( (mV > 100) && (mV < 350) ) return 2;
-	else if ( (mV > 850) && (mV < 1200) ) return 4;
-	else if ( (mV > 1300) && (mV < 1500) ) return 5;
+	else if ( (mV > 150) && (mV < 600) ) return 2;
+	else if ( (mV > 850) && (mV < 1450) ) return 4;
+	else if ( (mV > 1450) && (mV < 1600) ) return 5;
 	else if (mV > 1600) return 1;
 	else return 0;
 }

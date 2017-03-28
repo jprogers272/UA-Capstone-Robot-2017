@@ -49,9 +49,9 @@ void Stage1::checkCapacitorDiode(void) {
 void Stage1::identifyComponent(void) {
 	int mV = readADC_mv(STAGE1_ADC);
 	if (mV < 100) components[currentComponent] = 0;
-	else if ( (mV > 100) && (mV < 350) ) components[currentComponent] = 2;
-	else if ( (mV > 850) && (mV < 1200) ) components[currentComponent] = 4;
-	else if ( (mV > 1300) && (mV < 1500) ) components[currentComponent] = 5;
+	else if ( (mV > 150) && (mV < 600) ) components[currentComponent] = 2;
+	else if ( (mV > 850) && (mV < 1450) ) components[currentComponent] = 5;
+	else if ( (mV > 1450) && (mV < 1600) ) components[currentComponent] = 4;
 	else if (mV > 1600) components[currentComponent] = 1;
 	else components[currentComponent] = 0;
 
@@ -93,4 +93,12 @@ int Stage1::detectShort(int gpio1, int gpio2) {
 	writeGPIO(gpio1,0);
 	setDirectionGPIO(gpio1,GPIO_INPUT);
 	return shorted;
+}
+
+void Stage1::zeroComponentArray(void) {
+	components[0] = 0;
+	components[1] = 0;
+	components[2] = 0;
+	components[3] = 0;
+	components[4] = 0;
 }

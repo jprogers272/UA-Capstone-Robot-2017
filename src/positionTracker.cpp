@@ -23,6 +23,10 @@ PositionTracker::PositionTracker(void) {
 void PositionTracker::calculateAnglesOnly(float dps_x, float dps_y, float dps_z, long time_cur) {
 	int i;
 	float dps_data[3] = {dps_x,dps_y,dps_z};
+	//cout << "x dps is " << dps_x << " and x average is " << imu_averages[0] << endl;
+	//cout << "other averages are " << imu_averages[1] << endl
+	//	<< imu_averages[2] << endl << imu_averages[3] << endl
+	//	<< imu_averages[4] << endl << imu_averages[5] << endl;
 	float time_elapsed = (float)(time_cur - time_prev) / 1000.0;
 	for (i=0; i<3; i++) {
 		angle[i] += ((dps_data[i] - imu_averages[i]) * time_elapsed);

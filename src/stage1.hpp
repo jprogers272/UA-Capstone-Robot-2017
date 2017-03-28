@@ -21,6 +21,7 @@ class Stage1 {
 		void identifyComponent(void);
 		void checkCapacitorDiode(void);
 		int detectProblems(void);
+		void zeroComponentArray(void);
 		
 	private:
 		int detectShort(int,int);

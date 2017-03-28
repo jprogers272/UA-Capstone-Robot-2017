@@ -2,7 +2,7 @@
 #include <string.h>
 #include <time.h>
 
-int IR_gpio[12] = {8, 76, 78, 74, 86, 87, 10, 9, 66, 69, 47, 27};
+int IR_gpio[12] = {66, 69, 87, 47, 27, 48, 76, 77, 15, 67, 67, 67};
 
 void writeGPIO(int,int);
 int readGPIO(int);

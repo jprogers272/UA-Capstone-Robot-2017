@@ -1,27 +1,37 @@
 #!/bin/bash
 
+config-pin P9.31 gpio_pd
+config-pin P9.16 gpio_pd
+config-pin P8.37 gpio_pd
+config-pin P8.38 gpio_pd
+config-pin P9.13 gpio_pd
+config-pin P9.15 gpio_pd
+config-pin P8.39 gpio_pd
+config-pin P8.40 gpio_pd
+config-pin P9.24 gpio_pd
+config-pin P8.8 gpio_pd
+
 config-pin P8.7 gpio_pd
 config-pin P8.9 gpio_pd
+config-pin P8.29 gpio_pd
 config-pin P8.15 gpio_pd
 config-pin P8.17 gpio_pd
-config-pin P8.27 gpio_pd
-config-pin P8.29 gpio_pd
-config-pin P8.31 gpio_pd
-config-pin P8.33 gpio_pd
-config-pin P8.35 gpio_pd
-config-pin P8.37 gpio_pd
-config-pin P8.39 gpio_pd
-config-pin P8.41 gpio_pd
 
-echo 8 > /sys/class/gpio/export
-echo 9 > /sys/class/gpio/export
-echo 10 > /sys/class/gpio/export
-echo 27 > /sys/class/gpio/export
-echo 47 > /sys/class/gpio/export
-echo 66 > /sys/class/gpio/export
-echo 69 > /sys/class/gpio/export
-echo 74 > /sys/class/gpio/export
+
+echo 66 > /sys/class/export
+echo 69 > /sys/class/export
+echo 87 > /sys/class/export
+echo 47 > /sys/class/export
+echo 27 > /sys/class/export
+
+
+#echo 110 > /sys/class/gpio/export
+#echo 51 > /sys/class/gpio/export
+#echo 78 > /sys/class/gpio/export
+#echo 79 > /sys/class/gpio/export
+echo 31 > /sys/class/gpio/export
+#echo 48 > /sys/class/gpio/export
 echo 76 > /sys/class/gpio/export
-echo 78 > /sys/class/gpio/export
-echo 86 > /sys/class/gpio/export
-echo 87 > /sys/class/gpio/export
+echo 77 > /sys/class/gpio/export
+echo 15 > /sys/class/gpio/export
+echo 67 > /sys/class/gpio/export
