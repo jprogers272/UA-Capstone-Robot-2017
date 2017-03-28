@@ -1,5 +1,6 @@
 //Author(s): John Rogers
 
+#include "gpio.hpp"
 #include "robot.hpp"
 #include "angleControl.hpp"
 #include "i2cbus.hpp"
@@ -24,27 +25,38 @@ Robot::Robot() :
 	sensors(&i2c_bus)
 {
 	sensorData = new SensorData;
-
-	currentState = start;
-	nextState = pre_stage1;
-
-	stateLoopCount = 0;
-	gyroAverageZ = 0.0;
-	gyroAverageY = 0.0;
-	gyroAverageX = 0.0;
-
-	inner_state = 0;
-	display_flag = 0;
-
 	drive_voltages = new float[4];
-	zeroVoltages();
+
+	resetRobot();
 
 	disp.clearDisplayAll();
 }
 
+void Robot::resetRobot(void) {
+	currentState = start;
+	nextState = pre_stage1;
+	inner_state = 0;
+	stateLoopCount = 0;
+
+	display_flag = 0;
+
+	gyroAverageZ = 0.0;
+	gyroAverageY = 0.0;
+	gyroAverageX = 0.0;
+	zeroVoltages();
+
+	angle_controller.setSetpoint(0.0);
+	angle_controller.setAngle(0.0);
+
+	stage1.zeroComponentArray();
+}
+
 int Robot::robotLogic(void) {
-	cout << "current state: " << currentState << endl;
+	//cout << "current state: " << currentState << endl;
 	sensors.getAllSensors(sensorData);
+	if (readGPIO(START_SWITCH_GPIO) == 1) {
+		resetRobot();
+	}
 	switch (currentState) {
 		case start:
 			//disp.writeCenter("Robot Starting Up...",0);
@@ -133,7 +145,7 @@ int Robot::robotLogic(void) {
 }
 
 void Robot::setOutputs(void) {
-	cout << "battery voltage is " << sensorData->battery_voltage << endl;
+	//cout << "battery voltage is " << sensorData->battery_voltage << endl;
 	wheel_1.setVoltage(drive_voltages[0],sensorData->battery_voltage);
 	wheel_2.setVoltage(drive_voltages[1],sensorData->battery_voltage);
 	wheel_3.setVoltage(drive_voltages[2],sensorData->battery_voltage);

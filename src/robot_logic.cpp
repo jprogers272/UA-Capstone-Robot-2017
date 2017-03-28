@@ -1,4 +1,4 @@
-//Author(s): John Rogers, William Khan, Brandon Fikes
+//Author(s): John Rogers, William Khan, Brandon Fikes, Bryant Hall, Tyler Henson
 
 #include "robot.hpp"
 #include "gpio.hpp"
@@ -66,17 +66,18 @@ void Robot::setDriveDirection(int direction, float voltage) {
 }
 
 void Robot::start_logic(void) {
-    if(display_flag == 0) {
-	   disp.writeCenter("Robot Starting Up...",0);
-	   disp.writeDisplay();
-	   display_flag = 1; 
-    }
-
-    currentState = zero_gyro;
-	stateLoopCount = 0;
-	timer.start();
-    disp.clearDisplay();
-    display_flag = 0;
+	if(display_flag == 0) {
+		disp.writeCenter("Robot Starting Up...",0);
+		disp.writeDisplay();
+		display_flag = 1; 
+	}
+	if (readGPIO(START_SWITCH_GPIO) == 0) {
+		currentState = zero_gyro;
+		stateLoopCount = 0;
+		timer.start();
+		disp.clearDisplay();
+		display_flag = 0;
+	}
 }
 
 void Robot::zero_gyro_logic(void) {
@@ -84,6 +85,10 @@ void Robot::zero_gyro_logic(void) {
 		disp.writeCenter("Zeroing Gyro...",0);
 		disp.writeDisplay();
 		display_flag = 1;
+		gyroAverageX = 0.0;
+		gyroAverageY = 0.0;
+		gyroAverageZ = 0.0;
+		angle_controller.disableIntegral();
 	}
 	cout << "gyroAverage is " << gyroAverageZ << endl;
 	if (stateLoopCount < 50) {
@@ -97,6 +102,8 @@ void Robot::zero_gyro_logic(void) {
 		gyroAverageY /= (float)(stateLoopCount);
 		gyroAverageX /= (float)(stateLoopCount);
 		angle_controller.setAverage(gyroAverageZ);
+		//angle_controller.setSetpoint(0.0);
+		angle_controller.enableIntegral(IGAIN);
 		position_tracker.setGyroAverages(gyroAverageX,gyroAverageY,gyroAverageZ);
 		stateLoopCount = 0;
 		currentState = nextState;

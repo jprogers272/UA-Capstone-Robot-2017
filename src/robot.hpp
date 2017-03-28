@@ -73,6 +73,7 @@ class Robot {
 		void setOutputs(void);
 	
 	private:
+		void resetRobot(void);
 		void zeroVoltages(void);
 		
 		void drive_logic(void);

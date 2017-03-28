@@ -94,3 +94,11 @@ int Stage1::detectShort(int gpio1, int gpio2) {
 	setDirectionGPIO(gpio1,GPIO_INPUT);
 	return shorted;
 }
+
+void Stage1::zeroComponentArray(void) {
+	components[0] = 0;
+	components[1] = 0;
+	components[2] = 0;
+	components[3] = 0;
+	components[4] = 0;
+}

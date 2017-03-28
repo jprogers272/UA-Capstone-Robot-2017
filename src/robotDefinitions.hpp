@@ -39,6 +39,7 @@
 #define IR4_2_GPIO 67
 
 #define GUN_GPIO 50
+#define START_SWITCH_GPIO 60
 
 #define WHEEL1_DIR 9
 #define WHEEL2_DIR 8
@@ -57,7 +58,7 @@
 #define PWM_PERIOD 50000
 
 #define PGAIN 0.1
-#define IGAIN 0.03
+#define IGAIN 0.00
 #define DGAIN 0.005
 
 #define VBAT_MULTIPLIER 11.2
