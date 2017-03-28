@@ -11,6 +11,7 @@
 #include "stage1.hpp"
 #include "timing.hpp"
 #include "positionTracker.hpp"
+#include <pthread.h>
 
 enum State {
 	start,
@@ -62,6 +63,11 @@ class Robot {
 		RobotTimer state_timer;
 		int inner_state;
 		Stage1 stage1;
+		int camera_direction;
+		int end_thread_flag;
+		pthread_mutex_t cam_direction_mutex;
+		pthread_mutex_t end_thread_flag_mutex;
+		pthread_t camera_thread;
 	
 	//member functions
 	public:

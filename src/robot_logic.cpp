@@ -591,6 +591,48 @@ void Robot::pre_stage4_logic(void) {
 			}
 			break;
 		case 5:
+			if ((sensorData->ir2_1_state == 0) && (sensorData->ir2_2_state == 0)){
+				setDriveDirection(STOPPED, 0.0);
+
+				camera_direction = MOVE_RIGHT;
+				end_thread_flag = 0;
+				pthread_mutex_init(&cam_direction_mutex, NULL);
+				pthread_mutex_init(&end_thread_flag_mutex, NULL);
+
+				camera_data data;
+				data.direction_ptr = &camera_direction;
+				data.end_thread_ptr = &end_thread_flag;
+				data.dir_mutex_ptr = &cam_direction_mutex;
+				data.end_mutex_ptr = &end_thread_flag_mutex;
+
+				pthread_create(&camera_thread, NULL, locate, (void *)&data);
+
+				inner_state++;
+			}
+			break;
+		case 6:
+			pthread_mutex_lock(&cam_direction_mutex);
+			switch(camera_direction) {
+				case MOVE_RIGHT:
+					setDriveDirection(STRAIGHT_BACKWARD, 2.0);
+					break;
+				case MOVE_LEFT:
+					setDriveDirection(STRAIGHT_FORWARD, 2.0);
+					break;
+				case STOP:
+					setDriveDirection(STOPPED, 0.0);
+					pthread_mutex_lock(&end_thread_flag_mutex);
+					end_thread_flag = 1;
+					pthread_mutex_unlock(&end_thread_flag_mutex);
+					inner_state = 0;
+					currentState = stage4;
+					break;
+			}
+			pthread_mutex_unlock(&cam_direction_mutex);
+			break;
+
+
+		/*case 5:
 			if ((sensorData->ir2_1_state == 0) && (sensorData->ir2_2_state == 0)) {
 				setDriveDirection(STRAIGHT_BACKWARD,3.0);
 				inner_state++;
@@ -630,7 +672,7 @@ void Robot::pre_stage4_logic(void) {
 				inner_state = 0;
 				currentState = stage4;
 			}
-			break;
+			break;*/
 
 	}
 	drive_logic();
