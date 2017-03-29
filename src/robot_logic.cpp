@@ -867,6 +867,7 @@ void Robot::pre_stage4_logic(void) {
 
 				camera_direction = MOVE_RIGHT;
 				end_thread_flag = 0;
+				processed_frame = 0;
 				pthread_mutex_init(&cam_direction_mutex, NULL);
 				pthread_mutex_init(&end_thread_flag_mutex, NULL);
 
@@ -874,21 +875,25 @@ void Robot::pre_stage4_logic(void) {
 				data.end_thread_ptr = &end_thread_flag;
 				data.dir_mutex_ptr = &cam_direction_mutex;
 				data.end_mutex_ptr = &end_thread_flag_mutex;
+				data.process_frame_ptr = &process_frame;
 				
 				pthread_create(&camera_thread, NULL, locate, (void *)&data);
 				inner_state++;
-				state_timer.start();
 			}
 			break;
 		case 6:
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
-				pthread_mutex_lock(&cam_direction_mutex);
+			pthread_mutex_lock(&cam_direction_mutex);
+			if(processed_frame){
 				switch(camera_direction) {
 					case MOVE_RIGHT:
 						setDriveDirection(STRAIGHT_BACKWARD, 1.5);
+						inner_state++;
+						state_timer.start();
 						break;
 					case MOVE_LEFT:
 						setDriveDirection(STRAIGHT_FORWARD, 1.5);
+						inner_state++;
+						state_timer.start();
 						break;
 					case STOP:
 						setDriveDirection(STOPPED, 0.0);
@@ -899,10 +904,19 @@ void Robot::pre_stage4_logic(void) {
 						currentState = stage4;
 						break;
 				}
-				cout << camera_direction << endl;
-				pthread_mutex_unlock(&cam_direction_mutex);
 			}
+			cout << camera_direction << endl;
+			pthread_mutex_unlock(&cam_direction_mutex);
 			break;
+
+		case 7:
+			if(state_timer.getTimeElapsed(PRECISION_MS) > 200){
+				setDriveDirection(STOPPED, 0.0);
+				pthread_mutex_lock(&cam_direction_mutex);
+				processed_frame = 0;
+				pthread_mutex_unlock(&cam_direction_mutex);
+				inner_state--;
+			}
 
 
 

@@ -32,6 +32,7 @@ struct camera_data
 	pthread_mutex_t *dir_mutex_ptr;
 	int *end_thread_ptr;
 	pthread_mutex_t *end_mutex_ptr;
+	int *processed_frame_ptr;
 };
 
 void *locate(void *data);

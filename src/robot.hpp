@@ -70,6 +70,7 @@ class Robot {
 		Stage1 stage1;
 		int camera_direction;
 		int end_thread_flag;
+		int processed_frame;
 		pthread_mutex_t cam_direction_mutex;
 		pthread_mutex_t end_thread_flag_mutex;
 		pthread_t camera_thread;
