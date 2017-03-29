@@ -30,8 +30,16 @@ void PIDcontroller::calculateOutput(float plant_value, int time_cur) {
 //	cout << "derivative: " << derivative << endl;
 }
 
+void PIDcontroller::setTime(int time_cur) {
+	this->time_cur = time_cur;
+}
+
 void PIDcontroller::setSetpoint(float setpoint) {
 	this->setpoint = setpoint;
+}
+
+float PIDcontroller::getSetpoint(void) {
+	return this->setpoint;
 }
 
 float PIDcontroller::getOutput(void) {

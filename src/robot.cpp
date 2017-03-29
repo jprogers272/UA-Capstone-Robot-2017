@@ -35,19 +35,20 @@ Robot::Robot() :
 
 void Robot::resetRobot(void) {
 	currentState = start;
-	nextState = post_stage3;
+	nextState = pre_stage1;
 	inner_state = 0;
 	stateLoopCount = 0;
 
 	display_flag = 0;
+	end_thread_flag = 1;
 
 	gyroAverageZ = 0.0;
 	gyroAverageY = 0.0;
 	gyroAverageX = 0.0;
 	zeroVoltages();
 
-	angle_controller.setSetpoint(-90.0);
-	angle_controller.setAngle(-90.0);
+	angle_controller.setSetpoint(0.0);
+	angle_controller.setAngle(0.0);
 
 	stage1.zeroComponentArray();
 }

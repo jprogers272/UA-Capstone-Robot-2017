@@ -28,7 +28,9 @@ class PIDcontroller {
 	public:
 		PIDcontroller(float,float,float,float,float,float);
 		virtual void calculateOutput(float,int);
+		void setTime(int);
 		void setSetpoint(float);
+		float getSetpoint(void);
 		float getOutput(void);
 		void openFileCSV(std::string);
 		void printFileCSV(void);

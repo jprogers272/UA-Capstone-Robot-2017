@@ -112,6 +112,7 @@ void Robot::zero_gyro_logic(void) {
 		gyroAverageX /= (float)(stateLoopCount);
 		angle_controller.setAverage(gyroAverageZ);
 		//angle_controller.setSetpoint(0.0);
+		//angle_controller.setAngle(angle_controller.getSetpoint());
 		angle_controller.enableIntegral(IGAIN);
 		position_tracker.setGyroAverages(gyroAverageX,gyroAverageY,gyroAverageZ);
 		stateLoopCount = 0;
@@ -176,12 +177,19 @@ void Robot::pre_stage1_logic(void) {
 			break;
 		case 7:
 			if ((sensorData->ir1_3_state == 0)&&(sensorData->ir1_4_state==0)) {
-				setDriveDirection(STRAFE_LEFT,2.5);
+				setDriveDirection(STRAFE_LEFT,5.0);
+				state_timer.start();
+				inner_state++;
+			}
+			break;	
+		case 8:
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1500) {
 				inner_state = 0;
 				currentState = stage1_solving;
 				display_flag = 0;
 			}
-			break;	
+			break;
+
 
 	/*	case 5:
 			if ((sensorData->ir1_3_state == 1)&&(sensorData->ir1_4_state==0)) {
@@ -226,7 +234,7 @@ void Robot::stage1_logic(void) {
 			if (state_timer.getTimeElapsed(PRECISION_MS) > STAGE1_CHARGING_TIME) {
 				stage1.checkCapacitorDiode();
 				if (stage1.detectProblems() == 0) {
-					setDriveDirection(STOPPED,0);
+					//setDriveDirection(STOPPED,0);
 					inner_state = 0;
 					currentState = post_stage1;
 					display_flag = 0;
@@ -239,24 +247,24 @@ void Robot::stage1_logic(void) {
 		case 3:
 			cout << "fuck\n";
 			cout << "reorient robot?\n";
-			voltage_max = 1.5;
+			voltage_max = 2.0;
 			if (translation_angle > -89.0) {
 				translation_angle = -180.0;
 			}
-			else if (translation_angle < -91.0) {
+			else if ((translation_angle < -91.0) && (translation_angle > -95)) {
 				translation_angle = 0.0;
 			}
 			else {
 				//it's 90.0, accounting for floating point error
-				translation_angle = 0.0;
+				translation_angle = -180.0;
 			}
 		       	state_timer.start();
 			inner_state++;
 			stage1.currentComponent = 0;
 			break;
 		case 4:
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
-				voltage_max = 3.0;
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 500) {
+				voltage_max = 5.0;
 				if (translation_angle > -90.0) {
 					translation_angle = -88.0;
 				}
@@ -627,6 +635,7 @@ void Robot::stage3_logic(void) {
 			inner_state = 0;
 			currentState = post_stage3;
 	}
+	drive_logic();
 }
 
 void Robot::post_stage3_logic(void) {
@@ -803,6 +812,7 @@ void Robot::pre_stage4_logic(void) {
 				inner_state++;
 				nextState = currentState;
 				currentState = zero_gyro;
+				angle_controller.setAngle(-90.0);
 			}
 			break;
 		case 3:

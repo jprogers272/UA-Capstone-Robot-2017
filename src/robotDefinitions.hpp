@@ -53,7 +53,7 @@
 #define WHEEL4_PWM PWM2A
 #define SLAPPER_PWM PWM0B
 
-#define LOOP_TIME_MS 10
+#define LOOP_TIME_MS 1
 
 #define PWM_PERIOD 50000
 
