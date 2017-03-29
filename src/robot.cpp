@@ -35,7 +35,7 @@ Robot::Robot() :
 
 void Robot::resetRobot(void) {
 	currentState = start;
-	nextState = pre_stage1;
+	nextState = post_stage2;
 	inner_state = 0;
 	stateLoopCount = 0;
 
@@ -51,6 +51,7 @@ void Robot::resetRobot(void) {
 	angle_controller.setAngle(0.0);
 
 	stage1.zeroComponentArray();
+	writeGPIO(ENABLEDRIVER,0);
 }
 
 int Robot::robotLogic(void) {

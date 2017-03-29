@@ -31,7 +31,7 @@ void PIDcontroller::calculateOutput(float plant_value, int time_cur) {
 }
 
 void PIDcontroller::setTime(int time_cur) {
-	this->time_cur = time_cur;
+	this->time_prev = time_cur;
 }
 
 void PIDcontroller::setSetpoint(float setpoint) {

@@ -90,6 +90,7 @@ void Robot::start_logic(void) {
 }
 
 void Robot::zero_gyro_logic(void) {
+	state_timer.start();
   	if(display_flag == 0) {
 		disp.writeCenter("Zeroing Gyro...",0);
 		disp.writeDisplay();
@@ -114,12 +115,13 @@ void Robot::zero_gyro_logic(void) {
 		//angle_controller.setSetpoint(0.0);
 		//angle_controller.setAngle(angle_controller.getSetpoint());
 		angle_controller.enableIntegral(IGAIN);
+		angle_controller.setTime(timer.getTimeElapsed(PRECISION_MS));
 		position_tracker.setGyroAverages(gyroAverageX,gyroAverageY,gyroAverageZ);
 		stateLoopCount = 0;
 		currentState = nextState;
 		disp.clearDisplay();
 		display_flag = 0;
-		cout << "measuring took " << timer.getTimeElapsed(PRECISION_MS) << " ms.\n";
+		cout << "measuring took " << state_timer.getTimeElapsed(PRECISION_MS) << " ms.\n";
 		cout << "average is " << gyroAverageZ << endl;
 	}
 }
@@ -486,28 +488,52 @@ void Robot::pre_stage3_logic(void) {
 	if (stateLoopCount == 0) {
 		state_timer.start();
 	}
-	cout << "state timer is " << state_timer.getTimeElapsed(PRECISION_MS) << "ms\n";
+	//cout << "state timer is " << state_timer.getTimeElapsed(PRECISION_MS) << "ms\n";
 	switch (inner_state) {
 		case 0:
 			setDriveDirection(STRAFE_RIGHT,3.5);
 			if (state_timer.getTimeElapsed(PRECISION_S) > 1) {
+				state_timer.start();
 				inner_state++;
 			}
 			break;
 		case 1:
-			if (sensorData->ir2_4_state == 0) {
-				setDriveDirection(STRAFE_RIGHT,3.0);
-				inner_state++;
+			cout << state_timer.getTimeElapsed(PRECISION_MS) << endl;
+			if (state_timer.getTimeElapsed(PRECISION_MS)<2500)
+			{ 
+				if (sensorData->ir2_3_state == 0) {      
+				setDriveDirection(STRAIGHT_FORWARD,3.0);
+				state_timer.start();  
+				inner_state = 5;  
+				}
 			}
-			break;
-		case 2:
-			if (sensorData->ir2_3_state == 0) {
+			else{ 
 				setDriveDirection(STRAIGHT_FORWARD,3.0);
 				state_timer.start();
 				inner_state++;
 			}
 			break;
+		case 2:  //Delay to get closer to wall
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 500)
+			{
+				inner_state++;
+			}
+			break;
 		case 3:
+			if (sensorData->ir2_1_state == 0 && sensorData->ir2_2_state == 0 ){
+				setDriveDirection(STRAFE_LEFT,3.0);
+				inner_state++;
+			}
+			break;
+		case 4:
+			if (sensorData->ir2_3_state == 0 && sensorData->ir2_4_state == 0){
+				setDriveDirection(STRAIGHT_FORWARD,3.0);
+				state_timer.start();
+				inner_state++;
+			}
+			break;
+
+		case 5:
 			//if ((sensorData->ir2_1_state == 1) && (sensorData->ir2_2_state == 1)) {
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
 				setDriveDirection(STRAIGHT_BACKWARD,2.0);
@@ -515,9 +541,9 @@ void Robot::pre_stage3_logic(void) {
 				inner_state++;
 			}
 			break;
-		case 4:
+		case 6:
 			cout << state_timer.getTimeElapsed(PRECISION_MS) << endl;
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 50) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 0) {
 				setDriveDirection(STOPPED,0.0);
 				inner_state = 0;
 				currentState = stage3_solving;
@@ -532,6 +558,12 @@ void Robot::pre_stage3_logic(void) {
 void Robot::stage3_logic(void) {
 	// disp.writeCenter("Solving Stage 3...",3); // Once logic is in place, place inside if (display_flag == 0)
 	// disp.writeDisplay();
+	stage1.components[0] = 1;
+	stage1.components[1] = 1;
+	stage1.components[2] = 1;
+	stage1.components[3] = 1;
+	stage1.components[4] = 1;
+
 	switch(inner_state){
 		case 0: //configure pins used, setup variables
 			setDirectionGPIO(STEP, 0); //STEP  = GPIO PIN 45 (OUTPUT)
@@ -633,7 +665,7 @@ void Robot::stage3_logic(void) {
 		case 6: //Clean Up
 			writeGPIO(ENABLEDRIVER, 0); //put driver to sleep and release stepper
 			inner_state = 0;
-			currentState = post_stage3;
+			currentState = finish;
 	}
 	drive_logic();
 }
@@ -810,6 +842,7 @@ void Robot::pre_stage4_logic(void) {
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 1500) {
 				setDriveDirection(STOPPED,3.0);
 				inner_state++;
+				stateLoopCount = 0;
 				nextState = currentState;
 				currentState = zero_gyro;
 				angle_controller.setAngle(-90.0);
@@ -870,6 +903,8 @@ void Robot::pre_stage4_logic(void) {
 				pthread_mutex_unlock(&cam_direction_mutex);
 			}
 			break;
+
+
 
 
 		/*case 5:
