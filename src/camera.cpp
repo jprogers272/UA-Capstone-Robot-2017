@@ -14,6 +14,7 @@ using namespace cv;
 
 void *locate(void *data)
 {
+	cout << "In the thread" << endl;
 	//initialize local variables for shared data
 	camera_data *my_data;
 	my_data = (struct camera_data *)data;
@@ -113,8 +114,11 @@ void *locate(void *data)
 		pthread_mutex_unlock(dir_mutex);
 
 		pthread_mutex_lock(end_mutex);
-		if(*end_thread)
+		if(*end_thread){
+			pthread_mutex_unlock(end_mutex);
+			cout << "ending thread" << endl;
 			pthread_exit(0);
+		}
 		pthread_mutex_unlock(end_mutex);
 
 	}
