@@ -30,9 +30,12 @@ void Stage1::energizeCommon(void) {
 	writeGPIO(STAGE1_GPIO_COM,1);
 }
 
-void Stage1::checkCapacitorDiode(void) {
+void Stage1::checkCapacitorDiode(int ignorePin) {
 	int i;
 	for (i=0; i<5; i++) {
+		if (i == ignorePin) {
+			continue;
+		}
 		if (components[i] == 0) {
 			if (readGPIO(testGPIOs[i])) {
 				components[i] = 5;

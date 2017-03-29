@@ -26,6 +26,7 @@
 #define STAGE1_GPIO_COM 7
 #define STAGE1_ADC 0
 #define STAGE1_CHARGING_TIME 10
+#define STAGE1_IGNORE_PIN 1
 
 #define IR1_1_GPIO 66
 #define IR1_2_GPIO 69

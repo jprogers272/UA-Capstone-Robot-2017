@@ -218,7 +218,11 @@ void Robot::stage1_logic(void) {
 			inner_state++;
 			break;
 		case 1:
-			if (stage1.currentComponent < 5) {
+			if (stage1.currentComponent == STAGE1_IGNORE_PIN) {
+				stage1.currentComponent++;
+				inner_state = 0;
+			}
+			else if (stage1.currentComponent < 5) {
 				if (state_timer.getTimeElapsed(PRECISION_MS) > STAGE1_CHARGING_TIME) {
 					stage1.identifyComponent();
 					//cout << "identified component " << stage1.currentComponent << " as " << stage1.components[stage1.currentComponent] << endl;
@@ -235,6 +239,10 @@ void Robot::stage1_logic(void) {
 		case 2:
 			if (state_timer.getTimeElapsed(PRECISION_MS) > STAGE1_CHARGING_TIME) {
 				stage1.checkCapacitorDiode();
+				//deduce pin that was untested. 1+2+3+4+5=15, and components[STAGE1_IGNORE_PIN] is initially zero
+				stage1.components[STAGE1_IGNORE_PIN] = 15 - stage1.components[0] - 
+					stage1.components[1] - stage1.components[2] - 
+					stage1.components[3] - stage1.components[4];
 				if (stage1.detectProblems() == 0) {
 					//setDriveDirection(STOPPED,0);
 					inner_state = 0;
@@ -247,8 +255,7 @@ void Robot::stage1_logic(void) {
 			}
 			break;
 		case 3:
-			cout << "fuck\n";
-			cout << "reorient robot?\n";
+			cout << "reorient robot\n";
 			voltage_max = 2.0;
 			if (translation_angle > -89.0) {
 				translation_angle = -180.0;
