@@ -665,7 +665,7 @@ void Robot::stage3_logic(void) {
 		case 6: //Clean Up
 			writeGPIO(ENABLEDRIVER, 0); //put driver to sleep and release stepper
 			inner_state = 0;
-			currentState = finish;
+			currentState = post_stage3;
 	}
 	drive_logic();
 }
@@ -875,7 +875,7 @@ void Robot::pre_stage4_logic(void) {
 				data.end_thread_ptr = &end_thread_flag;
 				data.dir_mutex_ptr = &cam_direction_mutex;
 				data.end_mutex_ptr = &end_thread_flag_mutex;
-				data.process_frame_ptr = &process_frame;
+				data.processed_frame_ptr = &processed_frame;
 				
 				pthread_create(&camera_thread, NULL, locate, (void *)&data);
 				inner_state++;

@@ -21,7 +21,7 @@ void *locate(void *data)
 	pthread_mutex_t *dir_mutex = my_data->dir_mutex_ptr;
 	int *end_thread = my_data->end_thread_ptr;
 	pthread_mutex_t *end_mutex = my_data->end_mutex_ptr;
-	int *processed_frame = my_data->process_frame_ptr;
+	int *processed_frame = my_data->processed_frame_ptr;
 
 	//initialize Mats for processing each frame
 	Mat src, cropped, src_gray, canny_out, contour_out, contour_out_8U;
