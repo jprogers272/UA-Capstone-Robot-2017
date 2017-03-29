@@ -17,9 +17,10 @@ class Stage1 {
 	public:
 		Stage1(void);
 		void energizeComponent(void);
+		void deEnergizeComponent(void);
 		void energizeCommon(void);
 		void identifyComponent(void);
-		void checkCapacitorDiode(void);
+		void checkCapacitorDiode(int);
 		int detectProblems(void);
 		void zeroComponentArray(void);
 		

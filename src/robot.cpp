@@ -35,7 +35,7 @@ Robot::Robot() :
 
 void Robot::resetRobot(void) {
 	currentState = start;
-	nextState = pre_stage1;
+	nextState = post_stage2;
 	inner_state = 0;
 	stateLoopCount = 0;
 

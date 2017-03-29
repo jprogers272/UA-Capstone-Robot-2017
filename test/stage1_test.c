@@ -38,7 +38,7 @@ int main (void) {
 	struct timespec time_des;
 	struct timespec time_des_test;
 	time_des.tv_sec = 0;
-	time_des.tv_nsec = 10000000; //10ms
+	time_des.tv_nsec = 20000000; //10ms
 	time_des_test.tv_sec = 0;
 	time_des_test.tv_nsec = 10000000;
 	while (1) {
@@ -140,7 +140,7 @@ int testComponent(int gpio, struct timespec *time_des) {
 }
 
 int componentID(int mV) {
-	//printf("Vtest = %dmV\n",mV);
+	printf("Vtest = %dmV\n",mV);
 	if (mV < 100) return 0;
 	else if ( (mV > 150) && (mV < 600) ) return 2;
 	else if ( (mV > 850) && (mV < 1450) ) return 4;

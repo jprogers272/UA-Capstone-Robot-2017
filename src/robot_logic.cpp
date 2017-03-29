@@ -100,7 +100,7 @@ void Robot::zero_gyro_logic(void) {
 		gyroAverageZ = 0.0;
 		angle_controller.disableIntegral();
 	}
-	cout << "gyroAverage is " << gyroAverageZ << endl;
+//	cout << "gyroAverage is " << gyroAverageZ << endl;
 	if (stateLoopCount < 50) {
 		gyroAverageZ += sensorData->gyroZ;
 		gyroAverageY += sensorData->gyroY;
@@ -127,7 +127,7 @@ void Robot::zero_gyro_logic(void) {
 }
 
 void Robot::pre_stage1_logic(void) {
-	cout << "inner state is " << inner_state << endl;
+//	cout << "inner state is " << inner_state << endl;
 	if(display_flag == 0) {	
 		disp.writeCenter("Prepping Stage 1...",0);
 		disp.writeDisplay();
@@ -218,7 +218,10 @@ void Robot::stage1_logic(void) {
 			inner_state++;
 			break;
 		case 1:
+			cout << "timer value is " << state_timer.getTimeElapsed(PRECISION_MS) << "ms\n";
+			cout << "current component is " << stage1.currentComponent << ", " << stage1.components[stage1.currentComponent] << "\n";
 			if (stage1.currentComponent == STAGE1_IGNORE_PIN) {
+				stage1.deEnergizeComponent();
 				stage1.currentComponent++;
 				inner_state = 0;
 			}
@@ -238,11 +241,13 @@ void Robot::stage1_logic(void) {
 			break;
 		case 2:
 			if (state_timer.getTimeElapsed(PRECISION_MS) > STAGE1_CHARGING_TIME) {
-				stage1.checkCapacitorDiode();
+				stage1.checkCapacitorDiode(STAGE1_IGNORE_PIN);
 				//deduce pin that was untested. 1+2+3+4+5=15, and components[STAGE1_IGNORE_PIN] is initially zero
+				cout << stage1.components[0] << stage1.components[1] << stage1.components[2] << stage1.components[3] << stage1.components[4] << endl;
 				stage1.components[STAGE1_IGNORE_PIN] = 15 - stage1.components[0] - 
 					stage1.components[1] - stage1.components[2] - 
 					stage1.components[3] - stage1.components[4];
+				cout << stage1.components[0] << stage1.components[1] << stage1.components[2] << stage1.components[3] << stage1.components[4] << endl;
 				if (stage1.detectProblems() == 0) {
 					//setDriveDirection(STOPPED,0);
 					inner_state = 0;
@@ -256,6 +261,7 @@ void Robot::stage1_logic(void) {
 			break;
 		case 3:
 			cout << "reorient robot\n";
+			stage1.zeroComponentArray();
 			voltage_max = 2.0;
 			if (translation_angle > -89.0) {
 				translation_angle = -180.0;
@@ -553,7 +559,7 @@ void Robot::pre_stage3_logic(void) {
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 0) {
 				setDriveDirection(STOPPED,0.0);
 				inner_state = 0;
-				currentState = stage3_solving;
+				currentState = finish;
 				slapper_voltage = 0.0;
 			}
 			break;
@@ -678,7 +684,7 @@ void Robot::stage3_logic(void) {
 }
 
 void Robot::post_stage3_logic(void) {
-	static float angleX_before_step = position_tracker.getAngle(X_DIR);
+//	static float angleX_before_step = position_tracker.getAngle(X_DIR);
 //	cout << "difference is " << position_tracker.getAngle(X_DIR) - angleX_before_step << endl;
 	switch(inner_state) {
 		case 0:
@@ -805,7 +811,7 @@ void Robot::post_stage3_logic(void) {
 }
 
 void Robot::pre_stage4_logic(void) {
-	static float angleX_before_step = position_tracker.getAngle(X_DIR);
+//	static float angleX_before_step = position_tracker.getAngle(X_DIR);
 //	cout << "difference is " << position_tracker.getAngle(X) - angleX_before_step << endl;
 	if(display_flag == 0) {
 		disp.writeCenter("Prepping Stage 4...",4);

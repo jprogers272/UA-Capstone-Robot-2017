@@ -6,6 +6,10 @@
 #include "robotDefinitions.hpp"
 #include "timing.hpp"
 
+#include <iostream>
+
+using namespace std;
+
 Stage1::Stage1(void) {
 	testGPIOs[0] = STAGE1_GPIO1;
 	testGPIOs[1] = STAGE1_GPIO2;
@@ -23,6 +27,11 @@ Stage1::Stage1(void) {
 void Stage1::energizeComponent(void) {
 	setDirectionGPIO(testGPIOs[currentComponent],GPIO_OUTPUT);
 	writeGPIO(testGPIOs[currentComponent],1);
+}
+
+void Stage1::deEnergizeComponent(void) {
+	writeGPIO(testGPIOs[currentComponent],0);
+	setDirectionGPIO(testGPIOs[currentComponent],GPIO_INPUT);
 }
 
 void Stage1::energizeCommon(void) {
@@ -44,6 +53,15 @@ void Stage1::checkCapacitorDiode(int ignorePin) {
 				components[i] = 3;
 			}
 		}
+		else if ((components[i] == 4) || (components[i] == 5)) {
+			if (!readGPIO(testGPIOs[i])) {
+				components[i] = 5;
+			}
+			else {
+				components[i] = 4;
+			}
+		}
+
 	}
 	writeGPIO(STAGE1_GPIO_COM,0);
 	setDirectionGPIO(STAGE1_GPIO_COM,GPIO_INPUT);
@@ -51,10 +69,11 @@ void Stage1::checkCapacitorDiode(int ignorePin) {
 
 void Stage1::identifyComponent(void) {
 	int mV = readADC_mv(STAGE1_ADC);
+	cout << "Vtest = " << mV << "mV\n";
 	if (mV < 100) components[currentComponent] = 0;
 	else if ( (mV > 150) && (mV < 600) ) components[currentComponent] = 2;
-	else if ( (mV > 850) && (mV < 1450) ) components[currentComponent] = 5;
-	else if ( (mV > 1450) && (mV < 1600) ) components[currentComponent] = 4;
+	else if ( (mV > 850) && (mV < 1400) ) components[currentComponent] = 5;
+	else if ( (mV > 1400) && (mV < 1600) ) components[currentComponent] = 4;
 	else if (mV > 1600) components[currentComponent] = 1;
 	else components[currentComponent] = 0;
 
