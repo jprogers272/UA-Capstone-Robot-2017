@@ -3,6 +3,7 @@
 #include <iostream>
 #include "DCmotor.hpp"
 #include "pwm.hpp"
+#include "gpio.hpp"
 
 using namespace std;
 
@@ -26,4 +27,6 @@ int main()
 	wheel_3.off();
 	wheel_4.off();
 	slapper.off();
+
+	writeGPIO(ENABLEDRIVER,0);
 }

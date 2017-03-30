@@ -371,43 +371,80 @@ void Robot::pre_stage2_logic(void) {
 	switch (inner_state) {
 		case 0:
 			setDriveDirection(STRAFE_RIGHT,3.5);
-			inner_state++;
-			break;
-		case 1:
-			if (sensorData->ir2_4_state == 0) {
-				setDriveDirection(STRAFE_RIGHT,3.0);
-				inner_state++;
-			}
-			break;
-		case 2:
-			if (sensorData->ir2_3_state == 0) {
-				setDriveDirection(STOPPED,0.0);
-				inner_state++;
-			}
-			break;
-		case 3:
-			setDriveDirection(STRAIGHT_FORWARD,2.0);
-			state_timer.start();
-			inner_state++;
-			break;
-		case 4:
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 600) {
-				setDriveDirection(STOPPED,0.0);
+			if (state_timer.getTimeElapsed(PRECISION_S) > 1) {
 				state_timer.start();
 				inner_state++;
 			}
 			break;
-		case 5:
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
-				inner_state = 0;
-				currentState = average_compass;
-				display_flag = 0;
+		case 1:
+			cout << state_timer.getTimeElapsed(PRECISION_MS) << endl;
+			if (state_timer.getTimeElapsed(PRECISION_MS)<2500)
+			{ 
+				if (sensorData->ir2_4_state == 0 && sensorData->ir2_3_state == 0) {      
+				setDriveDirection(STRAIGHT_FORWARD,2.0);
+				state_timer.start();  
+				inner_state = 6;  
+				}
+			}
+			else{ 
+				if (sensorData->ir2_1_state == 0 && sensorData->ir2_2_state == 0)
+				{
+					setDriveDirection(STRAIGHT_BACKWARD,3.0);
+					inner_state++;
+				}
+				else
+				{
+					setDriveDirection(STRAIGHT_FORWARD,3.0);  //Doesn't go to next case
+					state_timer.start();
+					inner_state = 3;
+				}
+				
 			}
 			break;
-		default:
-			setDriveDirection(STOPPED,0.0);
-			inner_state = 0;
-			currentState = average_compass;
+		case 2:  
+			if (sensorData->ir2_1_state == 1 && sensorData->ir2_2_state == 1)
+				{
+					setDriveDirection(STRAIGHT_FORWARD,3.0);
+					inner_state++;
+				}
+			break;
+		case 3:  
+		if (sensorData->ir2_1_state == 0 && sensorData->ir2_2_state == 0)
+			{
+				setDriveDirection(STRAIGHT_FORWARD,2.0);
+				state_timer.start();
+				inner_state++;
+			}
+		break;
+		case 4: 
+			if ((state_timer.getTimeElapsed(PRECISION_MS) > 200))
+			{
+				setDriveDirection(STRAFE_LEFT,3.0);
+				inner_state++;
+			}
+			break;
+		case 5:
+			if (sensorData->ir2_3_state == 0 && sensorData->ir2_4_state == 0){
+				setDriveDirection(STRAIGHT_FORWARD,2.0);
+				state_timer.start();
+				inner_state++;
+			}
+			break;
+
+		case 6:
+			cout << state_timer.getTimeElapsed(PRECISION_MS) << endl;
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 400) {
+				setDriveDirection(STOPPED,0.0);
+				state_timer.start();
+				inner_state++;	
+			}
+			break;
+		case 7:
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
+				inner_state = 0;
+				stateLoopCount = 0;
+				currentState = average_compass;
+			}
 			break;
 	}
 	drive_logic();
@@ -559,7 +596,7 @@ void Robot::pre_stage3_logic(void) {
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 0) {
 				setDriveDirection(STOPPED,0.0);
 				inner_state = 0;
-				currentState = finish;
+				currentState = stage3_solving;
 				slapper_voltage = 0.0;
 			}
 			break;
@@ -576,6 +613,7 @@ void Robot::stage3_logic(void) {
 	stage1.components[2] = 1;
 	stage1.components[3] = 1;
 	stage1.components[4] = 1;
+	int loopvar = 0;
 
 	switch(inner_state){
 		case 0: //configure pins used, setup variables
@@ -590,7 +628,7 @@ void Robot::stage3_logic(void) {
 			break;
 		case 1: //First Rotation 
 			while(stage3.rotate1 != 0){
-				for (loopvar = 0; loopvar < stage3.rotate1; i++){
+				for (loopvar = 0; loopvar < stage3.rotate1; loopvar++){
 					writeGPIO(STEP,1);
 					robotWait(0, 5);
 					writeGPIO(STEP,0);
@@ -602,12 +640,13 @@ void Robot::stage3_logic(void) {
 			}
 		case 2: //Second Rotation 
 			while(stage3.rotate2 != 0){
-				for (loopvar = 0; loopvar < stage3.rotate2; i++){
+				for (loopvar = 0; loopvar < stage3.rotate2; loopvar++){
 					writeGPIO(STEP,1);
 					robotWait(0, 5);
 					writeGPIO(STEP,0);
 					robotWait(0, 5);
 				}
+				stage3.rotate2 = 0;
 				inner_state = 6;
 			}
 		// case 1: //First Rotation
