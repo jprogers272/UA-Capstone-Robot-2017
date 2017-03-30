@@ -218,8 +218,8 @@ void Robot::stage1_logic(void) {
 			inner_state++;
 			break;
 		case 1:
-			cout << "timer value is " << state_timer.getTimeElapsed(PRECISION_MS) << "ms\n";
-			cout << "current component is " << stage1.currentComponent << ", " << stage1.components[stage1.currentComponent] << "\n";
+			//cout << "timer value is " << state_timer.getTimeElapsed(PRECISION_MS) << "ms\n";
+			//cout << "current component is " << stage1.currentComponent << ", " << stage1.components[stage1.currentComponent] << "\n";
 			if (stage1.currentComponent == STAGE1_IGNORE_PIN) {
 				stage1.deEnergizeComponent();
 				stage1.currentComponent++;
@@ -243,7 +243,7 @@ void Robot::stage1_logic(void) {
 			if (state_timer.getTimeElapsed(PRECISION_MS) > STAGE1_CHARGING_TIME) {
 				stage1.checkCapacitorDiode(STAGE1_IGNORE_PIN);
 				//deduce pin that was untested. 1+2+3+4+5=15, and components[STAGE1_IGNORE_PIN] is initially zero
-				cout << stage1.components[0] << stage1.components[1] << stage1.components[2] << stage1.components[3] << stage1.components[4] << endl;
+				//cout << stage1.components[0] << stage1.components[1] << stage1.components[2] << stage1.components[3] << stage1.components[4] << endl;
 				stage1.components[STAGE1_IGNORE_PIN] = 15 - stage1.components[0] - 
 					stage1.components[1] - stage1.components[2] - 
 					stage1.components[3] - stage1.components[4];
@@ -417,7 +417,7 @@ void Robot::pre_stage2_logic(void) {
 			}
 		break;
 		case 4: 
-			if ((state_timer.getTimeElapsed(PRECISION_MS) > 200))
+			if ((state_timer.getTimeElapsed(PRECISION_MS) > 400))
 			{
 				setDriveDirection(STRAFE_LEFT,3.0);
 				inner_state++;
@@ -433,7 +433,7 @@ void Robot::pre_stage2_logic(void) {
 
 		case 6:
 			cout << state_timer.getTimeElapsed(PRECISION_MS) << endl;
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 400) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 200) {
 				setDriveDirection(STOPPED,0.0);
 				state_timer.start();
 				inner_state++;	
@@ -546,58 +546,66 @@ void Robot::pre_stage3_logic(void) {
 				state_timer.start();
 				inner_state++;
 			}
-			break;
+		break;
+
 		case 1:
 			cout << state_timer.getTimeElapsed(PRECISION_MS) << endl;
-			if (state_timer.getTimeElapsed(PRECISION_MS)<2500)
+			if (state_timer.getTimeElapsed(PRECISION_MS)>2500)
 			{ 
-				if (sensorData->ir2_3_state == 0) {      
-				setDriveDirection(STRAIGHT_FORWARD,3.0);
-				state_timer.start();  
-				inner_state = 5;  
+				if (sensorData->ir2_1_state == 0 && sensorData->ir2_2_state == 0)
+				{
+					setDriveDirection(STRAIGHT_BACKWARD,3.0);
+					inner_state++;
+				}
+				else
+				{
+					setDriveDirection(STRAIGHT_FORWARD,3.0);  
+					state_timer.start();
+					inner_state = 3;
 				}
 			}
-			else{ 
-				setDriveDirection(STRAIGHT_FORWARD,3.0);
-				state_timer.start();
-				inner_state++;
-			}
-			break;
-		case 2:  //Delay to get closer to wall
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 500)
+		break;
+
+		case 2:  
+			if (sensorData->ir2_1_state == 1 && sensorData->ir2_2_state == 1)
+				{
+					setDriveDirection(STRAIGHT_FORWARD,3.0);
+					inner_state++;
+				}
+		break;
+
+		case 3:  
+			if (sensorData->ir2_1_state == 0 && sensorData->ir2_2_state == 0)
+				{
+					setDriveDirection(STRAIGHT_FORWARD,2.0);
+					state_timer.start();
+					inner_state++;
+				}
+		break;
+
+		case 4: 
+			if ((state_timer.getTimeElapsed(PRECISION_MS) > 500))
 			{
-				inner_state++;
-			}
-			break;
-		case 3:
-			if (sensorData->ir2_1_state == 0 && sensorData->ir2_2_state == 0 ){
 				setDriveDirection(STRAFE_LEFT,3.0);
-				inner_state++;
-			}
-			break;
-		case 4:
-			if (sensorData->ir2_3_state == 0 && sensorData->ir2_4_state == 0){
-				setDriveDirection(STRAIGHT_FORWARD,3.0);
-				state_timer.start();
 				inner_state++;
 			}
 			break;
 
 		case 5:
-			//if ((sensorData->ir2_1_state == 1) && (sensorData->ir2_2_state == 1)) {
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
-				setDriveDirection(STRAIGHT_BACKWARD,2.0);
+			if (sensorData->ir2_3_state == 0 && sensorData->ir2_4_state == 0){
+				setDriveDirection(STRAIGHT_FORWARD,2.0);
 				state_timer.start();
 				inner_state++;
 			}
 			break;
+
 		case 6:
 			cout << state_timer.getTimeElapsed(PRECISION_MS) << endl;
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 0) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 600) {
 				setDriveDirection(STOPPED,0.0);
 				inner_state = 0;
-				currentState = stage3_solving;
-				slapper_voltage = 0.0;
+				currentState = finish;
+				slapper_voltage = 0.0;	
 			}
 			break;
 	}
