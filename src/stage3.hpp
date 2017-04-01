@@ -13,6 +13,7 @@ class Stage3{
 		int rotate3; //third rotation loop variable
 		int rotate4; //fourth rotation loop variable
 		int rotate5; //fifth rotation loop variable
+		int currentCodeValue;
 		int waiting; //wait variable for use in pulsing stepper
 		void calculateRotations(int*);
 };

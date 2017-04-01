@@ -68,4 +68,7 @@
 #define STEPDIRECTION 44
 #define ENABLEDRIVER 46
 
+#define STEP_RUN 88
+#define PROCESS_UPDATE 61
+
 #endif

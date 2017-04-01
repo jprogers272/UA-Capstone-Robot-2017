@@ -417,7 +417,7 @@ void Robot::pre_stage2_logic(void) {
 			}
 		break;
 		case 4: 
-			if ((state_timer.getTimeElapsed(PRECISION_MS) > 400))
+			if ((state_timer.getTimeElapsed(PRECISION_MS) > 200))
 			{
 				setDriveDirection(STRAFE_LEFT,3.0);
 				inner_state++;
@@ -433,7 +433,7 @@ void Robot::pre_stage2_logic(void) {
 
 		case 6:
 			cout << state_timer.getTimeElapsed(PRECISION_MS) << endl;
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 200) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 500) {
 				setDriveDirection(STOPPED,0.0);
 				state_timer.start();
 				inner_state++;	
@@ -603,151 +603,175 @@ void Robot::pre_stage3_logic(void) {
 			cout << state_timer.getTimeElapsed(PRECISION_MS) << endl;
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 600) {
 				setDriveDirection(STOPPED,0.0);
-				inner_state = 0;
-				currentState = finish;
-				slapper_voltage = 0.0;	
+				slapper_voltage = 4.5;	
+				state_timer.start();
+				inner_state++;
 			}
 			break;
+		case 7:
+			if(state_timer.getTimeElapsed(PRECISION_MS)>500){
+			slapper_voltage=0.0;
+			inner_state = 0;
+			currentState = stage3_solving;
+			}
 	}
 	drive_logic();
 	stateLoopCount++;
 }
 
 void Robot::stage3_logic(void) {
-	// disp.writeCenter("Solving Stage 3...",3); // Once logic is in place, place inside if (display_flag == 0)
-	// disp.writeDisplay();
-	stage1.components[0] = 1;
-	stage1.components[1] = 1;
-	stage1.components[2] = 1;
-	stage1.components[3] = 1;
-	stage1.components[4] = 1;
-	int loopvar = 0;
+	
+	//int loopvar = 0;
 
+	//robotWait(0,500);
+	cout << "inner state is " << inner_state << endl;
 	switch(inner_state){
-		case 0: //configure pins used, setup variables
-			setDirectionGPIO(STEP, 0); //STEP  = GPIO PIN 45 (OUTPUT)
+		case 0: //configkkure pins used, setup variables
+			//disp.writeCenter("Solving Stage 3...",3); // Once logic is in place, place inside if (display_flag == 0)
+			//disp.writeDisplay();
+			setDirectionGPIO(STEP, 1);
 			setDirectionGPIO(STEPDIRECTION, 0); //DIR   = GPIO PIN 44 (OUTPUT)
 			setDirectionGPIO(ENABLEDRIVER, 0); //SLEEP PIN used for Enable = GPIO PIN 46 (OUTPUT)
+			setDirectionGPIO(STEP_RUN, 0); //used to start process
+			setDirectionGPIO(PROCESS_UPDATE, 1); //used for input from arduino
 			writeGPIO(ENABLEDRIVER, 1); //wake the driver from sleep
 			writeGPIO(STEPDIRECTION, 1); //set rotation direction to clockwise
 			stage3.waiting = 0;
 			stage3.calculateRotations(stage1.components);
+			//stage1.components[0] = 3;
+			//stage1.components[1] = 4;
+			//stage1.components[2] = 2;
+			//stage1.components[3] = 1;
+			//stage1.components[4] = 5;
+			stage3.currentCodeValue = 0;
 			inner_state++;
 			break;
-		case 1: //First Rotation 
-			while(stage3.rotate1 != 0){
-				for (loopvar = 0; loopvar < stage3.rotate1; loopvar++){
-					writeGPIO(STEP,1);
-					robotWait(0, 5);
-					writeGPIO(STEP,0);
-					robotWait(0, 5);
+
+		case 1:
+			writeGPIO(STEP_RUN,1);
+			state_timer.start();
+			inner_state++;
+			break;
+		case 2:
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 2500) {
+				writeGPIO(STEP_RUN,0);
+				stage1.components[stage3.currentCodeValue]--;
+				if (stage1.components[stage3.currentCodeValue] != 0) {
+					inner_state = 1;
 				}
+				else {
+					inner_state = 3;
+					stage3.currentCodeValue++;
+				}
+			}
+			break;
+		case 3:
+			if (stage3.currentCodeValue > 4) {
+				currentState = post_stage3;
+				inner_state = 0;
+				writeGPIO(ENABLEDRIVER,0);
+			}
+			else {
+				writeGPIO(STEPDIRECTION,!readGPIO(STEPDIRECTION));
+				inner_state = 1;
+			}
+			break;
+		/*
+		case 1: //First Rotation
+			if (stage3.rotate1 != 0 && stage3.waiting != 1){
+				cout << "started first case" << endl;
+				cout << "rotate 1, code number is " << stage3.rotate1 << endl;
+				writeGPIO(STEP_RUN, 1); //start signal high
+				cout << "wrote STEP_RUN" << endl;
+				stage3.waiting = 1; //in wait state
+				state_timer.start();
+			}
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 2000) {
+			//else if (readGPIO(PROCESS_UPDATE) == 1 && stage3.waiting == 1){ //done from arduino
+				cout << "Process Update written High" << endl;
+				writeGPIO(STEP_RUN, 0); //start signal low
+				--stage3.rotate1; //update loop variable
+				stage3.waiting = 0;
+			}
+			else if (stage3.rotate1 == 0){ //finish case
+				cout << "In final case" << endl;
+				writeGPIO(STEPDIRECTION, 0); //set rotation direction for next state
+				stage3.waiting = 0;
 				inner_state++;
-				writeGPIO(STEPDIRECTION, 0);
-				stage3.rotate1 = 0;
+				cout << "inner state changed, moving to state 2" << endl;
+			
 			}
-		case 2: //Second Rotation 
-			while(stage3.rotate2 != 0){
-				for (loopvar = 0; loopvar < stage3.rotate2; loopvar++){
-					writeGPIO(STEP,1);
-					robotWait(0, 5);
-					writeGPIO(STEP,0);
-					robotWait(0, 5);
-				}
-				stage3.rotate2 = 0;
-				inner_state = 6;
+			break;
+		case 2: //Second Rotation
+			if (stage3.rotate2 != 0 && stage3.waiting != 1){
+				writeGPIO(STEP_RUN, 1); //start signal high
+				stage3.waiting = 1; //in wait state
 			}
-		// case 1: //First Rotation
-		// 	//Check to see if loop variable has not expired, and if the robot is not in a wait state
-		// 	if (stage3.rotate1 != 0 && stage3.waiting != 1){
-		// 		writeGPIO(STEP, 1); //Begin Pulse
-		// 		state_timer.start(); //start timer for pulse
-		// 		stage3.waiting = 1; //Indicate that Stage 3 is waiting to complete the pulse
-		// 	}
-		// 	//Check to see if we are waiting to complete a step - wait time is 10 milliseconds
-		// 	if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 5)){
-		// 		writeGPIO(STEP, 0); //Complete Pulse
-		// 		stage3.waiting = 0; //clear wait variable
-		// 		--stage3.rotate1;   //decrement loop variable used to track rotations
-		// 	}
-		// 	//Check to see if loop variable has expired
-		// 	if (stage3.rotate1 == 0){
-		// 		writeGPIO(STEPDIRECTION, 0); //set rotation direction to counter-clockwise
-		// 		stage3.waiting = 0; //ensure wait is cleared
-		// 		inner_state++; //move to second rotation state
-		// 	}
-		// 	break;
-		// case 2: //Second Rotation
-		// 	if (stage3.rotate2 != 0 && stage3.waiting != 1){
-		// 		writeGPIO(STEP, 1); //Begin Pulse
-		// 		state_timer.start(); //start timer for pulse
-		// 		stage3.waiting = 1; //Indicate that Stage 3 is waiting to complete the pulse
-		// 	}
-		// 	if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 5)){
-		// 		writeGPIO(STEP, 0); //Complete Pulse
-		// 		stage3.waiting = 0; 
-		// 		--stage3.rotate2; 
-		// 	}
-		// 	if (stage3.rotate2 == 0){
-		// 		writeGPIO(STEPDIRECTION, 1); //set rotation direction to clockwise
-		// 		stage3.waiting = 0; //ensure wait is cleared
-		// 		inner_state++;
-		// 	}
-		// 	break;
-		// case 3: //Third Rotation
-		// 	if (stage3.rotate3 != 0 && stage3.waiting != 1){
-		// 		writeGPIO(STEP, 1); //Begin Pulse
-		// 		state_timer.start(); //start timer for pulse
-		// 		stage3.waiting = 1; //Indicate that Stage 3 is waiting to complete the pulse
-		// 	}
-		// 	if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 5)){
-		// 		writeGPIO(STEP, 0); //Complete Pulse
-		// 		stage3.waiting = 0;
-		// 		--stage3.rotate3;
-		// 	}
-		// 	if (stage3.rotate3 == 0){
-		// 		writeGPIO(STEPDIRECTION, 0); //set rotation direction to counter-clockwise
-		// 		stage3.waiting = 0; //ensure wait is cleared
-		// 		inner_state++;
-		// 	}
-		// 	break;
-		// case 4: //Fourth Rotation
-		// 	if (stage3.rotate4 != 0 && stage3.waiting != 1){
-		// 		writeGPIO(STEP, 1); //Begin Pulse
-		// 		state_timer.start(); //start timer for pulse
-		// 		stage3.waiting = 1; //Indicate that Stage 3 is waiting to complete the pulse
-		// 	}
-		// 	if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 5)){
-		// 		writeGPIO(STEP, 0); //Complete Pulse
-		// 		stage3.waiting = 0;
-		// 		--stage3.rotate4;
-		// 	}
-		// 	if (stage3.rotate4 == 0){
-		// 		writeGPIO(STEPDIRECTION, 1); //set rotation direction to clockwise
-		// 		stage3.waiting = 0; //ensure wait is cleared
-		// 		inner_state++;
-		// 	}
-		// 	break;
-		// case 5: //Fifth Rotation
-		// 	if (stage3.rotate5 != 0 && stage3.waiting != 1){
-		// 		writeGPIO(STEP, 1); //Begin Pulse
-		// 		state_timer.start(); //start timer for pulse
-		// 		stage3.waiting = 1; //Indicate that Stage 3 is waiting to complete the pulse
-		// 	}
-		// 	if ((stage3.waiting == 1) && (state_timer.getTimeElapsed(PRECISION_MS) >= 5)){
-		// 		writeGPIO(STEP, 0); //Complete Pulse
-		// 		stage3.waiting = 0;
-		// 		--stage3.rotate5;
-		// 	}
-		// 	if (stage3.rotate5 == 0){
-		// 		stage3.waiting = 0; //ensure wait is cleared
-		// 		inner_state++;
-		// 	}
-		// 	break;
+			else if (readGPIO(PROCESS_UPDATE) == 1 && stage3.waiting == 1){ //done from arduino
+				writeGPIO(STEP_RUN, 0); //start signal low
+				--stage3.rotate2; //update loop variable
+				stage3.waiting = 0;
+			}
+			else if (stage3.rotate2 == 0){ //finish case
+				writeGPIO(STEPDIRECTION, 1); //set rotation direction for next state
+				stage3.waiting = 0;
+				inner_state++;
+			}
+			break;
+		case 3: //Third Rotation
+			if (stage3.rotate3 != 0 && stage3.waiting != 1){
+				writeGPIO(STEP_RUN, 1); //start signal high
+				stage3.waiting = 1; //in wait state
+			}
+			else if (readGPIO(PROCESS_UPDATE) == 1 && stage3.waiting == 1){ //done from arduino
+				writeGPIO(STEP_RUN, 0); //start signal low
+				--stage3.rotate3; //update loop variable
+				stage3.waiting = 0;
+			}
+			else if (stage3.rotate3 == 0){ //finish case
+				writeGPIO(STEPDIRECTION, 0); //set rotation direction for next state
+				stage3.waiting = 0;
+				inner_state++;
+			}
+			break;
+		case 4: //Fourth Rotation
+			if (stage3.rotate4 != 0 && stage3.waiting != 1){
+				writeGPIO(STEP_RUN, 1); //start signal high
+				stage3.waiting = 1; //in wait state
+			}
+			else if (readGPIO(PROCESS_UPDATE) == 1 && stage3.waiting == 1){ //done from arduino
+				writeGPIO(STEP_RUN, 0); //start signal low
+				--stage3.rotate4; //update loop variable
+				stage3.waiting = 0;
+			}
+			else if (stage3.rotate4 == 0){ //finish case
+				writeGPIO(STEPDIRECTION, 1); //set rotation direction for next state
+				stage3.waiting = 0;
+				inner_state++;
+			}
+			break;
+		case 5: //Fifth Rotation
+			if (stage3.rotate5 != 0 && stage3.waiting != 1){
+				writeGPIO(STEP_RUN, 1); //start signal high
+				stage3.waiting = 1; //in wait state
+			}
+			else if (readGPIO(PROCESS_UPDATE) == 1 && stage3.waiting == 1){ //done from arduino
+				writeGPIO(STEP_RUN, 0); //start signal low
+				--stage3.rotate5; //update loop variable
+				stage3.waiting = 0;
+			}
+			else if (stage3.rotate5 == 0){ //finish case
+				writeGPIO(STEPDIRECTION, 0); //set rotation direction for next state
+				stage3.waiting = 0;
+				inner_state++;
+			}
+			break;
 		case 6: //Clean Up
 			writeGPIO(ENABLEDRIVER, 0); //put driver to sleep and release stepper
 			inner_state = 0;
 			currentState = post_stage3;
+			//break;
+		*/
 	}
 	drive_logic();
 }
