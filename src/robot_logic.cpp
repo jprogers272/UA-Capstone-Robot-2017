@@ -128,6 +128,7 @@ void Robot::zero_gyro_logic(void) {
 
 void Robot::pre_stage1_logic(void) {
 //	cout << "inner state is " << inner_state << endl;
+	cout << "pre stage 1 and " << inner_state << endl;
 	if(display_flag == 0) {	
 		disp.writeCenter("Prepping Stage 1...",0);
 		disp.writeDisplay();
@@ -189,6 +190,7 @@ void Robot::pre_stage1_logic(void) {
 				inner_state = 0;
 				currentState = stage1_solving;
 				display_flag = 0;
+				state_timer2.start();
 			}
 			break;
 
@@ -206,6 +208,7 @@ void Robot::pre_stage1_logic(void) {
 }
 
 void Robot::stage1_logic(void) {
+	cout << "stage 1 and " << inner_state << endl;
 	switch (inner_state) {
 		case 0:
 			if(display_flag == 0) {
@@ -216,6 +219,13 @@ void Robot::stage1_logic(void) {
 			stage1.energizeComponent();
 			state_timer.start();
 			inner_state++;
+			if (state_timer2.getTimeElapsed(PRECISION_MS) > 10000) {
+				state_timer.start();
+				setDriveDirection(STRAFE_RIGHT,6.0);
+				inner_state = 6;
+				//currentState = pre_stage1;
+				stage1.deEnergizeComponent();
+			}
 			break;
 		case 1:
 			//cout << "timer value is " << state_timer.getTimeElapsed(PRECISION_MS) << "ms\n";
@@ -271,7 +281,7 @@ void Robot::stage1_logic(void) {
 			}
 			else {
 				//it's 90.0, accounting for floating point error
-				translation_angle = -180.0;
+				translation_angle = 0.0;
 			}
 		       	state_timer.start();
 			inner_state++;
@@ -293,6 +303,23 @@ void Robot::stage1_logic(void) {
 		case 5:
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
 				inner_state = 0;
+				state_timer.start();
+			}
+			break;
+		case 6:
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 300) {
+				state_timer.start();
+				inner_state++;
+				//currentState = pre_stage1;
+				setDriveDirection(STRAIGHT_BACKWARD,6.0);
+			}
+			break;
+		case 7:
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 300) {
+				state_timer.start();
+				inner_state = 2;
+				currentState = pre_stage1;
+				setDriveDirection(STRAFE_LEFT,4.0);
 			}
 			break;
 	}
@@ -378,15 +405,8 @@ void Robot::pre_stage2_logic(void) {
 			break;
 		case 1:
 			cout << state_timer.getTimeElapsed(PRECISION_MS) << endl;
-			if (state_timer.getTimeElapsed(PRECISION_MS)<2500)
+			if (state_timer.getTimeElapsed(PRECISION_MS)>2500)
 			{ 
-				if (sensorData->ir2_4_state == 0 && sensorData->ir2_3_state == 0) {      
-				setDriveDirection(STRAIGHT_FORWARD,2.0);
-				state_timer.start();  
-				inner_state = 6;  
-				}
-			}
-			else{ 
 				if (sensorData->ir2_1_state == 0 && sensorData->ir2_2_state == 0)
 				{
 					setDriveDirection(STRAIGHT_BACKWARD,3.0);
@@ -394,11 +414,10 @@ void Robot::pre_stage2_logic(void) {
 				}
 				else
 				{
-					setDriveDirection(STRAIGHT_FORWARD,3.0);  //Doesn't go to next case
+					setDriveDirection(STRAIGHT_FORWARD,3.0);  
 					state_timer.start();
 					inner_state = 3;
 				}
-				
 			}
 			break;
 		case 2:  
@@ -593,7 +612,7 @@ void Robot::pre_stage3_logic(void) {
 
 		case 5:
 			if (sensorData->ir2_3_state == 0 && sensorData->ir2_4_state == 0){
-				setDriveDirection(STRAIGHT_FORWARD,2.0);
+				setDriveDirection(STRAIGHT_FORWARD,1.5);
 				state_timer.start();
 				inner_state++;
 			}
@@ -643,7 +662,7 @@ void Robot::stage3_logic(void) {
 			//stage1.components[2] = 2;
 			//stage1.components[3] = 1;
 			//stage1.components[4] = 5;
-			stage3.currentCodeValue = 0;
+			//stage3.currentCodeValue = 0;
 			inner_state++;
 			break;
 
@@ -653,7 +672,7 @@ void Robot::stage3_logic(void) {
 			inner_state++;
 			break;
 		case 2:
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 2500) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 500) {
 				writeGPIO(STEP_RUN,0);
 				stage1.components[stage3.currentCodeValue]--;
 				if (stage1.components[stage3.currentCodeValue] != 0) {
@@ -794,9 +813,10 @@ void Robot::post_stage3_logic(void) {
 			break;
 		case 2:
 			if ((angle_controller.getAngle() < -175.0) && (angle_controller.getAngle() > -185.0)) {
-				setDriveDirection(STRAIGHT_FORWARD,4.0);
+				//setDriveDirection(STRAIGHT_FORWARD,4.0);
+				setDriveDirection(STRAFE_RIGHT,4.0);
 				state_timer.start();
-				inner_state = 5;
+				inner_state = 6;
 			}
 			break;
 		/*	
@@ -825,7 +845,7 @@ void Robot::post_stage3_logic(void) {
 			inner_state++;
 			break;
 		case 6:
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 750) {
 				setDriveDirection(STRAIGHT_FORWARD,4.5);
 				state_timer.start();
 				inner_state++;
@@ -963,12 +983,12 @@ void Robot::pre_stage4_logic(void) {
 			break;
 		case 4:
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 400) {
-				setDriveDirection(STRAIGHT_FORWARD,3.0);
+				//setDriveDirection(STRAIGHT_FORWARD,3.0);
 				inner_state++;
 			}
 			break;
 		case 5:
-			if ((sensorData->ir2_1_state == 0) && (sensorData->ir2_2_state == 0)){
+			//if ((sensorData->ir2_1_state == 0) && (sensorData->ir2_2_state == 0)){
 				setDriveDirection(STOPPED, 0.0);
 
 				camera_direction = MOVE_RIGHT;
@@ -985,7 +1005,7 @@ void Robot::pre_stage4_logic(void) {
 				
 				pthread_create(&camera_thread, NULL, locate, (void *)&data);
 				inner_state++;
-			}
+			//}
 			break;
 		case 6:
 			pthread_mutex_lock(&cam_direction_mutex);

@@ -64,6 +64,7 @@ class Robot {
 		float pid_multiplier;
 		RobotTimer timer;
 		RobotTimer state_timer;
+		RobotTimer state_timer2;
 		int inner_state;
 		int display_flag;
 		int start_switch_flag;
