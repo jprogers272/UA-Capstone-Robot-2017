@@ -11,3 +11,5 @@ obj/*
 !obj/.keep
 
 test/stage1_test.s
+
+nohup.out

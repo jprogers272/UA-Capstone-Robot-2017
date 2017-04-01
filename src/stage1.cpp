@@ -54,6 +54,7 @@ void Stage1::checkCapacitorDiode(int ignorePin) {
 			}
 		}
 		else if ((components[i] == 4) || (components[i] == 5)) {
+			cout << "current component is " << i << " and GPIO through is " << readGPIO(testGPIOs[i]);
 			if (!readGPIO(testGPIOs[i])) {
 				components[i] = 5;
 			}
@@ -73,8 +74,8 @@ void Stage1::identifyComponent(void) {
 	if (mV < 100) components[currentComponent] = 0;
 	else if ( (mV > 150) && (mV < 600) ) components[currentComponent] = 2;
 	else if ( (mV > 850) && (mV < 1400) ) components[currentComponent] = 5;
-	else if ( (mV > 1400) && (mV < 1600) ) components[currentComponent] = 4;
-	else if (mV > 1600) components[currentComponent] = 1;
+	else if ( (mV >= 1400) && (mV < 1600) ) components[currentComponent] = 4;
+	else if (mV >= 1600) components[currentComponent] = 1;
 	else components[currentComponent] = 0;
 
 	writeGPIO(testGPIOs[currentComponent],0);

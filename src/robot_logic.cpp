@@ -208,7 +208,7 @@ void Robot::pre_stage1_logic(void) {
 }
 
 void Robot::stage1_logic(void) {
-	cout << "stage 1 and " << inner_state << endl;
+	//cout << "stage 1 and " << inner_state << endl;
 	switch (inner_state) {
 		case 0:
 			if(display_flag == 0) {
@@ -238,7 +238,7 @@ void Robot::stage1_logic(void) {
 			else if (stage1.currentComponent < 5) {
 				if (state_timer.getTimeElapsed(PRECISION_MS) > STAGE1_CHARGING_TIME) {
 					stage1.identifyComponent();
-					//cout << "identified component " << stage1.currentComponent << " as " << stage1.components[stage1.currentComponent] << endl;
+					cout << "identified component " << stage1.currentComponent << " as " << stage1.components[stage1.currentComponent] << endl;
 					stage1.currentComponent++;
 					inner_state = 0;
 				}
@@ -531,7 +531,7 @@ void Robot::post_stage2_logic(void) {
 		case 2:
 			//setDriveDirection(STRAFE_RIGHT,4.5);
 			if ((angle_controller.getAngle() < -85.0) && (angle_controller.getAngle() > -95.0)) {
-				setDriveDirection(STRAIGHT_FORWARD,5.0);
+				setDriveDirection(STRAIGHT_FORWARD,4.0);
 				inner_state++;
 			}
 			break;
@@ -544,12 +544,27 @@ void Robot::post_stage2_logic(void) {
 			}
 			break;
 		case 4:
-			if (state_timer.getTimeElapsed(PRECISION_MS)>500)
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 500){
+				setDriveDirection(STRAFE_LEFT, 3.0);
+				state_timer.start();
+				inner_state++;
+			}
+
+		case 5:
+			if (state_timer.getTimeElapsed(PRECISION_MS)>1000)
 			{
-				setDriveDirection(STOPPED,0.0);
+				setDriveDirection(STRAFE_LEFT,4.0);
 				slapper_voltage = 0;
+				inner_state++;
+				state_timer.start();
+			}
+			break;
+		case 6: 
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000){
+				setDriveDirection(STOPPED, 0.0);
 				inner_state = 0;
-				currentState = pre_stage3;
+				currentState = zero_gyro;
+				nextState = pre_stage3;
 			}
 			break;
 
@@ -578,7 +593,7 @@ void Robot::pre_stage3_logic(void) {
 
 		case 1:
 			cout << state_timer.getTimeElapsed(PRECISION_MS) << endl;
-			if (state_timer.getTimeElapsed(PRECISION_MS)>2500)
+			if (state_timer.getTimeElapsed(PRECISION_MS)>3500)
 			{ 
 				if (sensorData->ir2_1_state == 0 && sensorData->ir2_2_state == 0)
 				{
@@ -629,23 +644,21 @@ void Robot::pre_stage3_logic(void) {
 
 		case 6:
 			cout << state_timer.getTimeElapsed(PRECISION_MS) << endl;
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 1500) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 2000) {
 				setDriveDirection(STOPPED,0.0);
-				slapper_voltage = 4.5;	
 				state_timer.start();
 				inner_state++;
 			}
 			break;
 		case 7:
-			if (state_timer.getTimeElapsed(PRECISION_MS)>500){
-				slapper_voltage=0.0;
+			if (state_timer.getTimeElapsed(PRECISION_MS)>1000){
 				setDriveDirection(STRAIGHT_BACKWARD,1.5);
 				state_timer.start();
 				inner_state++;
 			}
 			break;
 		case 8:
-			if (state_timer.getTimeElapsed(PRECISION_MS)>100)
+			if (state_timer.getTimeElapsed(PRECISION_MS)>50)
 			{
 				setDriveDirection(STOPPED,0.0);
 				state_timer.start();
@@ -699,7 +712,7 @@ void Robot::stage3_logic(void) {
 			inner_state++;
 			break;
 		case 2:
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 500) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
 				writeGPIO(STEP_RUN,0);
 				stage1.components[stage3.currentCodeValue]--;
 				if (stage1.components[stage3.currentCodeValue] != 0) {
