@@ -501,7 +501,7 @@ void Robot::stage2_logic(void) {
 	}
 	else {
 		cout << "Slapping. Field Diff: " << sensorData->compass_angle - compAverage << endl;
-		slapper_voltage = 4.5;
+		slapper_voltage = 6.0;
 	}
 
 	if (state_timer.getTimeElapsed(PRECISION_S) > 32) {
@@ -538,12 +538,21 @@ void Robot::post_stage2_logic(void) {
 		case 3:
 			if ((sensorData->ir2_1_state == 0) && (sensorData->ir2_2_state == 0))
 			{
+				setDriveDirection(STRAIGHT_BACKWARD,3.0);
+				state_timer.start();
+				inner_state++;
+			}
+			break;
+		case 4:
+			if (state_timer.getTimeElapsed(PRECISION_MS)>500)
+			{
 				setDriveDirection(STOPPED,0.0);
-				slapper_voltage = 0.0;
+				slapper_voltage = 0;
 				inner_state = 0;
 				currentState = pre_stage3;
 			}
 			break;
+
 		default:
 			setDriveDirection(STOPPED,0.0);
 			inner_state = 0;
@@ -588,7 +597,7 @@ void Robot::pre_stage3_logic(void) {
 		case 2:  
 			if (sensorData->ir2_1_state == 1 && sensorData->ir2_2_state == 1)
 				{
-					setDriveDirection(STRAIGHT_FORWARD,3.0);
+					setDriveDirection(STRAIGHT_FORWARD,2.0);
 					inner_state++;
 				}
 		break;
@@ -603,7 +612,7 @@ void Robot::pre_stage3_logic(void) {
 		break;
 
 		case 4: 
-			if ((state_timer.getTimeElapsed(PRECISION_MS) > 500))
+			if ((state_timer.getTimeElapsed(PRECISION_MS) > 100))
 			{
 				setDriveDirection(STRAFE_LEFT,3.0);
 				inner_state++;
@@ -620,7 +629,7 @@ void Robot::pre_stage3_logic(void) {
 
 		case 6:
 			cout << state_timer.getTimeElapsed(PRECISION_MS) << endl;
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 600) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1500) {
 				setDriveDirection(STOPPED,0.0);
 				slapper_voltage = 4.5;	
 				state_timer.start();
@@ -628,11 +637,29 @@ void Robot::pre_stage3_logic(void) {
 			}
 			break;
 		case 7:
-			if(state_timer.getTimeElapsed(PRECISION_MS)>500){
-			slapper_voltage=0.0;
-			inner_state = 0;
-			currentState = stage3_solving;
+			if (state_timer.getTimeElapsed(PRECISION_MS)>500){
+				slapper_voltage=0.0;
+				setDriveDirection(STRAIGHT_BACKWARD,1.5);
+				state_timer.start();
+				inner_state++;
 			}
+			break;
+		case 8:
+			if (state_timer.getTimeElapsed(PRECISION_MS)>100)
+			{
+				setDriveDirection(STOPPED,0.0);
+				state_timer.start();
+				inner_state++;
+			}
+			break;
+		case 9:
+			if (state_timer.getTimeElapsed(PRECISION_MS)>500)
+			{
+				inner_state = 0;
+				currentState = stage3_solving;
+			}	
+			break;
+
 	}
 	drive_logic();
 	stateLoopCount++;
@@ -845,14 +872,14 @@ void Robot::post_stage3_logic(void) {
 			inner_state++;
 			break;
 		case 6:
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 750) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 300) {
 				setDriveDirection(STRAIGHT_FORWARD,4.5);
 				state_timer.start();
 				inner_state++;
 			}
 			break;
 		case 7:
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 3000) {
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 2500) {
 				//setDriveDirection(STRAIGHT_FORWARD,7.0);
 				//state_timer.start();
 				inner_state = 0;
@@ -965,8 +992,8 @@ void Robot::pre_stage4_logic(void) {
 		//	break;
 
 		case 2:
-			if (state_timer.getTimeElapsed(PRECISION_MS) > 1500) {
-				setDriveDirection(STOPPED,3.0);
+			if (state_timer.getTimeElapsed(PRECISION_MS) > 1200) {
+				setDriveDirection(STOPPED,0.0);
 				inner_state++;
 				stateLoopCount = 0;
 				nextState = currentState;

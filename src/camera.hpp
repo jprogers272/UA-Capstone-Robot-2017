@@ -16,8 +16,8 @@
 #define BLOCK_SIZE 3
 #define USE_HARRIS false
 #define TOLERANCE 20
-#define LEFT 250
-#define RIGHT 270
+#define LEFT 225
+#define RIGHT 290
 #define CROP_TOP 90
 #define CROP_LEFT 0
 #define CROP_HEIGHT 240

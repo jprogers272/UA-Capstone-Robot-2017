@@ -51,6 +51,7 @@ void Robot::resetRobot(void) {
 	angle_controller.setAngle(0.0);
 
 	stage1.zeroComponentArray();
+	stage3.currentCodeValue = 0;
 	writeGPIO(ENABLEDRIVER,0);
 }
 
