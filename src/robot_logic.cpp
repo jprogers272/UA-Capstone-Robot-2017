@@ -504,7 +504,7 @@ void Robot::stage2_logic(void) {
 		slapper_voltage = 6.0;
 	}
 
-	if (state_timer.getTimeElapsed(PRECISION_S) > 32) {
+	if (state_timer.getTimeElapsed(PRECISION_S) > 2) {
 		slapper_voltage = 0;
 		stateLoopCount = 0;
 		inner_state = 0;

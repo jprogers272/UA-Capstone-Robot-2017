@@ -118,7 +118,9 @@ int testComponent(int gpio, struct timespec *time_des) {
 	setDirGPIO(TEST3,1);
 	setDirGPIO(TEST4,1);
 	setDirGPIO(TEST5,1);
-	setDirGPIO(TEST6,1);
+	setDirGPIO(TEST6,0);
+
+	writeGPIO(TEST6,0);
 
 	setDirGPIO(gpio,0);
 	writeGPIO(gpio,1);
