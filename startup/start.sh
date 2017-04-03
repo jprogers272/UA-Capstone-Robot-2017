@@ -1,4 +1,4 @@
 #!/bin/sh
 
-/home/capstone/test/PWM_SCRIPT
+./SETUP_SCRIPT.sh
 nohup /home/capstone/bin/robotMain &
