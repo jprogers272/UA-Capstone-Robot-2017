@@ -13,3 +13,4 @@ obj/*
 test/stage1_test.s
 
 startup/robot.out
+nohup.out
