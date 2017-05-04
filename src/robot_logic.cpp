@@ -209,6 +209,14 @@ void Robot::pre_stage1_logic(void) {
 
 void Robot::stage1_logic(void) {
 	//cout << "stage 1 and " << inner_state << endl;
+	if (state_timer2.getTimeElapsed(PRECISION_MS) > 10000) {
+		state_timer.start();
+		setDriveDirection(STRAFE_RIGHT,6.0);
+		inner_state = 7;
+		stage1.deEnergizeComponent();
+		stage1.deEnergizeCommon();
+		stage1.currentComponent = 0;
+	}
 	switch (inner_state) {
 		case 0:
 			if(display_flag == 0) {
@@ -216,42 +224,51 @@ void Robot::stage1_logic(void) {
 				disp.writeDisplay();
 				display_flag = 1;
 			}
-			stage1.energizeComponent();
+			//stage1.energizeComponent();
+			stage1.energizeCommon();
 			state_timer.start();
 			inner_state++;
-			if (state_timer2.getTimeElapsed(PRECISION_MS) > 10000) {
-				state_timer.start();
-				setDriveDirection(STRAFE_RIGHT,6.0);
-				inner_state = 6;
-				//currentState = pre_stage1;
-				stage1.deEnergizeComponent();
-			}
 			break;
 		case 1:
-			//cout << "timer value is " << state_timer.getTimeElapsed(PRECISION_MS) << "ms\n";
-			//cout << "current component is " << stage1.currentComponent << ", " << stage1.components[stage1.currentComponent] << "\n";
-			if (stage1.currentComponent == STAGE1_IGNORE_PIN) {
-				stage1.deEnergizeComponent();
-				stage1.currentComponent++;
-				inner_state = 0;
-			}
-			else if (stage1.currentComponent < 5) {
-				if (state_timer.getTimeElapsed(PRECISION_MS) > STAGE1_CHARGING_TIME) {
-					stage1.identifyComponent();
-					cout << "identified component " << stage1.currentComponent << " as " << stage1.components[stage1.currentComponent] << endl;
-					stage1.currentComponent++;
-					inner_state = 0;
-				}
-			}
-			else {
-				stage1.energizeCommon();
+			if (state_timer.getTimeElapsed(PRECISION_MS) > STAGE1_CHARGING_TIME) {
+				stage1.checkReverse(STAGE1_IGNORE_PIN);
+				stage1.deEnergizeCommon();
+				stage1.energizeComponent();
 				state_timer.start();
 				inner_state++;
 			}
 			break;
 		case 2:
+			//cout << "timer value is " << state_timer.getTimeElapsed(PRECISION_MS) << "ms\n";
+			//cout << "current component is " << stage1.currentComponent << ", " << stage1.components[stage1.currentComponent] << "\n";
+			if (stage1.currentComponent == STAGE1_IGNORE_PIN) {
+				stage1.deEnergizeComponent();
+				stage1.currentComponent++;
+				stage1.energizeComponent();
+				state_timer.start();
+				//inner_state = 0;
+			}
+			else if (stage1.currentComponent < 5) {
+				if (state_timer.getTimeElapsed(PRECISION_MS) > STAGE1_CHARGING_TIME) {
+					stage1.identifyComponent();
+					cout << "identified component " << stage1.currentComponent << " as " << stage1.components[stage1.currentComponent] << endl;
+					stage1.deEnergizeComponent();
+					stage1.currentComponent++;
+					stage1.energizeComponent();
+					state_timer.start();
+					//inner_state = 0;
+				}
+			}
+			else {
+				//stage1.energizeCommon();
+				//stage1.deEnergizeComponent();
+				state_timer.start();
+				inner_state++;
+			}
+			break;
+		case 3:
 			if (state_timer.getTimeElapsed(PRECISION_MS) > STAGE1_CHARGING_TIME) {
-				stage1.checkCapacitorDiode(STAGE1_IGNORE_PIN);
+				//stage1.checkCapacitorDiode(STAGE1_IGNORE_PIN);
 				//deduce pin that was untested. 1+2+3+4+5=15, and components[STAGE1_IGNORE_PIN] is initially zero
 				//cout << stage1.components[0] << stage1.components[1] << stage1.components[2] << stage1.components[3] << stage1.components[4] << endl;
 				stage1.components[STAGE1_IGNORE_PIN] = 15 - stage1.components[0] - 
@@ -269,7 +286,7 @@ void Robot::stage1_logic(void) {
 				}
 			}
 			break;
-		case 3:
+		case 4:
 			cout << "reorient robot\n";
 			stage1.zeroComponentArray();
 			voltage_max = 2.0;
@@ -283,11 +300,11 @@ void Robot::stage1_logic(void) {
 				//it's 90.0, accounting for floating point error
 				translation_angle = 0.0;
 			}
-		       	state_timer.start();
+		    state_timer.start();
 			inner_state++;
 			stage1.currentComponent = 0;
 			break;
-		case 4:
+		case 5:
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 500) {
 				voltage_max = 5.0;
 				if (translation_angle > -90.0) {
@@ -300,13 +317,13 @@ void Robot::stage1_logic(void) {
 				inner_state++;
 			}
 			break;
-		case 5:
+		case 6:
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 1000) {
 				inner_state = 0;
 				state_timer.start();
 			}
 			break;
-		case 6:
+		case 7:
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 300) {
 				state_timer.start();
 				inner_state++;
@@ -314,7 +331,7 @@ void Robot::stage1_logic(void) {
 				setDriveDirection(STRAIGHT_BACKWARD,6.0);
 			}
 			break;
-		case 7:
+		case 8:
 			if (state_timer.getTimeElapsed(PRECISION_MS) > 300) {
 				state_timer.start();
 				inner_state = 2;

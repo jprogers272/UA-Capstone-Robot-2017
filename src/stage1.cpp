@@ -39,6 +39,11 @@ void Stage1::energizeCommon(void) {
 	writeGPIO(STAGE1_GPIO_COM,1);
 }
 
+void Stage1::deEnergizeCommon(void) {
+	writeGPIO(STAGE1_GPIO_COM,0);
+	setDirectionGPIO(STAGE1_GPIO_COM,GPIO_INPUT);
+}
+
 void Stage1::checkCapacitorDiode(int ignorePin) {
 	int i;
 	for (i=0; i<5; i++) {
@@ -68,18 +73,49 @@ void Stage1::checkCapacitorDiode(int ignorePin) {
 	setDirectionGPIO(STAGE1_GPIO_COM,GPIO_INPUT);
 }
 
+void Stage1::checkReverse(int ignorePin) {
+	int i;
+	for (i=0; i<5; i++) {
+		if (i == ignorePin) {
+			reverse_values[i] = 0;
+			continue;
+		}
+		else {
+			reverse_values[i] = readGPIO(testGPIOs[i]);
+		}
+	}
+}
+
 void Stage1::identifyComponent(void) {
 	int mV = readADC_mv(STAGE1_ADC);
 	cout << "Vtest = " << mV << "mV\n";
-	if (mV < 100) components[currentComponent] = 0;
-	else if ( (mV > 150) && (mV < 600) ) components[currentComponent] = 2;
-	else if ( (mV > 850) && (mV < 1400) ) components[currentComponent] = 5;
-	else if ( (mV >= 1400) && (mV < 1600) ) components[currentComponent] = 4;
-	else if (mV >= 1600) components[currentComponent] = 1;
-	else components[currentComponent] = 0;
-
-	writeGPIO(testGPIOs[currentComponent],0);
-	setDirectionGPIO(testGPIOs[currentComponent],GPIO_INPUT);
+	if (mV < 100) {
+		if (reverse_values[currentComponent] == 1)
+			components[currentComponent] = 5;
+		else
+			components[currentComponent] = 3;
+	}
+	else if ((mV > 150) && (mV < 600)) {
+		if (reverse_values[currentComponent] == 1)
+			components[currentComponent] = 2;
+		else
+			components[currentComponent] = 0;
+	}
+	else if ( (mV > 850) && (mV < 1600) ) {
+		if (reverse_values[currentComponent] == 1)
+			components[currentComponent] = 4;
+		else
+			components[currentComponent] = 5;
+	}
+	else if (mV >= 1600) {
+		if (reverse_values[currentComponent] == 1)
+			components[currentComponent] = 1;
+		else
+			components[currentComponent] = 0;
+	}
+	else {
+		components[currentComponent] = 0;
+	}
 }
 
 int Stage1::detectProblems(void) {
