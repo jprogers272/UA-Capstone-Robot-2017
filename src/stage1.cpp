@@ -96,10 +96,7 @@ void Stage1::identifyComponent(void) {
 			components[currentComponent] = 3;
 	}
 	else if ((mV > 150) && (mV < 600)) {
-		if (reverse_values[currentComponent] == 1)
-			components[currentComponent] = 2;
-		else
-			components[currentComponent] = 0;
+		components[currentComponent] = 2;
 	}
 	else if ( (mV > 850) && (mV < 1600) ) {
 		if (reverse_values[currentComponent] == 1)

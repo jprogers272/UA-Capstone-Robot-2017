@@ -10,7 +10,7 @@ class Stage1 {
 	public:
 		int currentComponent;
 		int components[5];
-		int revers_values[5];
+		int reverse_values[5];
 		
 	private:
 		int testGPIOs[6];		
@@ -23,7 +23,7 @@ class Stage1 {
 		void deEnergizeCommon(void);
 		void identifyComponent(void);
 		void checkCapacitorDiode(int);
-		void checkRevers(int);
+		void checkReverse(int);
 		int detectProblems(void);
 		void zeroComponentArray(void);
 		
